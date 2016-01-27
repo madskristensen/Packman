@@ -3,7 +3,7 @@
 Packman is a client-side package manager for JavaScript
 and CSS libraries.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/kyk8vpst641r2n0r?svg=true)](https://ci.appveyor.com/project/madskristensen/webcompiler)
+[![Build status](https://ci.appveyor.com/api/projects/status/o2oc8nlxf6lqr787?svg=true)](https://ci.appveyor.com/project/madskristensen/packman)
 
 Download the extension at the
 [VS Gallery](https://visualstudiogallery.msdn.microsoft.com/3b329021-cd7a-4a01-86fc-714c2d05bb6c)
@@ -20,3 +20,5 @@ for changes and roadmap.
 - Can install packages into any folder
 - Only installs the files you need and nothing else
 - Great Visual Studio integration
+
+More documentation coming...

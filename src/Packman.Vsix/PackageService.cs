@@ -30,6 +30,8 @@ namespace PackmanVsix
 
         private static void Installing(object sender, InstallEventArgs e)
         {
+            VSPackage.DTE.StatusBar.Text = $"Installing {e.Package.Name}...";
+
             foreach (var file in e.Package.Files)
             {
                 string absolute = Path.Combine(e.Path, file);
@@ -54,6 +56,8 @@ namespace PackmanVsix
                     // Angular has issues with its huge i18n folder. No idea why
                 }
             }
+
+            VSPackage.DTE.StatusBar.Text = $"{e.Package.Name} installed";
         }
     }
 }
