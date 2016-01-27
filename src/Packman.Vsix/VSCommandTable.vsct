@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <Extern href="stdidcmd.h" />
+    <Extern href="vsshlids.h" />
+
+    <Commands package="guidLibrarianPackage">
+        <Groups>
+            <Group guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0600" />
+        </Groups>
+
+        <Buttons>
+            <Button guid="guidLibrarianCmdSet" id="InstallLibrary" priority="0x0100" type="Button">
+                <Parent guid="guidLibrarianCmdSet" id="ContextMenuGroup" />
+                <Icon guid="guidImages" id="logo" />
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <Strings>
+                    <ButtonText>Install Client-Side Package...</ButtonText>
+                </Strings>
+            </Button>
+            <Button guid="guidLibrarianCmdSet" id="RestoreAll" priority="0x0200" type="Button">
+                <Parent guid="guidLibrarianCmdSet" id="ContextMenuGroup" />
+                <Icon guid="guidImages" id="logo" />
+                <CommandFlag>DynamicVisibility</CommandFlag>
+                <CommandFlag>DefaultInvisible</CommandFlag>
+                <Strings>
+                    <ButtonText>Restore Packages</ButtonText>
+                </Strings>
+            </Button>
+        </Buttons>
+
+        <Bitmaps>
+            <Bitmap guid="guidImages" href="Resources\Images.png" usedList="logo" />
+        </Bitmaps>
+    </Commands>
+
+    <CommandPlacements>
+        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
+            <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE" />
+        </CommandPlacement>
+        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
+            <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_WEBFOLDER" />
+        </CommandPlacement>
+        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
+            <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
+        </CommandPlacement>
+        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
+            <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_WEBITEMNODE" />
+        </CommandPlacement>
+    </CommandPlacements>
+
+    <VisibilityConstraints>
+        <VisibilityItem guid="guidLibrarianCmdSet" id="ContextMenuGroup" context="UICONTEXT_SolutionExists" />
+    </VisibilityConstraints>
+
+    <Symbols>
+        <!-- This is the package guid. -->
+        <GuidSymbol name="guidLibrarianPackage" value="{ce753d0f-f511-4b2b-93de-5cc50145dca6}" />
+
+        <GuidSymbol name="guidLibrarianCmdSet" value="{9056cd3b-314d-462b-888e-95801ee4b05b}">
+            <IDSymbol name="ContextMenuGroup" value="0x1020" />
+            <IDSymbol name="InstallLibrary" value="0x0100" />
+            <IDSymbol name="RestoreAll" value="0x0200" />
+        </GuidSymbol>
+
+        <GuidSymbol name="guidImages" value="{5b696664-fde3-433c-982c-32bf4ab02398}">
+            <IDSymbol name="logo" value="1" />
+        </GuidSymbol>
+    </Symbols>
+
+</CommandTable>
