@@ -10,6 +10,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -21,7 +24,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PackmanVsix</RootNamespace>
-    <AssemblyName>Packman.Vsix</AssemblyName>
+    <AssemblyName>PackmanVsix</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -46,10 +49,11 @@
     <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\..\packages\VSSDK.DTE.7.0.4\lib\net20\envdte.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.ApplicationInsights, Version=1.2.3.490, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.ApplicationInsights.1.2.3\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.CSharp" />
@@ -91,17 +95,17 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\..\packages\VSSDK.Shell.Interop.10.10.0.4\lib\net20\Microsoft.VisualStudio.Shell.Interop.10.0.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.11.0, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\..\packages\VSSDK.Shell.Interop.11.11.0.4\lib\net20\Microsoft.VisualStudio.Shell.Interop.11.0.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\..\packages\VSSDK.Shell.Interop.12.12.0.4\lib\net20\Microsoft.VisualStudio.Shell.Interop.12.0.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\..\packages\VSSDK.Shell.Interop.8.8.0.4\lib\net20\Microsoft.VisualStudio.Shell.Interop.8.0.dll</HintPath>
@@ -133,6 +137,7 @@
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\..\packages\VSSDK.DTE.7.0.4\lib\net20\stdole.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
