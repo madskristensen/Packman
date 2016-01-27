@@ -13,11 +13,7 @@ build_script:
   - msbuild /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
 
 after_test:
-  - ps: Vsix-PushArtifacts
-
-artifacts:
-  - path: src\WebCompiler\**\*.nupkg
-    name: NuGet package
+  - ps: Vsix-PushArtifacts | Vsix-PublishToGallery
 
 before_deploy:
   - ps: Vsix-CreateChocolatyPackage -packageId packman
@@ -28,6 +24,3 @@ deploy:
     on:
       branch: master
       appveyor_repo_commit_message_extended: /\[release\]/
-
-after_deploy:
-  - ps: Vsix-PublishToGallery .\src\PackmanVsix\**\*.vsix
