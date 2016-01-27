@@ -213,6 +213,9 @@
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\ProjectHelpers.cs" />
     <Compile Include="Helpers\Telemetry.cs" />
+    <Compile Include="InstallDialog.xaml.cs">
+      <DependentUpon>InstallDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PackageService.cs" />
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
@@ -266,6 +269,12 @@
       <Project>{9e808a6e-f7f7-4b27-9624-141f6bbd72d3}</Project>
       <Name>Packman</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="InstallDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using EnvDTE;
 using Packman;
 using Microsoft.VisualStudio.Shell;
+using System.Windows.Interop;
 
 namespace PackmanVsix
 {
@@ -75,36 +76,22 @@ namespace PackmanVsix
                 item.ContainingProject.AddFileToProject(manifestPath, "None");
         }
 
-        private async Task<InstallablePackage> GetPackage()
+        private async Task<InstallablePackage> GetPackage(string folder)
         {
-            var prompt = new Form
-            {
-                Width = 500,
-                Height = 150,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = VSPackage.Name,
-                StartPosition = FormStartPosition.CenterScreen
-            };
-            var textLabel = new Label { Left = 50, Top = 20, Text = "Name of the package" };
-            var textBox = new TextBox { Left = 50, Top = 50, Width = 400 };
-            var confirmation = new Button { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
-            confirmation.Click += (sender, e) => { prompt.Close(); };
-            prompt.Controls.Add(textBox);
-            prompt.Controls.Add(confirmation);
-            prompt.Controls.Add(textLabel);
-            prompt.AcceptButton = confirmation;
+            InstallDialog dialog = new InstallDialog(folder);
 
-            string name = prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+            var hwnd = new IntPtr(VSPackage.DTE.MainWindow.HWnd);
+            System.Windows.Window window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
+            dialog.Owner = window;
 
-            if (!string.IsNullOrEmpty(name))
-            {
-                var versions = await VSPackage.Manager.Provider.GetVersionsAsync(name);
+            var result = dialog.ShowDialog();
 
-                if (versions != null)
-                    return await VSPackage.Manager.Provider.GetInstallablePackage(name, versions.First());
-            }
+            if (!result.HasValue || !result.Value)
+                return null;
 
-            return null;
+            string name = dialog.PackageName;
+
+            return await VSPackage.Manager.Provider.GetInstallablePackage(name, dialog.PackageVersion);
         }
     }
 }
