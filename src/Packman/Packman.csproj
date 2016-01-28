@@ -50,6 +50,7 @@
     <Compile Include="InstallSettings.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Manifest.cs" />
+    <Compile Include="PackageNameComparer.cs" />
     <Compile Include="Providers\IPackageProvider.cs" />
     <Compile Include="Providers\JsDelivr\JsDelivrMetaData.cs" />
     <Compile Include="Providers\JsDelivr\JsDelivrProvider.cs" />

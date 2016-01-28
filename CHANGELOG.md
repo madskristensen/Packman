@@ -6,9 +6,10 @@
   - [ ] Light bulb in `packman.json`
   - [ ] Context menu button on artifact file(s)
 - [ ] Remove all package artifacts from project
-- [ ] UI for package search
-  - [ ] Preview of what's being installed
-  - [ ] Select exactly which files to install
+- [x] UI for package search
+  - [x] Preview of what's being installed
+  - [x] Select exactly which files to install
+  - [ ] Optional creation of package folders
 
 Features that have a checkmark are complete and available for
 download in the

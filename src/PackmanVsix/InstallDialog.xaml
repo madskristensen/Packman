@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PackmanVsix"
         mc:Ignorable="d"
-        Title="Packman" Height="237" Width="498.674">
+        Title="Packman" Height="300.2" Width="498.674" WindowStartupLocation="CenterScreen" ShowInTaskbar="False">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition />
+            <RowDefinition Height="50" />
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -17,7 +17,7 @@
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-        <ComboBox x:Name="cbName" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10 0" IsEditable="True" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+        <ComboBox x:Name="cbName" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10 0" IsEditable="True" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" IsTextSearchEnabled="True">
             <ComboBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel/>

@@ -52,7 +52,9 @@ namespace Packman
             if (_packages == null)
                 await LoadPackages();
 
-            return _packages.Select(p => p.Name);
+            var comparer = new PackageNameComparer();
+
+            return _packages.OrderBy(p => p.Name, comparer).Select(p => p.Name);
         }
 
         async Task LoadPackages()

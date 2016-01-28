@@ -43,13 +43,16 @@ namespace Packman
                 await Task.WhenAll(list);
             }
 
-            return new InstallablePackage
+            var package = new InstallablePackage
             {
                 Name = Name,
                 Version = asset.Version,
                 Files = asset.Files,
                 MainFile = asset.MainFile
             };
+
+            package.Original = package;
+            return package;
         }
 
         async Task<JsDelivrAsset> GetAsset(string version, string providerName)

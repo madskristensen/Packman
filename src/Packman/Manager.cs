@@ -2,6 +2,7 @@
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
+using System.Diagnostics.Contracts;
 
 namespace Packman
 {
@@ -21,13 +22,14 @@ namespace Packman
                 var entry = manifest.Packages[name];
                 var package = await Provider.GetInstallablePackage(name, entry.Version);
 
-                var file = new FileInfo(manifest.FileName);
+                if (entry.Files != null && entry.Files.Count() != package.Files.Count())
+                    package.Files = entry.Files;
 
+                var file = new FileInfo(manifest.FileName);
 
                 var settings = new InstallSettings
                 {
                     InstallDirectory = Path.Combine(file.DirectoryName, entry.Path.Replace("/", "\\")),
-                    OnlyMainFile = entry.Main != null && entry.Main.Any(),
                     SaveManifest = false
                 };
 
@@ -68,9 +70,10 @@ namespace Packman
                     Path = relativePath
                 };
 
-                if (settings.OnlyMainFile)
+                // Only write "files" to the manifest if it's different from all files.
+                if (entry.Original.Files.Count() != entry.Files.Count())
                 {
-                    package.Main = new[] { entry.MainFile };
+                    package.Files = entry.Files;
                 }
 
                 manifest.Packages[entry.Name] = package;
@@ -81,29 +84,31 @@ namespace Packman
 
             OnInstalling(entry, settings.InstallDirectory);
 
-            CopyPackageContent(entry, settings);
+            await CopyPackageContent(entry, settings);
 
             OnInstalled(entry, settings.InstallDirectory);
 
             return manifest;
         }
 
-        private void CopyPackageContent(InstallablePackage entry, InstallSettings settings)
+        private async Task CopyPackageContent(InstallablePackage entry, InstallSettings settings)
         {
-            string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
+            await Task.Run(() =>
+            {
+                string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
 
-            if (settings.OnlyMainFile)
-            {
-                string src = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version, entry.MainFile);
-                string dest = Path.Combine(settings.InstallDirectory, entry.MainFile);
-                Directory.CreateDirectory(Path.GetDirectoryName(dest));
-                File.Copy(src, dest, true);
-            }
-            else
-            {
-                string sourceFolder = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version);
-                Copy(sourceFolder, settings.InstallDirectory);
-            }
+                foreach (string file in entry.Files)
+                {
+                    string cleanFile = file.Replace("/", "\\");
+                    string src = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version, cleanFile);
+                    string dest = Path.Combine(settings.InstallDirectory, cleanFile);
+
+                    string dir = Path.GetDirectoryName(dest);
+                    Directory.CreateDirectory(dir);
+
+                    File.Copy(src, dest, true);
+                }
+            });
         }
 
         public async Task<Manifest> Uninstall(string manifestFilePath, string name)
@@ -141,34 +146,6 @@ namespace Packman
 
             if (Directory.Exists(dir))
                 Directory.Delete(dir, true);
-        }
-
-        static void Copy(string sourceDirectory, string targetDirectory)
-        {
-            var diSource = new DirectoryInfo(sourceDirectory);
-            var diTarget = new DirectoryInfo(targetDirectory);
-
-            CopyAll(diSource, diTarget);
-        }
-
-        static void CopyAll(DirectoryInfo source, DirectoryInfo target)
-        {
-            Directory.CreateDirectory(target.FullName);
-
-            // Copy each file into the new directory.
-            foreach (FileInfo fi in source.GetFiles())
-            {
-                Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
-                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
-            }
-
-            // Copy each subdirectory using recursion.
-            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-            {
-                DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-
-                CopyAll(diSourceSubDir, nextTargetSubDir);
-            }
         }
 
         public static string MakeRelative(string baseFile, string file)

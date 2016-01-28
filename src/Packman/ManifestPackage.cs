@@ -12,17 +12,17 @@ namespace Packman
         [JsonProperty("path")]
         public string Path { get; set; }
 
-        [JsonProperty("main")]
-        public IEnumerable<string> Main { get; set; }
+        [JsonProperty("files")]
+        public IEnumerable<string> Files { get; set; }
 
         public bool ShouldSerializePath()
         {
             return !string.IsNullOrEmpty(Path) && Path != Defaults.DefaultLocalPath;
         }
 
-        public bool ShouldSerializeMain()
+        public bool ShouldSerializeFiles()
         {
-            return Main != null && Main.Any();
+            return Files != null && Files.Any();
         }
     }
 }

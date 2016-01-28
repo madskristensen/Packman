@@ -8,6 +8,7 @@ using EnvDTE;
 using Packman;
 using Microsoft.VisualStudio.Shell;
 using System.Windows.Interop;
+using System.Collections.Generic;
 
 namespace PackmanVsix
 {
@@ -61,9 +62,9 @@ namespace PackmanVsix
                 return;
 
             var dir = new DirectoryInfo(item.GetFullPath());
-            var package = await GetPackage(dir.Name);
+            var package = GetPackage(dir.Name);
 
-            if (package == null)
+            if (package == null || package.Files == null || !package.Files.Any())
                 return;
 
             string manifestPath = item.ContainingProject.GetConfigFile();
@@ -71,8 +72,7 @@ namespace PackmanVsix
             var settings = new InstallSettings
             {
                 InstallDirectory = Path.Combine(item.GetFullPath(), package.Name),
-                SaveManifest = true,
-                OnlyMainFile = false
+                SaveManifest = true
             };
 
             await VSPackage.Manager.Install(manifestPath, package, settings);
@@ -81,22 +81,20 @@ namespace PackmanVsix
                 item.ContainingProject.AddFileToProject(manifestPath, "None");
         }
 
-        private async Task<InstallablePackage> GetPackage(string folder)
+        private InstallablePackage GetPackage(string folder)
         {
-            InstallDialog dialog = new InstallDialog(folder);
+            var dialog = new InstallDialog(folder);
 
             var hwnd = new IntPtr(VSPackage.DTE.MainWindow.HWnd);
-            System.Windows.Window window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
+            var window = (System.Windows.Window)HwndSource.FromHwnd(hwnd).RootVisual;
             dialog.Owner = window;
 
             var result = dialog.ShowDialog();
 
             if (!result.HasValue || !result.Value)
                 return null;
-
-            string name = dialog.PackageName;
-
-            return await VSPackage.Manager.Provider.GetInstallablePackage(name, dialog.PackageVersion);
+            
+            return dialog.Package;
         }
     }
 }
