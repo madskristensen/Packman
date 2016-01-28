@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PackmanVsix
 {
     public partial class InstallDialog : Window
     {
         private string _folder;
+        private const string LATEST = "Latest version";
 
         public InstallDialog(string folder)
         {
@@ -44,7 +35,25 @@ namespace PackmanVsix
             cbName.Focus();
             cbName.ItemsSource = await VSPackage.Manager.Provider.GetPackageNamesAsync();
 
+            cbVersion.ItemsSource = new[] { LATEST };
             cbVersion.GotFocus += OnVersionGotFocus;
+
+            cbName.LostFocus += async delegate { await ShowFiles(); };
+            cbName.SelectionChanged += async delegate { await ShowFiles(); };
+            cbVersion.SelectionChanged += async delegate { await ShowFiles(); };
+        }
+
+        private async Task ShowFiles()
+        {
+            if (PackageVersion == LATEST || !cbName.ItemsSource.Cast<string>().Contains(PackageName))
+                return;
+
+            var package = await VSPackage.Manager.Provider.GetInstallablePackage(PackageName, PackageVersion);
+
+            if (package != null)
+            {
+                treeView.ItemsSource = package.Files;
+            }
         }
 
         private async void OnVersionGotFocus(object sender, RoutedEventArgs e)
@@ -52,16 +61,13 @@ namespace PackmanVsix
             string name = cbName.Text.Trim();
             var versions = await VSPackage.Manager.Provider.GetVersionsAsync(name);
 
-            if (versions != null)
-            {
-                cbVersion.ItemsSource = versions;
-            }
-            else
-            {
-                cbVersion.Text = "Select version";
-            }
+            cbVersion.ItemsSource = versions != null ? versions : new[] { LATEST };
+        }
 
-            cbVersion.IsEnabled = versions != null;
+        private void btnInstall_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
         }
     }
 }

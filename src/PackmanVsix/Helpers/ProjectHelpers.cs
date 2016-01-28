@@ -248,7 +248,7 @@ namespace PackmanVsix
 
         public static bool IsConfigFile(this ProjectItem item)
         {
-            if (item == null || item.Properties == null || item.Kind != Constants.vsProjectItemKindPhysicalFolder || item.ContainingProject == null)
+            if (item == null || item.Properties == null || item.Kind != Constants.vsProjectItemKindPhysicalFile || item.ContainingProject == null)
                 return false;
 
             string fileName = Path.GetFileName(item.GetFullPath());

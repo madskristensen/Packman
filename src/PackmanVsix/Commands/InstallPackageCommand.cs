@@ -55,12 +55,17 @@ namespace PackmanVsix
 
         async void Install(object sender, EventArgs e)
         {
-            var package = await GetPackage();
+            var item = ProjectHelpers.GetSelectedItems().FirstOrDefault();
+
+            if (item == null)
+                return;
+
+            var dir = new DirectoryInfo(item.GetFullPath());
+            var package = await GetPackage(dir.Name);
 
             if (package == null)
                 return;
 
-            var item = ProjectHelpers.GetSelectedItems().FirstOrDefault();
             string manifestPath = item.ContainingProject.GetConfigFile();
 
             var settings = new InstallSettings
