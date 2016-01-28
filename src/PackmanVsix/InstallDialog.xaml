@@ -34,7 +34,7 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <Label x:Name="lblTip" Content="Tip" HorizontalAlignment="Left" Foreground="Gray" Margin="10 0 0 0" />
+            <CheckBox x:Name="cbCreateFolder" Content="Place files in their own folder" HorizontalAlignment="Left" Margin="10 0 0 0" VerticalAlignment="Center" IsChecked="True"/>
             <Button x:Name="btnInstall" Grid.Column="1" Content="Install" HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Bottom" Width="75" IsDefault="True" Click="btnInstall_Click" />
             <Button x:Name="btnCancel" Grid.Column="2" Content="Cancel" HorizontalAlignment="Right" Margin="0 0 10 0" VerticalAlignment="Bottom" Width="75" IsCancel="True" />
         </Grid>

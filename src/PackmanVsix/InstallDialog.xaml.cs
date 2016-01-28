@@ -13,6 +13,7 @@ namespace PackmanVsix
     {
         private string _folder;
         private const string LATEST = "Latest version";
+        private TreeViewItem _parentItem;
 
         public InstallDialog(string folder)
         {
@@ -24,6 +25,14 @@ namespace PackmanVsix
         }
 
         public InstallablePackage Package { get; private set; }
+
+        public string InstallDirectory
+        {
+            get
+            {
+                return cbCreateFolder.IsChecked.Value ? cbName.Text.Trim() : string.Empty;
+            }
+        }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -38,6 +47,23 @@ namespace PackmanVsix
 
             cbName.SelectionChanged += async delegate { await ShowFiles(); };
             cbVersion.SelectionChanged += async delegate { await ShowFiles(); };
+
+            cbCreateFolder.Checked += CreateFolderToggle;
+            cbCreateFolder.Unchecked += CreateFolderToggle;
+        }
+
+        private void CreateFolderToggle(object sender, RoutedEventArgs e)
+        {
+            var box = (CheckBox)sender;
+            if (_parentItem != null)
+            {
+                var header = (CheckBox)_parentItem.Header;
+
+                if (box.IsChecked.Value)
+                    header.Content = $"{_folder}/{cbName.Text.Trim()}";
+                else
+                    header.Content = _folder;
+            }
         }
 
         private async Task ShowFiles()
@@ -59,10 +85,21 @@ namespace PackmanVsix
                 return;
 
             bool isChecked = package.AreAllFilesRecommended();
+            string itemName = _folder;
 
-            CheckBox masterCb = new CheckBox { Content = _folder, IsChecked = isChecked };
-            var folderItem = new TreeViewItem { IsExpanded = true };
-            folderItem.Header = masterCb;
+            if (cbCreateFolder.IsChecked.HasValue && cbCreateFolder.IsChecked.Value)
+                itemName += $"/{itemName}";
+
+            CheckBox masterCb = new CheckBox { Content = itemName, IsChecked = isChecked };
+
+            if (package.Files.Count() == 1)
+            {
+                masterCb.IsChecked = true;
+                masterCb.IsEnabled = false;
+            }
+
+            _parentItem = new TreeViewItem { IsExpanded = true };
+            _parentItem.Header = masterCb;
             masterCb.Checked += delegate { ToggleChecked(true); };
             masterCb.Unchecked += delegate { ToggleChecked(false); };
 
@@ -82,11 +119,11 @@ namespace PackmanVsix
                     }
                 };
 
-                folderItem.Items.Add(item);
+                _parentItem.Items.Add(item);
             }
 
             treeView.Items.Clear();
-            treeView.Items.Add(folderItem);
+            treeView.Items.Add(_parentItem);
         }
 
         private void ToggleChecked(bool check)

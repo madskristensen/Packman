@@ -62,7 +62,8 @@ namespace PackmanVsix
                 return;
 
             var dir = new DirectoryInfo(item.GetFullPath());
-            var package = GetPackage(dir.Name);
+            string installDir;
+            var package = GetPackage(dir.Name, out installDir);
 
             if (package == null || package.Files == null || !package.Files.Any())
                 return;
@@ -71,7 +72,7 @@ namespace PackmanVsix
 
             var settings = new InstallSettings
             {
-                InstallDirectory = Path.Combine(item.GetFullPath(), package.Name),
+                InstallDirectory = Path.Combine(item.GetFullPath(), installDir),
                 SaveManifest = true
             };
 
@@ -81,7 +82,7 @@ namespace PackmanVsix
                 item.ContainingProject.AddFileToProject(manifestPath, "None");
         }
 
-        private InstallablePackage GetPackage(string folder)
+        private InstallablePackage GetPackage(string folder, out string installDirectory)
         {
             var dialog = new InstallDialog(folder);
 
@@ -91,9 +92,13 @@ namespace PackmanVsix
 
             var result = dialog.ShowDialog();
 
+            installDirectory = folder;
+
             if (!result.HasValue || !result.Value)
                 return null;
-            
+
+            installDirectory = dialog.InstallDirectory;
+
             return dialog.Package;
         }
     }

@@ -10,8 +10,7 @@ namespace Packman
         public string Version { get; set; }
         public string MainFile { get; set; }
         public IEnumerable<string> Files { get; set; }
-
-        internal InstallablePackage Original { get; set; }
+        internal IEnumerable<string> AllFiles { get; set; }
 
         public bool AreAllFilesRecommended()
         {

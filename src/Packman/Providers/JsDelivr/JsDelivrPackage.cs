@@ -48,10 +48,10 @@ namespace Packman
                 Name = Name,
                 Version = asset.Version,
                 Files = asset.Files,
+                AllFiles = asset.Files,
                 MainFile = asset.MainFile
             };
 
-            package.Original = package;
             return package;
         }
 

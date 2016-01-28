@@ -71,7 +71,7 @@ namespace Packman
                 };
 
                 // Only write "files" to the manifest if it's different from all files.
-                if (entry.Original.Files.Count() != entry.Files.Count())
+                if (entry.AllFiles.Count() != entry.Files.Count())
                 {
                     package.Files = entry.Files;
                 }
