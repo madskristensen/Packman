@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using Packman;
 using System.Collections.Generic;
+using System;
+using System.Windows.Media.Imaging;
 
 namespace PackmanVsix
 {
@@ -25,6 +27,7 @@ namespace PackmanVsix
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            Icon = BitmapFrame.Create(new Uri("pack://application:,,,/PackmanVsix;component/Resources/dialog-icon.png", UriKind.RelativeOrAbsolute));
             Title = VSPackage.Name;
 
             cbName.Focus();
@@ -99,6 +102,25 @@ namespace PackmanVsix
             }
         }
 
+        private void SelectStableVersion(IEnumerable<string> versions)
+        {
+            int index = 0;
+
+            for (int i = 0; i < versions.Count() - 1; i++)
+            {
+                string version = versions.ElementAt(i);
+                Version v;
+
+                if (Version.TryParse(version, out v))
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            cbVersion.SelectedIndex = index;
+        }
+
         private IEnumerable<string> GetSelectedFiles()
         {
             var first = (TreeViewItem)treeView.Items[0];
@@ -118,10 +140,10 @@ namespace PackmanVsix
         private async void OnVersionGotFocus(object sender, RoutedEventArgs e)
         {
             string name = cbName.Text.Trim();
-            var versions = await VSPackage.Manager.Provider.GetVersionsAsync(name);
+            var versions = await VSPackage.Manager.Provider.GetVersionsAsync(name) ?? new[] { LATEST };
 
-            cbVersion.ItemsSource = versions ?? new[] { LATEST };
-            cbVersion.SelectedIndex = 0;
+            cbVersion.ItemsSource = versions;
+            SelectStableVersion(versions);
         }
 
         private async void btnInstall_Click(object sender, RoutedEventArgs e)

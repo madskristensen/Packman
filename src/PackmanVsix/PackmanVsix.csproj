@@ -252,6 +252,7 @@
     <Content Include="Resources\Icon.png">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\dialog-icon.png" />
     <Content Include="Resources\Package.ico" />
     <Content Include="Resources\Preview.png">
       <IncludeInVSIX>true</IncludeInVSIX>

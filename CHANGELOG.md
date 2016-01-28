@@ -10,6 +10,7 @@
   - [x] Preview of what's being installed
   - [x] Select exactly which files to install
   - [ ] Optional creation of package folders
+  - [x] Preselect latest stable version
 
 Features that have a checkmark are complete and available for
 download in the
