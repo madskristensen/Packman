@@ -52,6 +52,10 @@
     </Reference>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.CSS.Core, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Microsoft.CSS.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.JSON.Core">
       <HintPath>..\..\lib\Microsoft.JSON.Core.dll</HintPath>
     </Reference>
@@ -214,6 +218,11 @@
     <Compile Include="JSON\Completion\SimpleCompletionEntry.cs" />
     <Compile Include="JSON\JsonCreationListener.cs" />
     <Compile Include="JSON\Schema\ManifestSchemaSelector.cs" />
+    <Compile Include="JSON\Validation\JsonErrorTag.cs" />
+    <Compile Include="JSON\Validation\BaseValidator.cs" />
+    <Compile Include="JSON\Validation\FileValidator.cs" />
+    <Compile Include="JSON\Validation\VersionValidator.cs" />
+    <Compile Include="JSON\Validation\NameValidator.cs" />
     <Compile Include="PackageService.cs" />
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
@@ -231,7 +240,6 @@
     <Content Include="JSON\Schema\manifest-schema.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="app.config" />
     <None Include="JSON\Schema\manifest-instance.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -277,9 +285,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="JSON\Validation\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

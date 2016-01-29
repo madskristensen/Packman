@@ -66,8 +66,12 @@ namespace Packman
             using (StreamReader reader = new StreamReader(metaPath))
             {
                 string json = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
+
+                if (!string.IsNullOrEmpty(json))
+                    return JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
             }
+
+            return null;
         }
 
         async Task<JsDelivrAsset> GetAsset(string version, string providerName)

@@ -19,11 +19,12 @@
   - [x] Package name Intellisense
   - [x] Package version Intellisense
   - [x] Package file array Intellisense
-- [ ] JSON manifest validation
+- [x] JSON manifest validation
   - [x] JSON Schema
-  - [ ] Package version validation
-  - [ ] Package name validation
-  - [ ] Package files validation
+  - [x] Package version validation
+  - [x] Package name validation
+  - [x] Package files validation
+- [x] Offline support (works from cache)
 
 Features that have a checkmark are complete and available for
 download in the
