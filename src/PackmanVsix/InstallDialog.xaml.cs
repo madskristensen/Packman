@@ -74,7 +74,7 @@ namespace PackmanVsix
                 return;
 
             var versionList = await VSPackage.Manager.Provider.GetVersionsAsync(name);
-            string version = (string)cbVersion.SelectedItem;
+            var version = (string)cbVersion.SelectedItem;
 
             if (versionList == null || !versionList.Contains(version))
                 return;
@@ -90,7 +90,7 @@ namespace PackmanVsix
             if (cbCreateFolder.IsChecked.HasValue && cbCreateFolder.IsChecked.Value)
                 itemName += $"/{itemName}";
 
-            CheckBox masterCb = new CheckBox { Content = itemName, IsChecked = isChecked };
+            var masterCb = new CheckBox { Content = itemName, IsChecked = isChecked };
 
             if (package.Files.Count() == 1)
             {
@@ -186,7 +186,7 @@ namespace PackmanVsix
         private async void btnInstall_Click(object sender, RoutedEventArgs e)
         {
             string name = cbName.Text.Trim();
-            string version = (string)cbVersion.SelectedItem;
+            var version = (string)cbVersion.SelectedItem;
 
             Package = await VSPackage.Manager.Provider.GetInstallablePackage(name, version);
             Package.Files = GetSelectedFiles();

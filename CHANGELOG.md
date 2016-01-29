@@ -16,7 +16,7 @@
   - [x] Preselect latest stable version
 - [ ] JSON manifest Intellisense
   - [x] JSON Schema
-  - [ ] Package name Intellisense
+  - [x] Package name Intellisense
   - [x] Package version Intellisense
   - [ ] Package file array Intellisense
 - [ ] JSON manifest validation

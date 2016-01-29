@@ -3,7 +3,7 @@
   "packages": {
     "angularjs": {
       "version": "1.0.0-beta3",
-      "name": "angularjs",
+      "path": "lib",
       "files": [ "angular.js" ]
     }
   }

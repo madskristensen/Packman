@@ -14,22 +14,24 @@
         "type": "object",
         "required": [ "path", "version" ],
 
-        "path": {
-          "description": "The local relative path to the directory where the package artifacts will be copied into.",
-          "type": "string",
-          "minLength": 1
-        },
-        "version": {
-          "description": "The version of the package.",
-          "type": "string",
-          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\\+[0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*)?$"
-        },
-        "files": {
-          "description": "The file names to copy into the project.",
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string"
+        "properties": {
+          "path": {
+            "description": "The local relative path to the directory where the package artifacts will be copied into.",
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "description": "The version of the package.",
+            "type": "string",
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\\+[0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*)?$"
+          },
+          "files": {
+            "description": "The file names to copy into the project.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
