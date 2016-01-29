@@ -290,7 +290,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SuggestedActions\" />
+    <Folder Include="JSON\SuggestedActions\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

@@ -54,27 +54,11 @@ namespace Packman.Test
         }
 
         [TestMethod, TestCategory("Install")]
-        public async Task InstallPackageWithDefaultPath()
-        {
-            var entry = await AssemblyLoad.Api.GetInstallablePackage("knockout", "3.1.0");
-            await manager.Install(_manifestPath, entry, "lib");
-
-            string config = Path.Combine(_cwd, Defaults.ManifestFileName);
-            string content = File.ReadAllText(config);
-
-            Assert.IsTrue(File.Exists(config), "Config not created");
-            Assert.IsFalse(content.Contains("\"path\": \"lib\"\r"));
-
-            await manager.Uninstall(config, "knockout");
-            content = File.ReadAllText(config);
-            Assert.IsFalse(content.Contains("knockout"), "Didn't uninstall correctly");
-        }
-
-        [TestMethod, TestCategory("Install")]
         public async Task InstallPackageDontSaveManifest()
         {
             var entry = await AssemblyLoad.Api.GetInstallablePackage("jquery.ui", "1.11.4");
-            await manager.Install(_manifestPath, entry, "lib", false);
+            string path = Path.Combine(_cwd, "lib");
+            await manager.Install(_manifestPath, entry, path, false);
 
             string config = Path.Combine(_cwd, Defaults.ManifestFileName);
 

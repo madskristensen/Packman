@@ -1,28 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 namespace Packman
 {
     public class ManifestPackage
     {
-        [JsonProperty("version")]
+        [JsonProperty("version"), JsonRequired]
         public string Version { get; set; }
 
-        [JsonProperty("path")]
+        [JsonProperty("path"), JsonRequired]
         public string Path { get; set; }
 
-        [JsonProperty("files")]
+        [JsonProperty("files", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<string> Files { get; set; }
-
-        public bool ShouldSerializePath()
-        {
-            return !string.IsNullOrEmpty(Path);
-        }
-
-        public bool ShouldSerializeFiles()
-        {
-            return Files != null && Files.Any();
-        }
     }
 }
