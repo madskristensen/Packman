@@ -44,7 +44,7 @@
         <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0600">
             <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
         </CommandPlacement>
-        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0600">
+        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
             <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_WEBITEMNODE" />
         </CommandPlacement>
     </CommandPlacements>

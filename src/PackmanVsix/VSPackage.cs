@@ -16,7 +16,7 @@ namespace PackmanVsix
     public sealed class VSPackage : Package
     {
         public const string Version = "1.0";
-        public const string Name = "Librarian";
+        public const string Name = "Packman";
 
         public static DTE2 DTE { get; private set; }
         public static Manager Manager { get; private set; }

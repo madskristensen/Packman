@@ -35,8 +35,8 @@ namespace Packman
 
         public async Task<IEnumerable<string>> GetVersionsAsync(string packageName)
         {
-            if (!IsInitialized)
-                await InitializeAsync();
+            if (!IsInitialized && !await InitializeAsync())
+                return null;
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
@@ -45,8 +45,8 @@ namespace Packman
 
         public async Task<InstallablePackage> GetInstallablePackage(string packageName, string version)
         {
-            if (!IsInitialized)
-                await InitializeAsync();
+            if (!IsInitialized && !await InitializeAsync())
+                return null;
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
@@ -55,55 +55,84 @@ namespace Packman
 
         public async Task<IEnumerable<string>> GetPackageNamesAsync()
         {
-            if (!IsInitialized)
-                await InitializeAsync();
+            if (!IsInitialized && !await InitializeAsync())
+                return null;
 
             return _packages.Select(p => p.Name);
         }
 
         public async Task<IPackageMetaData> GetPackageMetaDataAsync(string packageName)
         {
-            if (!IsInitialized)
-                await InitializeAsync();
+            if (!IsInitialized && !await InitializeAsync())
+                return null;
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
             return package.GetPackageMetaData(Name);
         }
 
-        public async Task InitializeAsync()
+        public async Task<bool> InitializeAsync()
         {
             using (await _mutex.LockAsync())
             {
-                if (IsCachedVersionOld())
+                try
                 {
-                    Directory.CreateDirectory(new FileInfo(_localPath).DirectoryName);
+                    IEnumerable<JsDelivrPackage> packages;
 
-                    using (WebClient client = new WebClient())
+                    if (IsCachedVersionOld(out packages))
                     {
-                        await client.DownloadFileTaskAsync(_remoteApiUrl, _localPath);
-                    }
-                }
+                        Directory.CreateDirectory(new FileInfo(_localPath).DirectoryName);
 
-                using (StreamReader reader = new StreamReader(_localPath))
-                {
-                    string json = await reader.ReadToEndAsync();
-                    var packages = JsonConvert.DeserializeObject<IEnumerable<JsDelivrPackage>>(json);
+                        using (WebClient client = new WebClient())
+                        {
+                            await client.DownloadFileTaskAsync(_remoteApiUrl, _localPath);
+                        }
+                    }
+
+                    if (packages == null)
+                    {
+                        using (StreamReader reader = new StreamReader(_localPath))
+                        {
+                            string json = await reader.ReadToEndAsync();
+                            packages = JsonConvert.DeserializeObject<IEnumerable<JsDelivrPackage>>(json);
+                        }
+                    }
 
                     var comparer = new PackageNameComparer();
                     _packages = packages.OrderBy(p => p.Name, comparer);
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
                 }
             }
         }
 
-        bool IsCachedVersionOld()
+        bool IsCachedVersionOld(out IEnumerable<JsDelivrPackage> packages)
         {
             var file = new FileInfo(_localPath);
+            packages = null;
 
-            if (!file.Exists || file.Length < 1000)
+            if (!file.Exists)
                 return true;
 
-            return File.GetLastWriteTime(_localPath) > DateTime.Now.AddDays(Defaults.CacheDays);
+            bool isTooOld = File.GetLastWriteTime(_localPath) > DateTime.Now.AddDays(Defaults.CacheDays);
+
+            if (isTooOld)
+                return true;
+
+            try
+            {
+                string json = File.ReadAllText(_localPath);
+                packages = JsonConvert.DeserializeObject<IEnumerable<JsDelivrPackage>>(json);
+                return false;
+            }
+            catch
+            {
+                return true;
+            }
         }
     }
 }

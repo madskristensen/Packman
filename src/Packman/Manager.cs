@@ -22,6 +22,9 @@ namespace Packman
                 var entry = manifest.Packages[name];
                 var package = await Provider.GetInstallablePackage(name, entry.Version);
 
+                if (package == null)
+                    throw new PackageNotFoundException(name, entry.Version);
+
                 if (entry.Files != null && entry.Files.Count() != package.Files.Count())
                     package.Files = entry.Files;
 

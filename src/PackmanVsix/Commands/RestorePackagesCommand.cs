@@ -23,7 +23,7 @@ namespace PackmanVsix
             if (service != null)
             {
                 var cmdId = new CommandID(PackageGuids.guidLibrarianCmdSet, PackageIds.RestoreAll);
-                var button = new OleMenuCommand(Restore, cmdId);
+                var button = new OleMenuCommand(async (s, e) => { await Restore(s, e); }, cmdId);
                 button.BeforeQueryStatus += BeforeQueryStatus;
                 service.AddCommand(button);
             }
@@ -48,14 +48,26 @@ namespace PackmanVsix
             button.Visible = item.IsConfigFile();
         }
 
-        async void Restore(object sender, EventArgs e)
+        async System.Threading.Tasks.Task Restore(object sender, EventArgs e)
         {
             var item = ProjectHelpers.GetSelectedItems().FirstOrDefault();
 
-            if (item != null)
+            if (item == null)
+                return;
+
+            try
             {
                 var manifest = await Manifest.FromFileOrNewAsync(item.GetFullPath());
                 await VSPackage.Manager.InstallAll(manifest);
+            }
+            catch (PackageNotFoundException ex)
+            {
+                VSPackage.DTE.StatusBar.Text = $"{ex.Name} {ex.Version} could not be restored from cache. Make sure you are online and try again.";
+            }
+            catch (Exception ex)
+            {
+                VSPackage.DTE.StatusBar.Text = $"An error occured restoring one or more packages. See output window for details.";
+                Logger.Log(ex);
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Packman
         Task<IEnumerable<string>> GetPackageNamesAsync();
         Task<IEnumerable<string>> GetVersionsAsync(string packageName);
         Task<IPackageMetaData> GetPackageMetaDataAsync(string packageName);
-        Task InitializeAsync();
+        Task<bool> InitializeAsync();
         bool IsInitialized { get; }
     }
 }

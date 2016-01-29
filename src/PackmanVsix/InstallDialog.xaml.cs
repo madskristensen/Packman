@@ -42,6 +42,13 @@ namespace PackmanVsix
             cbName.Focus();
             cbName.ItemsSource = await VSPackage.Manager.Provider.GetPackageNamesAsync();
 
+            if (cbName.ItemsSource == null)
+            {
+                cbName.Text = "Packages could not be loaded";
+                cbName.IsEnabled = false;
+                btnInstall.IsEnabled = false;
+            }
+
             cbVersion.ItemsSource = new[] { LATEST };
             cbVersion.GotFocus += OnVersionGotFocus;
 
