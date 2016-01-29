@@ -10,6 +10,7 @@ namespace PackmanVsix
 {
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", Version, IconResourceID = 400)]
+    [ProvideOptionPage(typeof(Options), "Web", Name, 101, 111, true, new[] { "package", "library", "framework", "install" }, ProvidesLocalizedCategoryName = false)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
     [Guid(PackageGuids.guidLibrarianPackageString)]
@@ -21,6 +22,7 @@ namespace PackmanVsix
         public static DTE2 DTE { get; private set; }
         public static Manager Manager { get; private set; }
         public static IPackageProvider Provider { get; private set; }
+        public static Options Options { get; private set; }
 
         protected override void Initialize()
         {
@@ -29,6 +31,7 @@ namespace PackmanVsix
 
             Provider = new JsDelivrProvider();
             Manager = new Manager(Provider);
+            Options = (Options)GetDialogPage(typeof(Options));
 
             PackageService.Initialize(this, Manager);
 

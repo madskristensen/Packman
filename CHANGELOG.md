@@ -23,6 +23,7 @@
   - [x] Package name validation
   - [x] Package files validation
 - [x] Offline support (works from cache)
+- [x] Options dialog
 
 Features that have a checkmark are complete and available for
 download in the

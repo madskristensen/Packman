@@ -55,6 +55,7 @@ namespace PackmanVsix
             cbName.SelectionChanged += async delegate { await ShowFiles(); };
             cbVersion.SelectionChanged += async delegate { await ShowFiles(); };
 
+            cbCreateFolder.IsChecked = VSPackage.Options.CreatePackageFolder;
             cbCreateFolder.Checked += CreateFolderToggle;
             cbCreateFolder.Unchecked += CreateFolderToggle;
         }
@@ -197,6 +198,9 @@ namespace PackmanVsix
 
             Package = await VSPackage.Manager.Provider.GetInstallablePackage(name, version);
             Package.Files = GetSelectedFiles();
+
+            VSPackage.Options.CreatePackageFolder = cbCreateFolder.IsChecked.Value;
+            VSPackage.Options.SaveSettingsToStorage();
 
             DialogResult = true;
             Close();

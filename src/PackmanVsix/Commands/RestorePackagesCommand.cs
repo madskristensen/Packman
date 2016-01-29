@@ -59,6 +59,8 @@ namespace PackmanVsix
             {
                 var manifest = await Manifest.FromFileOrNewAsync(item.GetFullPath());
                 await VSPackage.Manager.InstallAll(manifest);
+
+                Telemetry.TrackEvent("Packages restored");
             }
             catch (PackageNotFoundException ex)
             {

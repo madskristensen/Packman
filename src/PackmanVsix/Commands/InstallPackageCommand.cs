@@ -73,10 +73,17 @@ namespace PackmanVsix
             var settings = new InstallSettings
             {
                 InstallDirectory = Path.Combine(item.GetFullPath(), installDir),
-                SaveManifest = true
+                SaveManifest = VSPackage.Options.SaveManifestFile
             };
 
             await VSPackage.Manager.Install(manifestPath, package, settings);
+
+            var props = new Dictionary<string, string> {
+                { "name", package.Name.ToLowerInvariant().Trim()}                ,
+                { "version", package.Version}
+            };
+
+            Telemetry.TrackEvent("Package installed", props);
 
             if (settings.SaveManifest)
                 item.ContainingProject.AddFileToProject(manifestPath, "None");

@@ -25,7 +25,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PackmanVsix</RootNamespace>
     <AssemblyName>PackmanVsix</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -224,6 +224,9 @@
     <Compile Include="JSON\Validation\FileValidator.cs" />
     <Compile Include="JSON\Validation\VersionValidator.cs" />
     <Compile Include="JSON\Validation\NameValidator.cs" />
+    <Compile Include="Options.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PackageService.cs" />
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
