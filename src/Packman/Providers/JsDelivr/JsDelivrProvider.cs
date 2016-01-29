@@ -61,6 +61,16 @@ namespace Packman
             return _packages.Select(p => p.Name);
         }
 
+        public async Task<IPackageMetaData> GetPackageMetaDataAsync(string packageName)
+        {
+            if (!IsInitialized)
+                await InitializeAsync();
+
+            var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+
+            return package.GetPackageMetaData(Name);
+        }
+
         public async Task InitializeAsync()
         {
             using (await _mutex.LockAsync())

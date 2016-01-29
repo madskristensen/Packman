@@ -21,9 +21,6 @@ namespace PackmanVsix
 
         protected override IEnumerable<JSONCompletionEntry> GetEntries(JSONCompletionContext context)
         {
-            if (!VSPackage.Manager.Provider.IsInitialized)
-                yield break;
-
             var member = context.ContextItem as JSONMember;
 
             if (member == null || member.UnquotedNameText != "version")

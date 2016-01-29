@@ -208,6 +208,7 @@
       <DependentUpon>InstallDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="JSON\Completion\BaseCompletionProvider.cs" />
+    <Compile Include="JSON\Completion\FilesCompletionProvider.cs" />
     <Compile Include="JSON\Completion\NameCompletionProvider.cs" />
     <Compile Include="JSON\Completion\VersionCompletionProvider.cs" />
     <Compile Include="JSON\Completion\SimpleCompletionEntry.cs" />

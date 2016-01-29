@@ -20,9 +20,6 @@ namespace PackmanVsix
 
         protected override IEnumerable<JSONCompletionEntry> GetEntries(JSONCompletionContext context)
         {
-            if (!VSPackage.Manager.Provider.IsInitialized)
-                yield break;
-
             string parent = (context.ContextItem.Parent?.Parent as JSONMember)?.UnquotedNameText;
 
             if (parent != "packages")

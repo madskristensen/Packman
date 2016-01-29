@@ -55,6 +55,21 @@ namespace Packman
             return package;
         }
 
+        public IPackageMetaData GetPackageMetaData(string providerName)
+        {
+            string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
+            string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
+
+            if (!File.Exists(metaPath))
+                return null;
+
+            using (StreamReader reader = new StreamReader(metaPath))
+            {
+                string json = reader.ReadToEnd();
+                return JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
+            }
+        }
+
         async Task<JsDelivrAsset> GetAsset(string version, string providerName)
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
@@ -64,7 +79,7 @@ namespace Packman
 
             if (metaFile.Exists && metaFile.Length > 0)
             {
-                asset = await GetAssetFromDisk(version, metaFile);
+                asset = GetAssetFromDisk(version, metaFile);
             }
 
             if (asset == null)
@@ -77,17 +92,17 @@ namespace Packman
                     await client.DownloadFileTaskAsync(url, metaFile.FullName);
                 }
 
-                asset = await GetAssetFromDisk(version, metaFile);
+                asset = GetAssetFromDisk(version, metaFile);
             }
 
             return asset;
         }
 
-        static async Task<JsDelivrAsset> GetAssetFromDisk(string version, FileInfo metaFile)
+        static JsDelivrAsset GetAssetFromDisk(string version, FileInfo metaFile)
         {
             using (StreamReader reader = metaFile.OpenText())
             {
-                string json = await reader.ReadToEndAsync();
+                string json = reader.ReadToEnd();
                 var data = JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
                 return data.Assets.SingleOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
             }

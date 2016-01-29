@@ -20,6 +20,9 @@ namespace PackmanVsix
 
         public IEnumerable<JSONCompletionEntry> GetListEntries(JSONCompletionContext context)
         {
+            if (!VSPackage.Manager.Provider.IsInitialized)
+                return _empty;
+
             ITextDocument document;
 
             if (TextDocumentFactoryService.TryGetTextDocument(context.Snapshot.TextBuffer, out document))

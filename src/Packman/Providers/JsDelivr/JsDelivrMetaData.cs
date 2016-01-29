@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Packman
 {
-    class JsDelivrMetaData
+    public class JsDelivrMetaData : IPackageMetaData
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -15,7 +15,7 @@ namespace Packman
         public IEnumerable<JsDelivrAsset> Assets { get; set; }
     }
 
-    class JsDelivrAsset
+    public class JsDelivrAsset : IPackageAsset
     {
         public IEnumerable<string> Files { get; set; }
         public string Version { get; set; }
