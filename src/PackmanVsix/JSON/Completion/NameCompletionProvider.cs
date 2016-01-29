@@ -28,6 +28,8 @@ namespace PackmanVsix
             var names = VSPackage.Manager.Provider.GetPackageNamesAsync().Result;
             if (names != null)
             {
+                Telemetry.TrackEvent("Completion for name");
+
                 foreach (var name in names)
                 {
                     yield return new SimpleCompletionEntry(name, _glyph, context.Session);

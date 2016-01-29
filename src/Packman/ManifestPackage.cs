@@ -17,7 +17,7 @@ namespace Packman
 
         public bool ShouldSerializePath()
         {
-            return !string.IsNullOrEmpty(Path) && Path != Defaults.DefaultLocalPath;
+            return !string.IsNullOrEmpty(Path);
         }
 
         public bool ShouldSerializeFiles()

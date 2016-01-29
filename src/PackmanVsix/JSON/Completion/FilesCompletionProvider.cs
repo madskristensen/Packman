@@ -55,6 +55,8 @@ namespace PackmanVsix
                 if (files == null)
                     yield break;
 
+                Telemetry.TrackEvent("Completion for files");
+
                 foreach (var file in files)
                 {
                     yield return new SimpleCompletionEntry(file, _glyph, context.Session);

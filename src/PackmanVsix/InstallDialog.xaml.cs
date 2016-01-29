@@ -96,7 +96,7 @@ namespace PackmanVsix
             string itemName = _folder;
 
             if (cbCreateFolder.IsChecked.HasValue && cbCreateFolder.IsChecked.Value)
-                itemName += $"/{itemName}";
+                itemName += $"/{cbName.Text.Trim()}";
 
             var masterCb = new CheckBox { Content = itemName, IsChecked = isChecked };
 

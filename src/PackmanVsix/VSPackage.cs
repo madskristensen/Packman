@@ -26,20 +26,29 @@ namespace PackmanVsix
 
         protected override void Initialize()
         {
-            base.Initialize();
             DTE = (DTE2)GetService(typeof(DTE));
-
             Provider = new JsDelivrProvider();
             Manager = new Manager(Provider);
-            Options = (Options)GetDialogPage(typeof(Options));
 
-            PackageService.Initialize(this, Manager);
+            Options = (Options)GetDialogPage(typeof(Options));
+            Options.Saved += (s, e) => SetDefaults();
+
+            SetDefaults();
 
             Logger.Initialize(this, Name);
             Telemetry.Initialize(this, Version, "d8226d88-0507-4495-9c9c-63951a2151d3");
 
+            PackageService.Initialize(this, Manager);
             InstallPackageCommand.Initialize(this);
             RestorePackagesCommand.Initialize(this);
+
+            base.Initialize();
+        }
+
+        static void SetDefaults()
+        {
+            Defaults.CachePath = Options.CachePath;
+            Defaults.CacheDays = Options.CacheDays;
         }
     }
 }

@@ -26,7 +26,7 @@
         </ComboBox>
         <ComboBox x:Name="cbVersion" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Width="100" Margin="10 0" SelectedIndex="0"/>
 
-       <TreeView x:Name="treeView" Grid.Row="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10 3" BorderBrush="#FF747474" />
+        <TreeView x:Name="treeView" Grid.Row="1" Grid.ColumnSpan="3" VirtualizingPanel.IsVirtualizing="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10 3" BorderBrush="#FF747474" />
 
         <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="0 10">
             <Grid.ColumnDefinitions>

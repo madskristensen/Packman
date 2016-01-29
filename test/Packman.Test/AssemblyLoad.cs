@@ -19,7 +19,6 @@ namespace Packman.Test
             string path = Path.Combine(_cwd, "cache.json");
 
             Defaults.CacheDays = 3;
-            Defaults.DefaultLocalPath = path;
 
             Api = new JsDelivrProvider();
         }

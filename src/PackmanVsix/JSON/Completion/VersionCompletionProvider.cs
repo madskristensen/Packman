@@ -34,6 +34,8 @@ namespace PackmanVsix
             var versions = VSPackage.Manager.Provider.GetVersionsAsync(name).Result;
             if (versions != null)
             {
+                Telemetry.TrackEvent("Completion for version");
+
                 foreach (var version in versions.Reverse())
                 {
                     yield return new SimpleCompletionEntry(version, _glyph, context.Session);

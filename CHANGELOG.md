@@ -4,6 +4,7 @@
 - [x] Restore packages
 - [ ] Update package
   - [ ] Light bulb in `packman.json`
+  - [ ] Visual indication that packages has update
 - [ ] Uninstall package
   - [ ] Light bulb in `packman.json`
 - [ ] Remove all package artifacts from project
@@ -24,6 +25,7 @@
   - [x] Package files validation
 - [x] Offline support (works from cache)
 - [x] Options dialog
+- [ ] Visual indication that folder/file is from package
 
 Features that have a checkmark are complete and available for
 download in the
