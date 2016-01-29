@@ -99,17 +99,25 @@ namespace Packman
             await Task.Run(() =>
             {
                 string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
+                string versionDir = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version);
 
-                foreach (string file in entry.Files)
+                try
                 {
-                    string cleanFile = file.Replace("/", "\\");
-                    string src = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version, cleanFile);
-                    string dest = Path.Combine(settings.InstallDirectory, cleanFile);
+                    foreach (string file in entry.Files)
+                    {
+                        string cleanFile = file.Replace("/", "\\");
+                        string src = Path.Combine(versionDir, cleanFile);
+                        string dest = Path.Combine(settings.InstallDirectory, cleanFile);
 
-                    string dir = Path.GetDirectoryName(dest);
-                    Directory.CreateDirectory(dir);
+                        string dir = Path.GetDirectoryName(dest);
+                        Directory.CreateDirectory(dir);
 
-                    File.Copy(src, dest, true);
+                        File.Copy(src, dest, true);
+                    }
+                }
+                catch (Exception)
+                {
+                    Directory.Delete(versionDir);
                 }
             });
         }
