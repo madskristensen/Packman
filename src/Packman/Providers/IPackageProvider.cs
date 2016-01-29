@@ -10,5 +10,7 @@ namespace Packman
         Task<InstallablePackage> GetInstallablePackage(string packageName, string version);
         Task<IEnumerable<string>> GetPackageNamesAsync();
         Task<IEnumerable<string>> GetVersionsAsync(string packageName);
+        Task InitializeAsync();
+        bool IsInitialized { get; }
     }
 }

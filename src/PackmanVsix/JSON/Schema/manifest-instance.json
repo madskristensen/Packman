@@ -1,0 +1,10 @@
+﻿{
+  "$schema": "manifest-schema.json",
+  "packages": {
+    "angularjs": {
+      "version": "1.0.0-beta3",
+      "name": "angularjs",
+      "files": [ "angular.js" ]
+    }
+  }
+}

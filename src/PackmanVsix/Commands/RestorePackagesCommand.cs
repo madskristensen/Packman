@@ -1,9 +1,8 @@
 ﻿using System;
 using System.ComponentModel.Design;
-using System.IO;
 using System.Linq;
-using Packman;
 using Microsoft.VisualStudio.Shell;
+using Packman;
 
 namespace PackmanVsix
 {

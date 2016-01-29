@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Defaults.cs" />
+    <Compile Include="Helpers\AsyncLock.cs" />
     <Compile Include="InstallablePackage.cs" />
     <Compile Include="InstallEventArgs.cs" />
     <Compile Include="InstallSettings.cs" />

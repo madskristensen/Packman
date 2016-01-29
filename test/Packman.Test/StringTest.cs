@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Packman.Test
@@ -8,7 +6,7 @@ namespace Packman.Test
     [TestClass]
     public class StringTest
     {
-        static string[] list =
+        static readonly string[] list =
         {
             "angularjs",
             "angular.foo",

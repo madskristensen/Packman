@@ -14,6 +14,16 @@
   - [x] Select exactly which files to install
   - [x] Optional creation of package folders
   - [x] Preselect latest stable version
+- [ ] JSON manifest Intellisense
+  - [x] JSON Schema
+  - [ ] Package name Intellisense
+  - [x] Package version Intellisense
+  - [ ] Package file array Intellisense
+- [ ] JSON manifest validation
+  - [x] JSON Schema
+  - [ ] Package version validation
+  - [ ] Package name validation
+  - [ ] Package files validation
 
 Features that have a checkmark are complete and available for
 download in the

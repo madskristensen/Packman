@@ -15,11 +15,17 @@ namespace Packman
 
         readonly string _localPath;
         IEnumerable<JsDelivrPackage> _packages;
+        static AsyncLock _mutex = new AsyncLock();
 
         public JsDelivrProvider()
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             _localPath = Path.Combine(rootCacheDir, Name, "cache.json");
+        }
+
+        public bool IsInitialized
+        {
+            get { return _packages != null; }
         }
 
         public string Name
@@ -29,8 +35,8 @@ namespace Packman
 
         public async Task<IEnumerable<string>> GetVersionsAsync(string packageName)
         {
-            if (_packages == null)
-                await LoadPackages();
+            if (!IsInitialized)
+                await InitializeAsync();
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
@@ -39,8 +45,8 @@ namespace Packman
 
         public async Task<InstallablePackage> GetInstallablePackage(string packageName, string version)
         {
-            if (_packages == null)
-                await LoadPackages();
+            if (!IsInitialized)
+                await InitializeAsync();
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
@@ -49,30 +55,34 @@ namespace Packman
 
         public async Task<IEnumerable<string>> GetPackageNamesAsync()
         {
-            if (_packages == null)
-                await LoadPackages();
+            if (!IsInitialized)
+                await InitializeAsync();
 
-            var comparer = new PackageNameComparer();
-
-            return _packages.OrderBy(p => p.Name, comparer).Select(p => p.Name);
+            return _packages.Select(p => p.Name);
         }
 
-        async Task LoadPackages()
+        public async Task InitializeAsync()
         {
-            if (IsCachedVersionOld())
+            using (await _mutex.LockAsync())
             {
-                Directory.CreateDirectory(new FileInfo(_localPath).DirectoryName);
-
-                using (WebClient client = new WebClient())
+                if (IsCachedVersionOld())
                 {
-                    await client.DownloadFileTaskAsync(_remoteApiUrl, _localPath);
-                }
-            }
+                    Directory.CreateDirectory(new FileInfo(_localPath).DirectoryName);
 
-            using (StreamReader reader = new StreamReader(_localPath))
-            {
-                string json = await reader.ReadToEndAsync();
-                _packages = JsonConvert.DeserializeObject<IEnumerable<JsDelivrPackage>>(json);
+                    using (WebClient client = new WebClient())
+                    {
+                        await client.DownloadFileTaskAsync(_remoteApiUrl, _localPath);
+                    }
+                }
+
+                using (StreamReader reader = new StreamReader(_localPath))
+                {
+                    string json = await reader.ReadToEndAsync();
+                    var packages = JsonConvert.DeserializeObject<IEnumerable<JsDelivrPackage>>(json);
+
+                    var comparer = new PackageNameComparer();
+                    _packages = packages.OrderBy(p => p.Name, comparer);
+                }
             }
         }
 
