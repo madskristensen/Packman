@@ -12,17 +12,17 @@
 
         <Buttons>
             <Button guid="guidLibrarianCmdSet" id="InstallLibrary" priority="0x0100" type="Button">
-                <Icon guid="ImageCatalogGuid" id="WebScript" />
+                <Icon guid="ImageCatalogGuid" id="NewPackage" />
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
-                    <ButtonText>Manage Packman Packages...</ButtonText>
+                    <ButtonText>Add Packman Package...</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidLibrarianCmdSet" id="RestoreAll" priority="0x0200" type="Button">
                 <Parent guid="guidLibrarianCmdSet" id="ContextMenuGroup" />
-                <Icon guid="ImageCatalogGuid" id="UpdateScript" />
+                <Icon guid="ImageCatalogGuid" id="Package" />
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -34,15 +34,17 @@
     </Commands>
 
     <CommandPlacements>
-        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0600">
+        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
             <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
         </CommandPlacement>
-        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
+        <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0100">
             <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_WEBITEMNODE" />
         </CommandPlacement>
-
-        <CommandPlacement guid="guidLibrarianCmdSet" id="InstallLibrary" priority="0x0510">
+        <CommandPlacement guid="guidLibrarianCmdSet" id="InstallLibrary" priority="0x0300">
             <Parent guid="guidVenusCmdId" id="IDG_CTX_REFERENCE" />
+        </CommandPlacement>
+        <CommandPlacement guid="guidLibrarianCmdSet" id="InstallLibrary" priority="0x0300">
+            <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_FOLDER_ADD" />
         </CommandPlacement>
     </CommandPlacements>
 

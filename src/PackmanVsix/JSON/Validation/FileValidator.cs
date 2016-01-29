@@ -54,7 +54,7 @@ namespace PackmanVsix.JSON.Validation
                 if (files == null)
                     return JSONItemValidationResult.Continue;
 
-                if (!files.Contains(item.Text.Trim('"')))
+                if (!files.Contains(item.Text.Trim('"', ',')))
                 {
                     string message = $"({VSPackage.Name}) {item.Text} is not a valid file name for {package.Name.Text}.";
                     AddError(context, item, message);

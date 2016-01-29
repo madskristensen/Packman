@@ -16,27 +16,17 @@ namespace PackmanVsix
 
             _manager.Installed += Installed;
             _manager.Installing += Installing;
-            _manager.Uninstalled += Uninstalled;
+            _manager.Copying += Copying;
         }
 
-        private static void Uninstalled(object sender, InstallEventArgs e)
+        private static void Copying(object sender, FileCopyEventArgs e)
         {
-            foreach (var file in e.Package.Files)
-            {
-                string absolute = Path.Combine(e.Path, file);
-                ProjectHelpers.DeleteFileFromProject(absolute);
-            }
+            ProjectHelpers.CheckFileOutOfSourceControl(e.Destination);
         }
 
         private static void Installing(object sender, InstallEventArgs e)
         {
-            VSPackage.DTE.StatusBar.Text = $"Installing {e.Package.Name}...";
-
-            foreach (var file in e.Package.Files)
-            {
-                string absolute = Path.Combine(e.Path, file);
-                ProjectHelpers.CheckFileOutOfSourceControl(absolute);
-            }
+            VSPackage.DTE.StatusBar.Text = $"Installing {e.Package.Name} from Packman...";
         }
 
         static void Installed(object sender, InstallEventArgs e)
@@ -45,19 +35,12 @@ namespace PackmanVsix
 
             foreach (var file in e.Package.Files)
             {
-                try
-                {
-                    string absolute = Path.Combine(e.Path, file);
-                    //dte.ItemOperations.AddExistingItem(absolute);
-                    project.AddFileToProject(absolute);
-                }
-                catch (Exception)
-                {
-                    // Angular has issues with its huge i18n folder. No idea why
-                }
+                string absolute = Path.Combine(e.Path, file);
+                var info = new FileInfo(absolute);
+                project.AddFileToProject(info.FullName);
             }
 
-            VSPackage.DTE.StatusBar.Text = $"{e.Package.Name} installed";
+            VSPackage.DTE.StatusBar.Text = $"The {e.Package.Name} package was installed successfully";
         }
     }
 }

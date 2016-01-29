@@ -45,10 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Defaults.cs" />
+    <Compile Include="EventArgs\FileCopyEventArgs.cs" />
     <Compile Include="Exceptions\PackageNotFoundException.cs" />
     <Compile Include="Helpers\AsyncLock.cs" />
     <Compile Include="InstallablePackage.cs" />
-    <Compile Include="InstallEventArgs.cs" />
+    <Compile Include="EventArgs\InstallEventArgs.cs" />
     <Compile Include="InstallSettings.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Manifest.cs" />

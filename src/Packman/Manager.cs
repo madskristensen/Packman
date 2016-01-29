@@ -112,7 +112,9 @@ namespace Packman
                         string dir = Path.GetDirectoryName(dest);
                         Directory.CreateDirectory(dir);
 
+                        OnCopying(src, dest);
                         File.Copy(src, dest, true);
+                        OnCopied(src, dest);
                     }
                 }
                 catch (Exception)
@@ -120,43 +122,6 @@ namespace Packman
                     Directory.Delete(versionDir);
                 }
             });
-        }
-
-        public async Task<Manifest> Uninstall(string manifestFilePath, string name)
-        {
-            var manifest = await Manifest.FromFileOrNewAsync(manifestFilePath);
-
-            if (!manifest.Packages.ContainsKey(name))
-                return manifest;
-
-            string version = manifest.Packages[name].Version;
-            string path = manifest.Packages[name].Path;
-            var installable = await Provider.GetInstallablePackage(name, version);
-
-            OnUninstalling(installable, path);
-
-            manifest.Packages.Remove(name);
-            await manifest.Save();
-
-            //foreach (var file in installable.Asset.Files)
-            //{
-            //    string dir = Path.GetDirectoryName(manifest.FileName);
-            //    string fullPath = Path.Combine(dir, installable.CachePath, file);
-            //    File.Delete(fullPath);
-            //}
-
-            OnUninstalled(installable, path);
-
-            return manifest;
-        }
-
-        public void ClearCache()
-        {
-            string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
-            string dir = Path.Combine(rootCacheDir, Provider.Name);
-
-            if (Directory.Exists(dir))
-                Directory.Delete(dir, true);
         }
 
         public static string MakeRelative(string baseFile, string file)
@@ -170,39 +135,31 @@ namespace Packman
         void OnInstalling(InstallablePackage package, string path)
         {
             if (Installing != null)
-            {
-                Installing(null, new InstallEventArgs(package, path));
-            }
+                Installing(this, new InstallEventArgs(package, path));
         }
 
         void OnInstalled(InstallablePackage package, string path)
         {
             if (Installed != null)
-            {
-                Installed(null, new InstallEventArgs(package, path));
-            }
+                Installed(this, new InstallEventArgs(package, path));
         }
 
-        void OnUninstalling(InstallablePackage package, string path)
+        void OnCopying(string source, string destination)
         {
-            if (Uninstalling != null)
-            {
-                Uninstalling(null, new InstallEventArgs(package, path));
-            }
+            if (Copying != null)
+                Copying(this, new FileCopyEventArgs(source, destination));
         }
 
-        void OnUninstalled(InstallablePackage package, string path)
+        void OnCopied(string source, string destination)
         {
-            if (Uninstalled != null)
-            {
-                Uninstalled(null, new InstallEventArgs(package, path));
-            }
+            if (Copied != null)
+                Copied(this, new FileCopyEventArgs(source, destination));
         }
 
         public event EventHandler<InstallEventArgs> Installing;
         public event EventHandler<InstallEventArgs> Installed;
 
-        public event EventHandler<InstallEventArgs> Uninstalling;
-        public event EventHandler<InstallEventArgs> Uninstalled;
+        public event EventHandler<FileCopyEventArgs> Copying;
+        public event EventHandler<FileCopyEventArgs> Copied;
     }
 }
