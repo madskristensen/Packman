@@ -11,9 +11,11 @@ namespace PackmanVsix.Models
         private PackageItemType _itemType;
         private string _name;
         private bool _isExpanded;
+        private readonly HashSet<string> _selectedFiles;
 
-        public PackageItem(InstallDialogViewModel parent)
+        public PackageItem(InstallDialogViewModel parent, HashSet<string> selectedFiles)
         {
+            _selectedFiles = selectedFiles;
             Children = new PackageItem[0];
             ParentModel = parent;
         }
@@ -42,11 +44,16 @@ namespace PackmanVsix.Models
                     {
                         if (value)
                         {
-                            ParentModel.SelectedFiles.Add(FullPath);
+                            _selectedFiles.Add(FullPath);
                         }
                         else
                         {
-                            ParentModel.SelectedFiles.Remove(FullPath);
+                            _selectedFiles.Remove(FullPath);
+                        }
+
+                        if (CanUpdateInstallStatus())
+                        {
+                            ParentModel.InstallPackageCommand.CanExecute(null);
                         }
                     }
                 }
@@ -84,5 +91,7 @@ namespace PackmanVsix.Models
             get { return _name; }
             set { Set(ref _name, value, StringComparer.Ordinal); }
         }
+
+        public Func<bool> CanUpdateInstallStatus { get; set; }
     }
 }

@@ -10,43 +10,24 @@ namespace PackmanVsix.Models
     public class InstallDialogViewModel : BindableBase
     {
         private readonly Action<bool> _closeDialog;
+        private IReadOnlyList<string> _availablePacakges;
         private IReadOnlyList<PackageItem> _displayRoot;
         private bool _includePackageName;
+        private bool _isPackageListLoaded;
         private InstallablePackage _package;
         private string _packageName;
         private IReadOnlyList<string> _packageVersions;
         private string _rootFolderName;
         private string _selectedPackageVersion;
-        private IReadOnlyList<string> _availablePacakges;
-        private bool _isPackageListLoaded;
 
         public InstallDialogViewModel(Dispatcher dispatcher, Action<bool> closeDialog)
         {
             Dispatcher = dispatcher;
             _closeDialog = closeDialog;
             IncludePackageName = VSPackage.Options.CreatePackageFolder;
-            SelectedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            InstallPackageCommand = ActionCommand.Create(InstallPackage, PackageIsSet, false);
+            SelectedFiles = null;
+            InstallPackageCommand = ActionCommand.Create(InstallPackage, CanInstallPackage, false);
             LoadPackages();
-        }
-
-        private async void LoadPackages()
-        {
-            IEnumerable<string> packages = await VSPackage.Manager.Provider.GetPackageNamesAsync();
-            IReadOnlyList<string> listedPackages = packages?.ToList();
-            bool loadSuccess = true;
-            
-            if (listedPackages == null || listedPackages.Count == 0)
-            {
-                listedPackages = new[] {Properties.Resources.PackagesCouldNotBeLoaded};
-                loadSuccess = false;
-            }
-
-            Dispatcher.Invoke(() =>
-            {
-                AvailablePackages = listedPackages;
-                IsPackageListLoaded = loadSuccess;
-            });
         }
 
         public IReadOnlyList<string> AvailablePackages
@@ -77,7 +58,7 @@ namespace PackmanVsix.Models
                         if (value)
                         {
                             IReadOnlyList<PackageItem> children = roots[0].Children;
-                            PackageItem packageItem = new PackageItem(this)
+                            PackageItem packageItem = new PackageItem(this, SelectedFiles)
                             {
                                 Name = pkg.Name,
                                 ItemType = PackageItemType.Folder,
@@ -98,6 +79,12 @@ namespace PackmanVsix.Models
 
         public ICommand InstallPackageCommand { get; }
 
+        public bool IsPackageListLoaded
+        {
+            get { return _isPackageListLoaded; }
+            set { Set(ref _isPackageListLoaded, value); }
+        }
+
         public InstallablePackage Package
         {
             get { return _package; }
@@ -105,9 +92,9 @@ namespace PackmanVsix.Models
             {
                 if (Set(ref _package, value))
                 {
-                    SelectedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    SelectedFiles = null;
                     InstallPackageCommand.CanExecute(null);
-                    
+
                     System.Threading.Tasks.Task.Run(() =>
                     {
                         int tries = 0;
@@ -147,30 +134,6 @@ namespace PackmanVsix.Models
             }
         }
 
-        private async void UpdateVersions(string name)
-        {
-            string[] latest = new[] {Properties.Resources.LatestVersion};
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                PackageVersions = latest;
-            }
-
-            IEnumerable<string> versions = await VSPackage.Manager.Provider.GetVersionsAsync(name) ?? latest;
-            PackageVersions = versions.ToList();
-
-            foreach (string version in PackageVersions)
-            {
-                Version v;
-                if (Version.TryParse(version, out v))
-                {
-                    SelectedPackageVersion = version;
-                    return;
-                }
-            }
-
-            SelectedPackageVersion = PackageVersions.FirstOrDefault();
-        }
-
         public IReadOnlyList<string> PackageVersions
         {
             get { return _packageVersions; }
@@ -197,10 +160,9 @@ namespace PackmanVsix.Models
             }
         }
 
-        public bool IsPackageListLoaded
+        private bool CanInstallPackage()
         {
-            get { return _isPackageListLoaded; }
-            set { Set(ref _isPackageListLoaded, value); }
+            return Package != null && SelectedFiles != null && SelectedFiles.Count > 0;
         }
 
         private async void FindPackage(string packageName, string version)
@@ -223,9 +185,23 @@ namespace PackmanVsix.Models
             _closeDialog(true);
         }
 
-        private bool PackageIsSet()
+        private async void LoadPackages()
         {
-            return Package != null;
+            IEnumerable<string> packages = await VSPackage.Manager.Provider.GetPackageNamesAsync();
+            IReadOnlyList<string> listedPackages = packages?.ToList();
+            bool loadSuccess = true;
+            
+            if (listedPackages == null || listedPackages.Count == 0)
+            {
+                listedPackages = new[] {Properties.Resources.PackagesCouldNotBeLoaded};
+                loadSuccess = false;
+            }
+
+            Dispatcher.Invoke(() =>
+            {
+                AvailablePackages = listedPackages;
+                IsPackageListLoaded = loadSuccess;
+            });
         }
 
         private void RebuildPackageTree(InstallablePackage package)
@@ -242,25 +218,28 @@ namespace PackmanVsix.Models
                 return;
             }
 
-            PackageItem root = new PackageItem(this)
+            bool canUpdateInstallStatusValue = false;
+            Func<bool> canUpdateInstallStatus = () => canUpdateInstallStatusValue;
+            HashSet<string> selectedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            PackageItem root = new PackageItem(this, selectedFiles)
             {
+                CanUpdateInstallStatus = canUpdateInstallStatus,
                 ItemType = PackageItemType.Folder,
-                Name = RootFolderName,
-                IsExpanded = true
+                Name = RootFolderName
             };
 
             PackageItem topLevelChildrenParent = root;
 
             if (IncludePackageName)
             {
-                topLevelChildrenParent = new PackageItem(this)
+                topLevelChildrenParent = new PackageItem(this, selectedFiles)
                 {
+                    CanUpdateInstallStatus = canUpdateInstallStatus,
                     Name = package.Name,
-                    ItemType = PackageItemType.Folder,
-                    IsExpanded = true
+                    ItemType = PackageItemType.Folder
                 };
 
-                root.Children = new[] {topLevelChildrenParent};
+                root.Children = new[] { topLevelChildrenParent };
             }
 
             foreach (string file in package.Files)
@@ -278,11 +257,11 @@ namespace PackmanVsix.Models
 
                         if (next == null)
                         {
-                            next = new PackageItem(this)
+                            next = new PackageItem(this, selectedFiles)
                             {
+                                CanUpdateInstallStatus = canUpdateInstallStatus,
                                 Name = parts[i],
-                                ItemType = PackageItemType.Folder,
-                                IsExpanded = true
+                                ItemType = PackageItemType.Folder
                             };
 
                             List<PackageItem> children = new List<PackageItem>(currentParent.Children)
@@ -299,12 +278,12 @@ namespace PackmanVsix.Models
                     }
                     else
                     {
-                        PackageItem next = new PackageItem(this)
+                        PackageItem next = new PackageItem(this, selectedFiles)
                         {
+                            CanUpdateInstallStatus = canUpdateInstallStatus,
                             FullPath = file,
                             Name = parts[i],
                             ItemType = PackageItemType.File,
-                            IsExpanded = true,
                             IsMain = string.Equals(package.MainFile, file, StringComparison.OrdinalIgnoreCase),
                         };
 
@@ -320,20 +299,55 @@ namespace PackmanVsix.Models
                 }
             }
 
-            if (package == Package)
+            SetNodeOpenStates(root);
+
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() => DisplayRoots = new[] {root});
-            }
+                if (package == Package)
+                {
+                    canUpdateInstallStatusValue = true;
+                    DisplayRoots = new[] {root};
+                    SelectedFiles = selectedFiles;
+                    InstallPackageCommand.CanExecute(null);
+                }
+            });
         }
-    }
 
-    internal class SlashCountComparer : IComparer<string>
-    {
-        public static IComparer<string> Instance { get; } = new SlashCountComparer();
-
-        public int Compare(string left, string right)
+        private static void SetNodeOpenStates(PackageItem item)
         {
-            return -left.Count(x => x == '/').CompareTo(right.Count(x => x == '/'));
+            bool shouldBeOpen = false;
+
+            foreach (PackageItem child in item.Children)
+            {
+                SetNodeOpenStates(child);
+                shouldBeOpen |= child.IsChecked || child.IsExpanded;
+            }
+
+            item.IsExpanded = shouldBeOpen;
+        }
+
+        private async void UpdateVersions(string name)
+        {
+            string[] latest = new[] {Properties.Resources.LatestVersion};
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                PackageVersions = latest;
+            }
+
+            IEnumerable<string> versions = await VSPackage.Manager.Provider.GetVersionsAsync(name) ?? latest;
+            PackageVersions = versions.ToList();
+
+            foreach (string version in PackageVersions)
+            {
+                Version v;
+                if (Version.TryParse(version, out v))
+                {
+                    SelectedPackageVersion = version;
+                    return;
+                }
+            }
+
+            SelectedPackageVersion = PackageVersions.FirstOrDefault();
         }
     }
 }
