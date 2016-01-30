@@ -6,5 +6,6 @@ namespace Packman
     {
         public IEnumerable<string> Files { get; set; }
         public string Version { get; set; }
+        public string MainFile { get; set; }
     }
 }

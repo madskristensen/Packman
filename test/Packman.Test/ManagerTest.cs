@@ -30,8 +30,7 @@ namespace Packman.Test
             {
                 var entry = await manager.Provider.GetInstallablePackage("jquery", "2.2.0");
 
-                // TODO: fill the MainFile property on the Cdnjs provider
-                //Assert.IsNotNull(entry.MainFile, "Main file is not set");
+                Assert.IsNotNull(entry.MainFile, "Main file is not set");
                 string path = Path.Combine(_cwd, "js");
                 await manager.Install(_manifestPath, entry, path);
 

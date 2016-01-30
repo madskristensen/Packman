@@ -20,12 +20,14 @@ namespace Packman
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string dir = Path.Combine(rootCacheDir, providerName, Name, version);
-            var asset = await GetAsset(version, providerName);
+            var metadata = await GetPackageMetaData(providerName);
 
-            if (asset == null)
+            if (metadata == null)
             {
                 return null;
             }
+
+            var asset = metadata.Assets.FirstOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
 
             if (!Directory.Exists(dir))
             {
@@ -66,13 +68,14 @@ namespace Packman
                 Name = Name,
                 Version = asset.Version,
                 Files = asset.Files,
+                MainFile = asset.MainFile ?? metadata.MainFile,
                 AllFiles = asset.Files
             };
 
             return package;
         }
 
-        public IPackageMetaData GetPackageMetaData(string providerName)
+        public async Task<IPackageMetaData> GetPackageMetaData(string providerName)
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
@@ -86,7 +89,7 @@ namespace Packman
             {
                 using (StreamReader reader = new StreamReader(metaPath))
                 {
-                    string json = reader.ReadToEnd();
+                    string json = await reader.ReadToEndAsync();
 
                     if (!string.IsNullOrEmpty(json))
                     {
@@ -99,42 +102,6 @@ namespace Packman
             }
 
             return null;
-        }
-
-        async Task<IPackageAsset> GetAsset(string version, string providerName)
-        {
-            string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
-            string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
-            var metaFile = new FileInfo(metaPath);
-            IPackageAsset asset = null;
-
-            if (metaFile.Exists && metaFile.Length > 0)
-            {
-                asset = GetAssetFromDisk(version, metaFile);
-            }
-
-            if (asset == null)
-            {
-                metaFile.Directory.Create();
-
-                using (WebClient client = new WebClient())
-                {
-                    string url = string.Format(_metaPackageUrlFormat, Name);
-                    try
-                    {
-                        await client.DownloadFileTaskAsync(url, metaFile.FullName);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                }
-
-                metaFile.Refresh();
-                asset = GetAssetFromDisk(version, metaFile);
-            }
-
-            return asset;
         }
 
         static IPackageAsset GetAssetFromDisk(string version, FileInfo metaFile)
