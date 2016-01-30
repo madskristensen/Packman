@@ -11,12 +11,6 @@ namespace Packman
         public string GitHub { get; set; }
         public string Author { get; set; }
         public string MainFile { get; set; }
-        public IEnumerable<JsDelivrAsset> Assets { get; set; }
+        public IEnumerable<PackageAsset> Assets { get; set; }
     }
-
-    public class JsDelivrAsset : IPackageAsset
-    {
-        public IEnumerable<string> Files { get; set; }
-        public string Version { get; set; }
-   }
 }

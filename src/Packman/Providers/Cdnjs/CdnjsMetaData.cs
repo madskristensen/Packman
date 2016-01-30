@@ -15,12 +15,6 @@ namespace Packman
         public string Author { get; set; }
         [JsonProperty("filename")]
         public string MainFile { get; set; }
-        public IEnumerable<JsDelivrAsset> Assets { get; set; }
-    }
-
-    public class CdnjsAsset : IPackageAsset
-    {
-        public IEnumerable<string> Files { get; set; }
-        public string Version { get; set; }
+        public IEnumerable<PackageAsset> Assets { get; set; }
     }
 }

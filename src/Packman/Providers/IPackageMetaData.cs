@@ -4,7 +4,7 @@ namespace Packman
 {
     public interface IPackageMetaData
     {
-        IEnumerable<JsDelivrAsset> Assets { get; set; }
+        IEnumerable<PackageAsset> Assets { get; set; }
         string Author { get; set; }
         string Description { get; set; }
         string GitHub { get; set; }
