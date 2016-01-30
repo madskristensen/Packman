@@ -2,7 +2,6 @@
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
-using System.Diagnostics.Contracts;
 
 namespace Packman
 {
@@ -117,7 +116,13 @@ namespace Packman
                 }
                 catch (Exception)
                 {
-                    Directory.Delete(versionDir);
+                    try
+                    {
+                        Directory.Delete(versionDir);
+                    }
+                    catch
+                    {
+                    }
                 }
             });
         }

@@ -22,6 +22,11 @@ namespace Packman
             string dir = Path.Combine(rootCacheDir, providerName, Name, version);
             var asset = await GetAsset(version, providerName);
 
+            if (asset == null)
+            {
+                return null;
+            }
+
             if (!Directory.Exists(dir))
             {
                 var list = new List<Task>();
@@ -35,12 +40,25 @@ namespace Packman
 
                     using (WebClient client = new WebClient())
                     {
-                        var task = client.DownloadFileTaskAsync(url, localFile.FullName);
-                        list.Add(task);
+                        try
+                        {
+                            var task = client.DownloadFileTaskAsync(url, localFile.FullName);
+                            list.Add(task);
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
 
-                await Task.WhenAll(list);
+                try
+                {
+                    await Task.WhenAll(list);
+                }
+                catch
+                {
+                    return null;
+                }
             }
 
             var package = new InstallablePackage
@@ -61,14 +79,24 @@ namespace Packman
             string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
 
             if (!File.Exists(metaPath))
-                return null;
-
-            using (StreamReader reader = new StreamReader(metaPath))
             {
-                string json = reader.ReadToEnd();
+                return null;
+            }
 
-                if (!string.IsNullOrEmpty(json))
-                    return JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
+            try
+            {
+                using (StreamReader reader = new StreamReader(metaPath))
+                {
+                    string json = reader.ReadToEnd();
+
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        return JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
+                    }
+                }
+            }
+            catch
+            {
             }
 
             return null;
@@ -93,7 +121,14 @@ namespace Packman
                 using (WebClient client = new WebClient())
                 {
                     string url = string.Format(_metaPackageUrlFormat, Name);
-                    await client.DownloadFileTaskAsync(url, metaFile.FullName);
+                    try
+                    {
+                        await client.DownloadFileTaskAsync(url, metaFile.FullName);
+                    }
+                    catch
+                    {
+                        return null;
+                    }
                 }
 
                 asset = GetAssetFromDisk(version, metaFile);
@@ -104,11 +139,23 @@ namespace Packman
 
         static JsDelivrAsset GetAssetFromDisk(string version, FileInfo metaFile)
         {
-            using (StreamReader reader = metaFile.OpenText())
+            if (!metaFile.Exists)
             {
-                string json = reader.ReadToEnd();
-                var data = JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
-                return data.Assets.SingleOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+                return null;
+            }
+
+            try
+            {
+                using (StreamReader reader = metaFile.OpenText())
+                {
+                    string json = reader.ReadToEnd();
+                    var data = JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
+                    return data.Assets.SingleOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+                }
+            }
+            catch (IOException)
+            {
+                return null;
             }
         }
 

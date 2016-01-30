@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PackmanVsix"
-        mc:Ignorable="d"
+        xmlns:controls="clr-namespace:PackmanVsix.Controls"
+        xmlns:models="clr-namespace:PackmanVsix.Models"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=models:InstallDialogViewModel}"
         Title="Packman" Height="300.2" Width="498.674" WindowStartupLocation="CenterScreen" ShowInTaskbar="False">
     <Grid>
         <Grid.RowDefinitions>
@@ -17,26 +18,26 @@
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-        <ComboBox x:Name="cbName" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10 0" IsEditable="True" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" IsTextSearchEnabled="True">
+        <ComboBox x:Name="cbName" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10 0" IsEditable="True" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" IsTextSearchEnabled="True" Text="{Binding Path=PackageName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=AvailablePackages}" IsEnabled="{Binding Path=IsPackageListLoaded}">
             <ComboBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel/>
                 </ItemsPanelTemplate>
             </ComboBox.ItemsPanel>
         </ComboBox>
-        <ComboBox x:Name="cbVersion" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Width="100" Margin="10 0" SelectedIndex="0"/>
+        <ComboBox Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Width="100" Margin="10 0" SelectedIndex="0" SelectedItem="{Binding SelectedPackageVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding PackageVersions}"/>
 
-        <TreeView x:Name="treeView" Grid.Row="1" Grid.ColumnSpan="3" VirtualizingPanel.IsVirtualizing="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10 3" BorderBrush="#FF747474" />
+        <controls:PackageContentsTreeView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10 3" BorderBrush="#FF747474" />
 
-        <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="0 10">
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbCreateFolder" Content="Place files in their own folder" HorizontalAlignment="Left" Margin="10 0 0 0" VerticalAlignment="Center" />
-            <Button x:Name="btnInstall" Grid.Column="1" Content="Install" HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Bottom" Width="75" IsDefault="True" Click="btnInstall_Click" />
-            <Button x:Name="btnCancel" Grid.Column="2" Content="Cancel" HorizontalAlignment="Right" Margin="0 0 10 0" VerticalAlignment="Bottom" Width="75" IsCancel="True" />
+            <CheckBox Content="Place files in their own folder" HorizontalAlignment="Left" Margin="10 0 0 0" VerticalAlignment="Center" IsChecked="{Binding Path=IncludePackageName, Mode=TwoWay}" />
+            <Button Grid.Column="1" Content="Install" HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Bottom" Width="75" IsDefault="True" Command="{Binding InstallPackageCommand}" />
+            <Button Grid.Column="2" Content="Cancel" HorizontalAlignment="Right" Margin="0 0 10 0" VerticalAlignment="Bottom" Width="75" IsCancel="True" />
         </Grid>
 
     </Grid>

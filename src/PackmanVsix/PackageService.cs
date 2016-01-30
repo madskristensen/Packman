@@ -45,9 +45,11 @@ namespace PackmanVsix
 
             foreach (var file in e.Package.Files)
             {
+                string absolute = Path.Combine(e.Path, file);
+                absolute = absolute.Replace("/", "\\");
+
                 try
                 {
-                    string absolute = Path.Combine(e.Path, file);
                     //dte.ItemOperations.AddExistingItem(absolute);
                     project.AddFileToProject(absolute);
                 }
