@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Packman
 {
-    class PackageNameComparer : StringComparer
+    internal class PackageNameComparer : StringComparer
     {
         static char[] _separators = { '.', '-', '_' };
         const StringComparison _ignore = StringComparison.OrdinalIgnoreCase;

@@ -41,14 +41,14 @@ namespace PackmanVsix
             Instance = new RestorePackagesCommand(package);
         }
 
-        void BeforeQueryStatus(object sender, EventArgs e)
+        private void BeforeQueryStatus(object sender, EventArgs e)
         {
             var button = (OleMenuCommand)sender;
             var item = ProjectHelpers.GetSelectedItems().FirstOrDefault();
             button.Visible = item.IsConfigFile();
         }
 
-        async System.Threading.Tasks.Task Restore(object sender, EventArgs e)
+        private async System.Threading.Tasks.Task Restore(object sender, EventArgs e)
         {
             var item = ProjectHelpers.GetSelectedItems().FirstOrDefault();
 
@@ -64,11 +64,11 @@ namespace PackmanVsix
             }
             catch (PackageNotFoundException ex)
             {
-                VSPackage.DTE.StatusBar.Text = $"{ex.Name} {ex.Version} could not be restored from cache. Make sure you are online and try again.";
+                VSPackage.DTE.StatusBar.Text = string.Format(Properties.Resources.ExceptionLoadingPackages, ex.Name, ex.Version);
             }
             catch (Exception ex)
             {
-                VSPackage.DTE.StatusBar.Text = $"An error occured restoring one or more packages. See output window for details.";
+                VSPackage.DTE.StatusBar.Text = Properties.Resources.ErrorRestoringPackages;
                 Logger.Log(ex);
             }
         }

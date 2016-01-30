@@ -26,6 +26,9 @@ namespace PackmanVsix.JSON.Validation
 
         protected static void AddError(IJSONValidationContext context, JSONParseItem item, string message)
         {
+            if (item == null)
+                return;
+
             var error = new JsonErrorTag
             {
                 Flags = JSONErrorFlags.ErrorListError | JSONErrorFlags.UnderlineRed,

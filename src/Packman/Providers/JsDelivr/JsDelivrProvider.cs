@@ -50,6 +50,11 @@ namespace Packman
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
+            if (package == null)
+            {
+                return null;
+            }
+
             return await package.ToInstallablePackageAsync(version, Name);
         }
 
@@ -67,6 +72,11 @@ namespace Packman
                 return null;
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+
+            if (package == null)
+            {
+                return null;
+            }
 
             return package.GetPackageMetaData(Name);
         }

@@ -2,8 +2,6 @@
 using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using EnvDTE;
 using Packman;
 using Microsoft.VisualStudio.Shell;
@@ -102,7 +100,9 @@ namespace PackmanVsix
             installDirectory = folder;
 
             if (!result.HasValue || !result.Value)
+            {
                 return null;
+            }
 
             installDirectory = dialog.InstallDirectory;
 

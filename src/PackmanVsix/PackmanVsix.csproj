@@ -67,6 +67,10 @@
       <HintPath>..\..\packages\Microsoft.VisualStudio.Editor.14.1.24720\lib\net45\Microsoft.VisualStudio.Editor.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.ImageCatalog, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.ImageCatalog.14.1.24720\lib\net45\Microsoft.VisualStudio.ImageCatalog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.Imaging, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.VisualStudio.Imaging.14.1.24720\lib\net45\Microsoft.VisualStudio.Imaging.dll</HintPath>
       <Private>True</Private>
@@ -140,6 +144,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -206,12 +211,22 @@
   <ItemGroup>
     <Compile Include="Commands\RestorePackagesCommand.cs" />
     <Compile Include="Commands\InstallPackageCommand.cs" />
+    <Compile Include="Controls\PackageContentsTreeView.xaml.cs">
+      <DependentUpon>PackageContentsTreeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\BoldingConverter.cs" />
+    <Compile Include="Converters\NotConverter.cs" />
+    <Compile Include="Converters\PackageItemIconConverter.cs" />
+    <Compile Include="Converters\VisibleIfNonNullConverter.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\ProjectHelpers.cs" />
     <Compile Include="Helpers\Telemetry.cs" />
     <Compile Include="InstallDialog.xaml.cs">
       <DependentUpon>InstallDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ActionCommand.cs" />
+    <Compile Include="Models\BindableBase.cs" />
+    <Compile Include="Models\InstallDialogViewModel.cs" />
     <Compile Include="JSON\Completion\BaseCompletionProvider.cs" />
     <Compile Include="JSON\Completion\FilesCompletionProvider.cs" />
     <Compile Include="JSON\Completion\NameCompletionProvider.cs" />
@@ -224,10 +239,18 @@
     <Compile Include="JSON\Validation\FileValidator.cs" />
     <Compile Include="JSON\Validation\VersionValidator.cs" />
     <Compile Include="JSON\Validation\NameValidator.cs" />
+    <Compile Include="Models\PackageItem.cs" />
+    <Compile Include="Models\PackageItemType.cs" />
+    <Compile Include="Models\PackageVersion.cs" />
     <Compile Include="Options.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PackageService.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -235,6 +258,7 @@
     </Compile>
     <Compile Include="VSPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WpfUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\LICENSE">
@@ -244,6 +268,7 @@
     <Content Include="JSON\Schema\manifest-schema.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="app.config" />
     <None Include="JSON\Schema\manifest-instance.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -270,6 +295,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
       <DependentUpon>VSPackage.cs</DependentUpon>
       <MergeWithCTO>true</MergeWithCTO>
@@ -284,13 +313,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\PackageContentsTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="InstallDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SuggestedActions\" />
+    <Folder Include="JSON\SuggestedActions\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
