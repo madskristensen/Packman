@@ -42,7 +42,7 @@ namespace Packman.Test
         [TestMethod, TestCategory("Install")]
         public async Task InstallPackageWithCustomPath()
         {
-            var entry = await AssemblyLoad.Api.GetInstallablePackage("angularjs", "1.4.7");
+            var entry = await AssemblyLoad.Api.GetInstallablePackage("knockout", "3.4.0");
             string path = Path.Combine(_cwd, "js/lib");
             await manager.Install(_manifestPath, entry, path);
 
@@ -56,7 +56,7 @@ namespace Packman.Test
         [TestMethod, TestCategory("Install")]
         public async Task InstallPackageDontSaveManifest()
         {
-            var entry = await AssemblyLoad.Api.GetInstallablePackage("jquery.ui", "1.11.4");
+            var entry = await AssemblyLoad.Api.GetInstallablePackage("jquery", "2.2.0");
             string path = Path.Combine(_cwd, "lib");
             await manager.Install(_manifestPath, entry, path, false);
 
@@ -65,7 +65,7 @@ namespace Packman.Test
             if (File.Exists(config))
             {
                 string content = File.ReadAllText(config);
-                Assert.IsFalse(content.Contains("jquery.ui"));
+                Assert.IsFalse(content.Contains("jquery"));
             }
         }
 

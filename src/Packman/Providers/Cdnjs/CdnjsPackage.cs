@@ -8,13 +8,12 @@ using Newtonsoft.Json;
 
 namespace Packman
 {
-    class JsDelivrPackage
+    class CdnjsPackage
     {
-        const string _metaPackageUrlFormat = "http://api.jsdelivr.com/v1/jsdelivr/libraries?name={0}";
-        const string _downloadUrlFormat = "https://cdn.jsdelivr.net/{0}/{1}/{2}";
+        const string _metaPackageUrlFormat = "https://api.cdnjs.com/libraries/{0}";
+        const string _downloadUrlFormat = "https://cdnjs.cloudflare.com/ajax/libs/{0}/{1}/{2}";
 
         public string Name { get; set; }
-        public IEnumerable<string> Versions { get; set; }
 
         public async Task<InstallablePackage> ToInstallablePackageAsync(string version, string providerName)
         {
@@ -72,14 +71,25 @@ namespace Packman
             return package;
         }
 
-        public IPackageMetaData GetPackageMetaData(string providerName)
+        public async Task<IPackageMetaData> GetPackageMetaData(string providerName)
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
 
             if (!File.Exists(metaPath))
             {
-                return null;
+                using (WebClient client = new WebClient())
+                {
+                    string url = string.Format(_metaPackageUrlFormat, Name);
+                    try
+                    {
+                        await client.DownloadFileTaskAsync(url, metaPath).ConfigureAwait(false);
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
             }
 
             try
@@ -90,18 +100,19 @@ namespace Packman
 
                     if (!string.IsNullOrEmpty(json))
                     {
-                        return JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
+                        return JsonConvert.DeserializeObject<CdnjsMetaData>(json);
                     }
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                System.Diagnostics.Debug.Write(ex.Message);
             }
 
             return null;
         }
 
-        async Task<IPackageAsset> GetAsset(string version, string providerName)
+        public async Task<IPackageAsset> GetAsset(string version, string providerName)
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
@@ -149,7 +160,7 @@ namespace Packman
                 using (StreamReader reader = metaFile.OpenText())
                 {
                     string json = reader.ReadToEnd();
-                    var data = JsonConvert.DeserializeObject<List<JsDelivrMetaData>>(json).FirstOrDefault();
+                    var data = JsonConvert.DeserializeObject<CdnjsMetaData>(json);
                     return data.Assets.FirstOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
                 }
             }

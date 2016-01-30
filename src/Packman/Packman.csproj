@@ -57,6 +57,9 @@
     <Compile Include="Providers\IPackageProvider.cs" />
     <Compile Include="Providers\IPackageMetaData.cs" />
     <Compile Include="Providers\IPackageAsset.cs" />
+    <Compile Include="Providers\Cdnjs\CdnjsMetaData.cs" />
+    <Compile Include="Providers\Cdnjs\CdnjsPackage.cs" />
+    <Compile Include="Providers\Cdnjs\CdnProvider.cs" />
     <Compile Include="Providers\JsDelivr\JsDelivrMetaData.cs" />
     <Compile Include="Providers\JsDelivr\JsDelivrProvider.cs" />
     <Compile Include="Providers\JsDelivr\JsDelivrPackage.cs" />

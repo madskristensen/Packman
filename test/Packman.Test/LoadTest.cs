@@ -25,8 +25,8 @@ namespace Packman.Test
         [TestMethod, TestCategory("Load")]
         public async Task AssetHasVersions()
         {
-            var angular = await AssemblyLoad.Api.GetInstallablePackage("angularjs", "1.4.7");
-            Assert.AreEqual(779, angular.Files.Count(), "Angular assets not correct");
+            var angular = await AssemblyLoad.Api.GetInstallablePackage("jquery", "2.2.0");
+            Assert.AreEqual(3, angular.Files.Count(), "jquery assets not correct");
         }
     }
 }

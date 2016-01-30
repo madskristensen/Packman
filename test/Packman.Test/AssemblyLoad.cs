@@ -20,7 +20,8 @@ namespace Packman.Test
 
             Defaults.CacheDays = 3;
 
-            Api = new JsDelivrProvider();
+            //Api = new JsDelivrProvider();
+            Api = new CdnjsProvider();
         }
 
         [AssemblyCleanup]
