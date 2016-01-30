@@ -131,6 +131,7 @@ namespace Packman
                     }
                 }
 
+                metaFile.Refresh();
                 asset = GetAssetFromDisk(version, metaFile);
             }
 
