@@ -116,7 +116,18 @@ namespace Packman
                     }
 
                     var comparer = new PackageNameComparer();
-                    _packages = packages.OrderBy(p => p.Name, comparer);
+                    var distinct = new List<CdnjsPackage>();
+
+                    // For some reason, the Cdnjs api returns duplicate entries
+                    foreach (var package in packages.OrderBy(p => p.Name, comparer))
+                    {
+                        if (!distinct.Any(p => p.Name == package.Name))
+                        {
+                            distinct.Add(package);
+                        }
+                    }
+
+                    _packages = distinct;
 
                     return true;
                 }
