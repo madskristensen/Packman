@@ -35,9 +35,12 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <CheckBox Content="Place files in their own folder" HorizontalAlignment="Left" Margin="10 0 0 0" VerticalAlignment="Center" IsChecked="{Binding Path=IncludePackageName, Mode=TwoWay}" />
-            <Button Grid.Column="1" Content="Install" HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Bottom" Width="75" IsDefault="True" Command="{Binding InstallPackageCommand}" />
-            <Button Grid.Column="2" Content="Cancel" HorizontalAlignment="Right" Margin="0 0 10 0" VerticalAlignment="Bottom" Width="75" IsCancel="True" />
+            <StackPanel>
+                <CheckBox Content="Place files in their own folder" HorizontalAlignment="Left" Margin="10 0 0 0" VerticalAlignment="Center" IsChecked="{Binding Path=IncludePackageName, Mode=TwoWay}" />
+                <CheckBox Content="Save manifest file" HorizontalAlignment="Left" Margin="10 0 0 0" VerticalAlignment="Center" IsChecked="{Binding Path=SaveManifestFile, Mode=TwoWay}" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="Install" HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Center" Width="75" IsDefault="True" Command="{Binding InstallPackageCommand}" />
+            <Button Grid.Column="2" Content="Cancel" HorizontalAlignment="Right" Margin="0 0 10 0" VerticalAlignment="Center" Width="75" IsCancel="True" />
         </Grid>
 
     </Grid>
