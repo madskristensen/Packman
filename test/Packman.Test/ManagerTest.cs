@@ -56,7 +56,7 @@ namespace Packman.Test
         [TestMethod, TestCategory("Install")]
         public async Task InstallPackageDontSaveManifest()
         {
-            var entry = await AssemblyLoad.Api.GetInstallablePackage("jquery", "2.2.0");
+            var entry = await AssemblyLoad.Api.GetInstallablePackage("16pixels", "0.1.6");
             string path = Path.Combine(_cwd, "lib");
             await manager.Install(_manifestPath, entry, path, false);
 
@@ -65,7 +65,7 @@ namespace Packman.Test
             if (File.Exists(config))
             {
                 string content = File.ReadAllText(config);
-                Assert.IsFalse(content.Contains("jquery"));
+                Assert.IsFalse(content.Contains("16pixels"));
             }
         }
 

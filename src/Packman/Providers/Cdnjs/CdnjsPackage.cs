@@ -83,7 +83,8 @@ namespace Packman
                     string url = string.Format(_metaPackageUrlFormat, Name);
                     try
                     {
-                        await client.DownloadFileTaskAsync(url, metaPath).ConfigureAwait(false);
+                        Directory.CreateDirectory(Path.GetDirectoryName(metaPath));
+                        await client.DownloadFileTaskAsync(url, metaPath);
                     }
                     catch
                     {
@@ -104,7 +105,7 @@ namespace Packman
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.Write(ex.Message);
             }
@@ -133,6 +134,7 @@ namespace Packman
                     string url = string.Format(_metaPackageUrlFormat, Name);
                     try
                     {
+                        Directory.CreateDirectory(Path.GetDirectoryName(metaPath));
                         await client.DownloadFileTaskAsync(url, metaFile.FullName);
                     }
                     catch

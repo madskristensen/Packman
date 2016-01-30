@@ -30,6 +30,14 @@ namespace PackmanVsix
         [DefaultValue(1)]
         public int CacheDays { get; set; } = 1;
 
+        // TODO: get rid of the enum and make this dynamic and MEF'ed out
+        [DisplayName("Provider")]
+        [Category("Provider")]
+        [Description("The CDN that provides the data.")]
+        [DefaultValue(1)]
+        [TypeConverter(typeof(EnumConverter))]
+        public Providers Provider { get; set; } = Providers.JsDelivr;
+
 
         protected override void OnApply(PageApplyEventArgs e)
         {
@@ -53,5 +61,12 @@ namespace PackmanVsix
         }
 
         public event EventHandler<EventArgs> Saved;
+    }
+
+    // TODO: get rid of the enum and make this dynamic and MEF'ed out
+    public enum Providers
+    {
+        JsDelivr,
+        Cdnjs
     }
 }

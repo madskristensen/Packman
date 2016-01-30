@@ -40,9 +40,12 @@ namespace Packman
 
             var package = _packages.FirstOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
+            if (package == null)
+                return null;
+
             var metadata = await package.GetPackageMetaData(Name).ConfigureAwait(false);
 
-            return metadata.Assets.Select(a => a.Version);
+            return metadata?.Assets.Select(a => a.Version);
         }
 
         public async Task<InstallablePackage> GetInstallablePackage(string packageName, string version)

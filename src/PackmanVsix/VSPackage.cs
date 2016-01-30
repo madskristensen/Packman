@@ -20,19 +20,16 @@ namespace PackmanVsix
 
         public static DTE2 DTE { get; private set; }
         public static Manager Manager { get; private set; }
-        public static IPackageProvider Provider { get; private set; }
         public static Options Options { get; private set; }
 
-        protected override void Initialize()
+        protected async override void Initialize()
         {
             DTE = (DTE2)GetService(typeof(DTE));
-            Provider = new JsDelivrProvider();
-            Manager = new Manager(Provider);
 
             Options = (Options)GetDialogPage(typeof(Options));
-            Options.Saved += (s, e) => SetDefaults();
+            Options.Saved += async (s, e) => await SetDefaults();
 
-            SetDefaults();
+            await SetDefaults();
 
             Logger.Initialize(this, Name);
             Telemetry.Initialize(this, Version, "d8226d88-0507-4495-9c9c-63951a2151d3");
@@ -44,10 +41,23 @@ namespace PackmanVsix
             base.Initialize();
         }
 
-        static void SetDefaults()
+        static async System.Threading.Tasks.Task SetDefaults()
         {
             Defaults.CachePath = Options.CachePath;
             Defaults.CacheDays = Options.CacheDays;
+
+            IPackageProvider provider;
+
+            // TODO: get rid of the enum and make this dynamic and MEF'ed out
+            if (Options.Provider == Providers.JsDelivr)
+                provider = new JsDelivrProvider();
+            else
+                provider = new CdnjsProvider();
+
+            Manager = new Manager(provider);
+
+            if (!provider.IsInitialized)
+                await provider.InitializeAsync();
         }
     }
 }
