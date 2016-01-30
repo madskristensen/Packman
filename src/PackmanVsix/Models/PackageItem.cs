@@ -5,22 +5,24 @@ namespace PackmanVsix.Models
 {
     public class PackageItem : BindableBase
     {
+        private readonly HashSet<string> _selectedFiles;
         private IReadOnlyList<PackageItem> _children;
-        private bool _isChecked;
+        private bool? _isChecked;
+        private bool _isExpanded;
         private bool _isMain;
+        private bool _isUpdatingParentCheckedStates;
         private PackageItemType _itemType;
         private string _name;
-        private bool _isExpanded;
-        private readonly HashSet<string> _selectedFiles;
 
-        public PackageItem(InstallDialogViewModel parent, HashSet<string> selectedFiles)
+        public PackageItem(InstallDialogViewModel parent, PackageItem parentNode, HashSet<string> selectedFiles)
         {
             _selectedFiles = selectedFiles;
             Children = new PackageItem[0];
             ParentModel = parent;
+            Parent = parentNode;
         }
 
-        public InstallDialogViewModel ParentModel { get; }
+        public Func<bool> CanUpdateInstallStatus { get; set; }
 
         public IReadOnlyList<PackageItem> Children
         {
@@ -28,39 +30,50 @@ namespace PackmanVsix.Models
             set { Set(ref _children, value); }
         }
 
-        public bool IsChecked
+        public string FullPath { get; set; }
+
+        public bool? IsChecked
         {
             get { return _isChecked; }
             set
             {
                 if (Set(ref _isChecked, value))
                 {
-                    foreach (PackageItem child in Children)
+                    if (value.HasValue && !_isUpdatingParentCheckedStates)
                     {
-                        child.IsChecked = value;
-                    }
-
-                    if (ItemType == PackageItemType.File)
-                    {
-                        if (value)
+                        foreach (PackageItem child in Children)
                         {
-                            _selectedFiles.Add(FullPath);
-                        }
-                        else
-                        {
-                            _selectedFiles.Remove(FullPath);
+                            child.IsChecked = value;
                         }
 
-                        if (CanUpdateInstallStatus())
+                        if (ItemType == PackageItemType.File)
                         {
-                            ParentModel.InstallPackageCommand.CanExecute(null);
+                            if (value.GetValueOrDefault())
+                            {
+                                _selectedFiles.Add(FullPath);
+                            }
+                            else
+                            {
+                                _selectedFiles.Remove(FullPath);
+                            }
+
+                            if (CanUpdateInstallStatus())
+                            {
+                                ParentModel.InstallPackageCommand.CanExecute(null);
+                            }
                         }
                     }
+
+                    Parent?.UpdateCheckedStateForChildCheckedStateChange();
                 }
             }
         }
 
-        public string FullPath { get; set; }
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { Set(ref _isExpanded, value); }
+        }
 
         public bool IsMain
         {
@@ -72,12 +85,6 @@ namespace PackmanVsix.Models
                     IsChecked = true;
                 }
             }
-        }
-
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set { Set(ref _isExpanded, value); }
         }
 
         public PackageItemType ItemType
@@ -92,6 +99,40 @@ namespace PackmanVsix.Models
             set { Set(ref _name, value, StringComparer.Ordinal); }
         }
 
-        public Func<bool> CanUpdateInstallStatus { get; set; }
+        public PackageItem Parent { get; }
+
+        public InstallDialogViewModel ParentModel { get; }
+
+        private void UpdateCheckedStateForChildCheckedStateChange()
+        {
+            //Should never happen
+            if (Children.Count == 0)
+            {
+                return;
+            }
+
+            _isUpdatingParentCheckedStates = true;
+            if (!Children[0].IsChecked.HasValue)
+            {
+                IsChecked = null;
+                _isUpdatingParentCheckedStates = false;
+                return;
+            }
+
+            bool baseState = Children[0].IsChecked.Value;
+
+            for (int i = 1; i < Children.Count; ++i)
+            {
+                if (Children[i].IsChecked.GetValueOrDefault(!baseState) ^ baseState)
+                {
+                    IsChecked = null;
+                    _isUpdatingParentCheckedStates = false;
+                    return;
+                }
+            }
+
+            IsChecked = baseState;
+            _isUpdatingParentCheckedStates = false;
+        }
     }
 }
