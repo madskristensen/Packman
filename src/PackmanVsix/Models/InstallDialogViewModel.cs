@@ -142,6 +142,20 @@ namespace PackmanVsix.Models
             set { Set(ref _rootFolderName, value, StringComparer.Ordinal); }
         }
 
+        public bool SaveManifestFile
+        {
+            get { return VSPackage.Options.SaveManifestFile; }
+            set
+            {
+                bool previousValue = VSPackage.Options.SaveManifestFile;
+                if (value ^ previousValue)
+                {
+                    VSPackage.Options.SaveManifestFile = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public HashSet<string> SelectedFiles { get; private set; }
 
         public string SelectedPackageVersion
