@@ -15,6 +15,7 @@ namespace PackmanVsix.Models
         private bool _includePackageName;
         private bool _isPackageListLoaded;
         private InstallablePackage _package;
+        private PackageItem _packageItem;
         private string _packageName;
         private IReadOnlyList<string> _packageVersions;
         private string _rootFolderName;
@@ -57,16 +58,11 @@ namespace PackmanVsix.Models
                     {
                         if (value)
                         {
-                            IReadOnlyList<PackageItem> children = roots[0].Children;
-                            PackageItem packageItem = new PackageItem(this, SelectedFiles)
-                            {
-                                Name = pkg.Name,
-                                ItemType = PackageItemType.Folder,
-                                IsExpanded = true,
-                                Children = children
-                            };
+                            _packageItem.Children = roots[0].Children;
+                            _packageItem.IsExpanded = roots[0].IsExpanded;
+                            _packageItem.IsChecked = roots[0].IsChecked;
 
-                            roots[0].Children = new[] { packageItem };
+                            roots[0].Children = new[] { _packageItem };
                         }
                         else
                         {
@@ -160,6 +156,19 @@ namespace PackmanVsix.Models
             }
         }
 
+        private static void SetNodeOpenStates(PackageItem item)
+        {
+            bool shouldBeOpen = false;
+
+            foreach (PackageItem child in item.Children)
+            {
+                SetNodeOpenStates(child);
+                shouldBeOpen |= child.IsChecked.GetValueOrDefault(true) || child.IsExpanded;
+            }
+
+            item.IsExpanded = shouldBeOpen;
+        }
+
         private bool CanInstallPackage()
         {
             return Package != null && SelectedFiles != null && SelectedFiles.Count > 0;
@@ -221,31 +230,38 @@ namespace PackmanVsix.Models
             bool canUpdateInstallStatusValue = false;
             Func<bool> canUpdateInstallStatus = () => canUpdateInstallStatusValue;
             HashSet<string> selectedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            PackageItem root = new PackageItem(this, selectedFiles)
+            PackageItem root = new PackageItem(this, null, selectedFiles)
             {
                 CanUpdateInstallStatus = canUpdateInstallStatus,
                 ItemType = PackageItemType.Folder,
-                Name = RootFolderName
+                Name = RootFolderName,
+                IsChecked = false
             };
 
-            PackageItem topLevelChildrenParent = root;
+            PackageItem packageItem = new PackageItem(this, root, selectedFiles)
+            {
+                CanUpdateInstallStatus = canUpdateInstallStatus,
+                Name = package.Name,
+                ItemType = PackageItemType.Folder,
+                IsChecked = false
+            };
+
+            //The node that children will be added to
+            PackageItem realParent = root;
+            //The node that will be set as the parent of the child nodes
+            PackageItem virtualParent = packageItem;
 
             if (IncludePackageName)
             {
-                topLevelChildrenParent = new PackageItem(this, selectedFiles)
-                {
-                    CanUpdateInstallStatus = canUpdateInstallStatus,
-                    Name = package.Name,
-                    ItemType = PackageItemType.Folder
-                };
-
-                root.Children = new[] { topLevelChildrenParent };
+                realParent = packageItem;
+                root.Children = new[] { packageItem };
             }
 
             foreach (string file in package.Files)
             {
                 string[] parts = file.Split('/');
-                PackageItem currentParent = topLevelChildrenParent;
+                PackageItem currentRealParent = realParent;
+                PackageItem currentVirtualParent = virtualParent;
 
                 for (int i = 0; i < parts.Length; ++i)
                 {
@@ -253,48 +269,51 @@ namespace PackmanVsix.Models
 
                     if (isFolder)
                     {
-                        PackageItem next = currentParent.Children.FirstOrDefault(x => x.ItemType == PackageItemType.Folder && string.Equals(x.Name, parts[i]));
+                        PackageItem next = currentRealParent.Children.FirstOrDefault(x => x.ItemType == PackageItemType.Folder && string.Equals(x.Name, parts[i]));
 
                         if (next == null)
                         {
-                            next = new PackageItem(this, selectedFiles)
+                            next = new PackageItem(this, currentVirtualParent, selectedFiles)
                             {
                                 CanUpdateInstallStatus = canUpdateInstallStatus,
                                 Name = parts[i],
-                                ItemType = PackageItemType.Folder
+                                ItemType = PackageItemType.Folder,
+                                IsChecked = false
                             };
 
-                            List<PackageItem> children = new List<PackageItem>(currentParent.Children)
+                            List<PackageItem> children = new List<PackageItem>(currentRealParent.Children)
                             {
                                 next
                             };
 
                             children.Sort((x, y) => x.ItemType == y.ItemType ? StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name) : y.ItemType == PackageItemType.Folder ? 1 : -1);
 
-                            currentParent.Children = children;
+                            currentRealParent.Children = children;
                         }
 
-                        currentParent = next;
+                        currentRealParent = next;
+                        currentVirtualParent = next;
                     }
                     else
                     {
-                        PackageItem next = new PackageItem(this, selectedFiles)
+                        PackageItem next = new PackageItem(this, currentVirtualParent, selectedFiles)
                         {
                             CanUpdateInstallStatus = canUpdateInstallStatus,
                             FullPath = file,
                             Name = parts[i],
                             ItemType = PackageItemType.File,
+                            IsChecked = false,
                             IsMain = string.Equals(package.MainFile, file, StringComparison.OrdinalIgnoreCase),
                         };
 
-                        List<PackageItem> children = new List<PackageItem>(currentParent.Children)
+                        List<PackageItem> children = new List<PackageItem>(currentRealParent.Children)
                         {
                             next
                         };
 
                         children.Sort((x, y) => x.ItemType == y.ItemType ? StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name) : y.ItemType == PackageItemType.Folder ? -1 : 1);
 
-                        currentParent.Children = children;
+                        currentRealParent.Children = children;
                     }
                 }
             }
@@ -306,24 +325,12 @@ namespace PackmanVsix.Models
                 if (package == Package)
                 {
                     canUpdateInstallStatusValue = true;
+                    _packageItem = packageItem;
                     DisplayRoots = new[] {root};
                     SelectedFiles = selectedFiles;
                     InstallPackageCommand.CanExecute(null);
                 }
             });
-        }
-
-        private static void SetNodeOpenStates(PackageItem item)
-        {
-            bool shouldBeOpen = false;
-
-            foreach (PackageItem child in item.Children)
-            {
-                SetNodeOpenStates(child);
-                shouldBeOpen |= child.IsChecked || child.IsExpanded;
-            }
-
-            item.IsExpanded = shouldBeOpen;
         }
 
         private async void UpdateVersions(string name)
