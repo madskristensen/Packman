@@ -11,7 +11,7 @@ namespace PackmanVsix
 {
     [Export(typeof(IJSONCompletionListProvider))]
     [Name(nameof(FilesCompletionProvider))]
-    class FilesCompletionProvider : BaseCompletionProvider
+    internal class FilesCompletionProvider : BaseCompletionProvider
     {
         static readonly StandardGlyphGroup _glyph = StandardGlyphGroup.GlyphGroupVariable;
 
@@ -28,16 +28,18 @@ namespace PackmanVsix
                 yield break;
 
             var parent = member.Parent as JSONObject;
-            var name = parent.FindType<JSONMember>()?.UnquotedNameText;
+            var name = parent?.FindType<JSONMember>()?.UnquotedNameText;
 
             if (string.IsNullOrEmpty(name))
+            {
                 yield break;
+            }
 
             var metadata = VSPackage.Manager.Provider.GetPackageMetaDataAsync(name).Result;
 
             if (metadata != null)
             {
-                var children = parent?.BlockItemChildren.OfType<JSONMember>();
+                var children = parent.BlockItemChildren?.OfType<JSONMember>();
                 var version = children?.SingleOrDefault(c => c.UnquotedNameText == "version");
 
                 IEnumerable<string> files;

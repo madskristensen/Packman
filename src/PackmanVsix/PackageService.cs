@@ -36,8 +36,16 @@ namespace PackmanVsix
             foreach (var file in e.Package.Files)
             {
                 string absolute = Path.Combine(e.Path, file);
-                var info = new FileInfo(absolute);
-                project.AddFileToProject(info.FullName);
+
+                try
+                {
+                    var info = new FileInfo(absolute);
+                    project.AddFileToProject(info.FullName);
+                }
+                catch (Exception)
+                {
+                    // Angular has issues with its huge i18n folder. No idea why
+                }
             }
 
             VSPackage.DTE.StatusBar.Text = $"The {e.Package.Name} package was installed successfully";
