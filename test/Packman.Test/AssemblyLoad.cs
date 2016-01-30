@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Packman.Test
@@ -6,7 +7,7 @@ namespace Packman.Test
     [TestClass]
     public static class AssemblyLoad
     {
-        internal static IPackageProvider Api { get; private set; }
+        internal static List<IPackageProvider> Apis { get; private set; }
 
         static string _cwd;
 
@@ -20,7 +21,7 @@ namespace Packman.Test
 
             Defaults.CacheDays = 3;
 
-            Api = new JsDelivrProvider();
+            Apis = new List<IPackageProvider>() { new JsDelivrProvider(), new CdnjsProvider()};
             //Api = new CdnjsProvider();
         }
 
