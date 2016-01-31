@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Packman.Test
 {
     [TestClass]
-    public class ManagerTest
+    public class InstallTest
     {
         string _cwd, _manifestPath;
         IEnumerable<Manager> _managers;
@@ -15,12 +15,21 @@ namespace Packman.Test
         [TestInitialize]
         public void Initialize()
         {
-            var guid = "test";
-            _cwd = new DirectoryInfo("..\\..\\" + guid).FullName;
+            _cwd = new DirectoryInfo("..\\..\\test").FullName;
             Directory.CreateDirectory(_cwd);
 
+            Defaults.CacheDays = 3;
+
             _manifestPath = Path.Combine(_cwd, Defaults.ManifestFileName);
-            _managers = AssemblyLoad.Apis.Select(a => new Manager(a));
+
+            IPackageProvider[] managers = { new JsDelivrProvider(), new CdnjsProvider() };
+            _managers = managers.Select(a => new Manager(a));
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            Directory.Delete(_cwd, true);
         }
 
         [TestMethod, TestCategory("Install")]
