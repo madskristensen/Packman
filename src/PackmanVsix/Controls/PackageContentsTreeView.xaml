@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:models="clr-namespace:PackmanVsix.Models"
              xmlns:converters="clr-namespace:PackmanVsix.Converters"
+             xmlns:controls="clr-namespace:PackmanVsix.Controls"
              mc:Ignorable="d" x:Name="ThisControl"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=models:InstallDialogViewModel}">
     <UserControl.Resources>
@@ -26,7 +27,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Margin="2 0" Width="16" Height="16" Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Source, Converter={StaticResource VisibleIfNonNullConverter}}" VerticalAlignment="Center">
+                        <Image Grid.Column="0" Margin="1 0" Width="16" Height="16" Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Source, Converter={StaticResource VisibleIfNonNullConverter}}" VerticalAlignment="Center">
                             <Image.Source>
                                 <MultiBinding Converter="{StaticResource IconConverter}">
                                     <Binding Path="ItemType" />
@@ -34,10 +35,11 @@
                                     <Binding Path="IsExpanded" />
                                     <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth" />
                                     <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight" />
+                                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=TreeView}" />
                                 </MultiBinding>
                             </Image.Source>
                         </Image>
-                        <Label Grid.Column="1" Margin="0" Padding="0" VerticalAlignment="Center" Content="{Binding Name}" FontWeight="{Binding Path=IsMain, Converter={StaticResource BoldingConverter}}" />
+                        <Label Grid.Column="1" Margin="2 0 0 0" Padding="0" VerticalAlignment="Center" Content="{Binding Name}" FontWeight="{Binding Path=IsMain, Converter={StaticResource BoldingConverter}}" />
                     </Grid>
                 </CheckBox>
             </HierarchicalDataTemplate>
