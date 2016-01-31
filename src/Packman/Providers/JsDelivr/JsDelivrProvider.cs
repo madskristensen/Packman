@@ -35,7 +35,7 @@ namespace Packman
 
         public async Task<IEnumerable<string>> GetVersionsAsync(string packageName)
         {
-            if (!IsInitialized && !await InitializeAsync())
+            if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))
                 return null;
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
@@ -43,9 +43,9 @@ namespace Packman
             return package?.Versions;
         }
 
-        public async Task<InstallablePackage> GetInstallablePackage(string packageName, string version)
+        public async Task<InstallablePackage> GetInstallablePackageAsync(string packageName, string version)
         {
-            if (!IsInitialized && !await InitializeAsync())
+            if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))
                 return null;
 
             var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
@@ -55,30 +55,15 @@ namespace Packman
                 return null;
             }
 
-            return await package.ToInstallablePackageAsync(version, Name);
+            return await package.ToInstallablePackageAsync(version, Name).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<string>> GetPackageNamesAsync()
         {
-            if (!IsInitialized && !await InitializeAsync())
+            if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))
                 return null;
 
             return _packages.Select(p => p.Name);
-        }
-
-        public async Task<IPackageMetaData> GetPackageMetaDataAsync(string packageName)
-        {
-            if (!IsInitialized && !await InitializeAsync())
-                return null;
-
-            var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
-
-            if (package == null)
-            {
-                return null;
-            }
-
-            return await package.GetPackageMetaData(Name).ConfigureAwait(false);
         }
 
         public async Task<bool> InitializeAsync()
@@ -95,7 +80,7 @@ namespace Packman
 
                         using (WebClient client = new WebClient())
                         {
-                            await client.DownloadFileTaskAsync(_remoteApiUrl, _localPath);
+                            await client.DownloadFileTaskAsync(_remoteApiUrl, _localPath).ConfigureAwait(false);
                         }
                     }
 
@@ -103,7 +88,7 @@ namespace Packman
                     {
                         using (StreamReader reader = new StreamReader(_localPath))
                         {
-                            string json = await reader.ReadToEndAsync();
+                            string json = await reader.ReadToEndAsync().ConfigureAwait(false);
                             packages = JsonConvert.DeserializeObject<IEnumerable<JsDelivrPackage>>(json);
                         }
                     }

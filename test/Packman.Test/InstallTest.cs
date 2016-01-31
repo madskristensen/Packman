@@ -37,7 +37,7 @@ namespace Packman.Test
         {
             foreach (var manager in _managers)
             {
-                var entry = await manager.Provider.GetInstallablePackage("jquery", "2.2.0");
+                var entry = await manager.Provider.GetInstallablePackageAsync("jquery", "2.2.0");
 
                 Assert.IsNotNull(entry.MainFile, "Main file is not set");
                 string path = Path.Combine(_cwd, "js");
@@ -57,7 +57,7 @@ namespace Packman.Test
         {
             foreach (var manager in _managers)
             {
-                var entry = await manager.Provider.GetInstallablePackage("knockout", "3.4.0");
+                var entry = await manager.Provider.GetInstallablePackageAsync("knockout", "3.4.0");
                 string path = Path.Combine(_cwd, "js/lib");
                 await manager.Install(_manifestPath, entry, path);
 
@@ -74,7 +74,7 @@ namespace Packman.Test
         {
             foreach (var manager in _managers)
             {
-                var entry = await manager.Provider.GetInstallablePackage("16pixels", "0.1.6");
+                var entry = await manager.Provider.GetInstallablePackageAsync("16pixels", "0.1.6");
                 string path = Path.Combine(_cwd, "lib");
                 await manager.Install(_manifestPath, entry, path, false);
 

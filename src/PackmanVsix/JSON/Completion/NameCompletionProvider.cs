@@ -24,6 +24,7 @@ namespace PackmanVsix
                 yield break;
 
             var names = VSPackage.Manager.Provider.GetPackageNamesAsync().Result;
+
             if (names != null)
             {
                 Telemetry.TrackEvent("Completion for name");

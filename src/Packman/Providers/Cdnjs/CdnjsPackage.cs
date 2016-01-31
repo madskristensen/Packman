@@ -18,14 +18,15 @@ namespace Packman
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string dir = Path.Combine(rootCacheDir, providerName, Name, version);
-            var metadata = await GetPackageMetaData(providerName);
+            var metadata = await GetPackageMetaData(providerName).ConfigureAwait(false);
 
             if (metadata == null)
-            {
                 return null;
-            }
 
             var asset = metadata.Assets.FirstOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+
+            if (asset == null)
+                return null;
 
             var package = new InstallablePackage
             {
@@ -49,7 +50,7 @@ namespace Packman
             return package;
         }
 
-        public async Task<IPackageMetaData> GetPackageMetaData(string providerName)
+        internal async Task<IPackageMetaData> GetPackageMetaData(string providerName)
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
@@ -62,7 +63,7 @@ namespace Packman
                     try
                     {
                         Directory.CreateDirectory(Path.GetDirectoryName(metaPath));
-                        await client.DownloadFileTaskAsync(url, metaPath);
+                        await client.DownloadFileTaskAsync(url, metaPath).ConfigureAwait(false);
                     }
                     catch
                     {
@@ -89,28 +90,6 @@ namespace Packman
             }
 
             return null;
-        }
-
-        static IPackageAsset GetAssetFromDisk(string version, FileInfo metaFile)
-        {
-            if (!metaFile.Exists)
-            {
-                return null;
-            }
-
-            try
-            {
-                using (StreamReader reader = metaFile.OpenText())
-                {
-                    string json = reader.ReadToEnd();
-                    var data = JsonConvert.DeserializeObject<CdnjsMetaData>(json);
-                    return data.Assets.FirstOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
-                }
-            }
-            catch (IOException)
-            {
-                return null;
-            }
         }
 
         public override string ToString()

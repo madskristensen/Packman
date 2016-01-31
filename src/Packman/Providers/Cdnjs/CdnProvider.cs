@@ -48,7 +48,7 @@ namespace Packman
             return metadata?.Assets.Select(a => a.Version);
         }
 
-        public async Task<InstallablePackage> GetInstallablePackage(string packageName, string version)
+        public async Task<InstallablePackage> GetInstallablePackageAsync(string packageName, string version)
         {
             if (!IsInitialized && !await InitializeAsync())
                 return null;
@@ -69,21 +69,6 @@ namespace Packman
                 return null;
 
             return _packages.Select(p => p.Name);
-        }
-
-        public async Task<IPackageMetaData> GetPackageMetaDataAsync(string packageName)
-        {
-            if (!IsInitialized && !await InitializeAsync())
-                return null;
-
-            var package = _packages.FirstOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
-
-            if (package == null)
-            {
-                return null;
-            }
-
-            return await package.GetPackageMetaData(Name);
         }
 
         public async Task<bool> InitializeAsync()

@@ -196,7 +196,7 @@ namespace PackmanVsix.Models
             }
             else
             {
-                Package = await VSPackage.Manager.Provider.GetInstallablePackage(packageName, version);
+                Package = await VSPackage.Manager.Provider.GetInstallablePackageAsync(packageName, version);
             }
         }
 

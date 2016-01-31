@@ -33,80 +33,66 @@ namespace PackmanVsix
             var name = parent?.FindType<JSONMember>()?.UnquotedNameText;
 
             if (string.IsNullOrEmpty(name))
-            {
                 yield break;
-            }
 
-            var metadata = VSPackage.Manager.Provider.GetPackageMetaDataAsync(name).Result;
+            var children = parent.BlockItemChildren?.OfType<JSONMember>();
+            var version = children?.SingleOrDefault(c => c.UnquotedNameText == "version");
 
-            if (metadata != null)
+            if (version == null)
+                yield break;
+
+            var package = VSPackage.Manager.Provider.GetInstallablePackageAsync(name, version.UnquotedValueText).Result;
+
+            if (package == null)
+                yield break;
+
+            Telemetry.TrackEvent("Completion for files");
+
+            JSONArray array = context.ContextItem.FindType<JSONArray>();
+
+            if (array == null)
+
+                yield break;
+
+            HashSet<string> usedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (JSONArrayElement arrayElement in array.Elements)
             {
-                var children = parent.BlockItemChildren?.OfType<JSONMember>();
-                var version = children?.SingleOrDefault(c => c.UnquotedNameText == "version");
+                JSONTokenItem token = arrayElement.Value as JSONTokenItem;
 
-                IEnumerable<string> files;
-
-                if (version == null)
+                if (token != null)
                 {
-                    files = metadata.Assets.SelectMany(a => a.Files);
-                }
-                else
-                {
-                    var asset = metadata.Assets.SingleOrDefault(a => a.Version.Equals(version.UnquotedValueText, StringComparison.OrdinalIgnoreCase));
-                    files = asset?.Files;
-                }
-
-                if (files == null)
-                    yield break;
-
-                Telemetry.TrackEvent("Completion for files");
-
-                JSONArray array = context.ContextItem.FindType<JSONArray>();
-
-                if (array == null)
-                {
-                    yield break;
-                }
-
-                HashSet<string> usedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (JSONArrayElement arrayElement in array.Elements)
-                {
-                    JSONTokenItem token = arrayElement.Value as JSONTokenItem;
-
-                    if (token != null)
-                    {
-                        usedFiles.Add(token.CanonicalizedText);
-                    }
-                }
-
-                FrameworkElement o = context.Session.Presenter as FrameworkElement;
-
-                if (o != null)
-                {
-                    o.SetBinding(ImageThemingUtilities.ImageBackgroundColorProperty, new Binding("Background")
-                    {
-                        Source = o,
-                        Converter = new BrushToColorConverter()
-                    });
-                }
-
-                foreach (var file in files)
-                {
-                    if (!usedFiles.Contains(file))
-                    {
-                        bool isThemeIcon;
-                        ImageSource glyph = WpfUtil.GetIconForFile(o, file, out isThemeIcon);
-
-                        yield return new SimpleCompletionEntry(file, glyph, context.Session);
-                    }
-                }
-
-                if (o != null)
-                {
-                    BindingOperations.ClearBinding(o, ImageThemingUtilities.ImageBackgroundColorProperty);
+                    usedFiles.Add(token.CanonicalizedText);
                 }
             }
+
+            FrameworkElement o = context.Session.Presenter as FrameworkElement;
+
+            if (o != null)
+            {
+                o.SetBinding(ImageThemingUtilities.ImageBackgroundColorProperty, new Binding("Background")
+                {
+                    Source = o,
+                    Converter = new BrushToColorConverter()
+                });
+            }
+
+            foreach (var file in package.AllFiles)
+            {
+                if (!usedFiles.Contains(file))
+                {
+                    bool isThemeIcon;
+                    ImageSource glyph = WpfUtil.GetIconForFile(o, file, out isThemeIcon);
+
+                    yield return new SimpleCompletionEntry(file, glyph, context.Session);
+                }
+            }
+
+            if (o != null)
+            {
+                BindingOperations.ClearBinding(o, ImageThemingUtilities.ImageBackgroundColorProperty);
+            }
+            //}
         }
     }
 }

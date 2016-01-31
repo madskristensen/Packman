@@ -19,7 +19,7 @@ namespace Packman
             foreach (var name in manifest.Packages.Keys)
             {
                 var entry = manifest.Packages[name];
-                var package = await Provider.GetInstallablePackage(name, entry.Version);
+                var package = await Provider.GetInstallablePackageAsync(name, entry.Version);
 
                 if (package == null)
                     throw new PackageNotFoundException(name, entry.Version);

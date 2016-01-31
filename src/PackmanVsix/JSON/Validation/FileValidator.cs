@@ -31,35 +31,28 @@ namespace PackmanVsix.JSON.Validation
             if (package == null || packages == null || packages.UnquotedNameText != "packages")
                 return JSONItemValidationResult.Continue;
 
-            var metadata = VSPackage.Manager.Provider.GetPackageMetaDataAsync(package.UnquotedNameText).Result;
+            //var metadata = VSPackage.Manager.Provider.GetPackageMetaDataAsync(package.UnquotedNameText).Result;
 
-            if (metadata != null)
+            //if (metadata != null)
+            //{
+            var parent = member.Parent as JSONObject;
+            var children = parent?.BlockItemChildren.OfType<JSONMember>();
+            var version = children?.SingleOrDefault(c => c.UnquotedNameText == "version");
+
+            if (version == null)
+                return JSONItemValidationResult.Continue;
+
+            var installable = VSPackage.Manager.Provider.GetInstallablePackageAsync(package.UnquotedNameText, version.UnquotedValueText).Result;
+
+            if (installable == null)
+                return JSONItemValidationResult.Continue;
+
+            if (!installable.AllFiles.Contains(item.Text.Trim('"', ',')))
             {
-                var parent = member.Parent as JSONObject;
-                var children = parent?.BlockItemChildren.OfType<JSONMember>();
-                var version = children?.SingleOrDefault(c => c.UnquotedNameText == "version");
-
-                IEnumerable<string> files;
-
-                if (version == null)
-                {
-                    files = metadata.Assets.SelectMany(a => a.Files);
-                }
-                else
-                {
-                    var asset = metadata.Assets.SingleOrDefault(a => a.Version.Equals(version.UnquotedValueText, StringComparison.OrdinalIgnoreCase));
-                    files = asset?.Files;
-                }
-
-                if (files == null)
-                    return JSONItemValidationResult.Continue;
-
-                if (!files.Contains(item.Text.Trim('"', ',')))
-                {
-                    string message = $"({VSPackage.Name}) {item.Text} is not a valid file name for {package.Name.Text}.";
-                    AddError(context, item, message);
-                }
+                string message = $"({VSPackage.Name}) {item.Text} is not a valid file name for {package.Name.Text}.";
+                AddError(context, item, message);
             }
+            //}
 
             return JSONItemValidationResult.Continue;
         }
