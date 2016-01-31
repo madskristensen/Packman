@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Imaging;
@@ -12,7 +13,7 @@ namespace PackmanVsix.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values == null || values.Length != 5 || !(values[0] is PackageItemType) || !(values[1] is string) || !(values[2] is bool) || !(values[3] is double) || !(values[4] is double))
+            if (values == null || values.Length != 6 || !(values[0] is PackageItemType) || !(values[1] is string) || !(values[2] is bool) || !(values[3] is double) || !(values[4] is double) || !(values[5] is DependencyObject))
             {
                 return null;
             }
@@ -35,12 +36,12 @@ namespace PackmanVsix.Converters
             {
                 bool isExpanded = (bool) values[2];
                 ImageMoniker moniker = isExpanded ? KnownMonikers.FolderOpened : KnownMonikers.FolderClosed;
-                return WpfUtil.GetIconForImageMoniker(moniker, x, y);
+                return WpfUtil.ThemeImage((DependencyObject)values[5], WpfUtil.GetIconForImageMoniker(moniker, x, y));
             }
 
             string name = (string) values[1];
             bool isThemeIcon;
-            ImageSource source = WpfUtil.GetIconForFile(name, out isThemeIcon);
+            ImageSource source = WpfUtil.GetIconForFile((DependencyObject)values[5], name, out isThemeIcon);
             return source;
         }
 

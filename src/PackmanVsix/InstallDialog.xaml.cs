@@ -29,7 +29,7 @@ namespace PackmanVsix
             get { return ViewModel.IncludePackageName ? Package.Name : string.Empty; }
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             Icon = BitmapFrame.Create(new Uri("pack://application:,,,/PackmanVsix;component/Resources/dialog-icon.png", UriKind.RelativeOrAbsolute));
             Title = VSPackage.Name;

@@ -1,4 +1,8 @@
-﻿namespace PackmanVsix.Controls
+﻿using System.Windows;
+using System.Windows.Data;
+using Microsoft.VisualStudio.PlatformUI;
+
+namespace PackmanVsix.Controls
 {
     /// <summary>
     /// Interaction logic for PackageContentsTreeView.xaml
@@ -8,6 +12,12 @@
         public PackageContentsTreeView()
         {
             InitializeComponent();
+            SetBinding(ImageThemingUtilities.ImageBackgroundColorProperty, new Binding
+            {
+                Source = Content,
+                Path = new PropertyPath("Background"),
+                Converter = new BrushToColorConverter()
+            });
         }
     }
 }

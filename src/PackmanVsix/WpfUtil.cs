@@ -8,14 +8,16 @@ using System.Windows.Media.Imaging;
 using Microsoft.Internal.VisualStudio.Shell;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging.Interop;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Color = System.Windows.Media.Color;
 
 namespace PackmanVsix
 {
     public static class WpfUtil
     {
-        public static ImageSource GetIconForImageMoniker(ImageMoniker? imageMoniker, int sizeX, int sizeY)
+        public static BitmapSource GetIconForImageMoniker(ImageMoniker? imageMoniker, int sizeX, int sizeY)
         {
             if (imageMoniker == null)
             {
@@ -43,7 +45,7 @@ namespace PackmanVsix
 
             object data;
             result.get_Data(out data);
-            ImageSource glyph = data as ImageSource;
+            BitmapSource glyph = data as BitmapSource;
 
             if (glyph != null)
             {
@@ -53,15 +55,15 @@ namespace PackmanVsix
             return glyph;
         }
 
-        public static ImageSource GetIconForFile(string file, out bool themeIcon)
+        public static ImageSource GetIconForFile(DependencyObject owner, string file, out bool themeIcon)
         {
-            return GetImage(file, __VSUIDATAFORMAT.VSDF_WINFORMS, out themeIcon);
+            return GetImage(owner, file, __VSUIDATAFORMAT.VSDF_WPF, out themeIcon);
         }
 
-        private static ImageSource GetImage(string file, __VSUIDATAFORMAT format, out bool themeIcon)
+        private static ImageSource GetImage(DependencyObject owner, string file, __VSUIDATAFORMAT format, out bool themeIcon)
         {
             IVsImageService imageService = ServiceProvider.GlobalProvider.GetService(typeof(SVsImageService)) as IVsImageService;
-            ImageSource result = null;
+            BitmapSource result = null;
             uint iconSource = (uint)__VSIconSource.IS_Unknown;
 
             if (imageService != null && !string.IsNullOrWhiteSpace(file))
@@ -69,26 +71,25 @@ namespace PackmanVsix
                 IVsUIObject image = imageService.GetIconForFileEx(file, format, out iconSource);
                 if (image != null)
                 {
-                    var imageData = GetObjectData(image);
-                    result = imageData as ImageSource;
-
-                    if (result == null && imageData is Icon)
-                    {
-                        Icon icon = (Icon) imageData;
-                        Bitmap bitmap = icon.ToBitmap();
-                        IntPtr hBitmap = bitmap.GetHbitmap();
-
-                        result = Imaging.CreateBitmapSourceFromHBitmap(
-                            hBitmap, IntPtr.Zero, Int32Rect.Empty,
-                            BitmapSizeOptions.FromEmptyOptions());
-
-                        DeleteObject(hBitmap);
-                    }
+                    object imageData = GetObjectData(image);
+                    result = imageData as BitmapSource;
                 }
             }
 
             themeIcon = (iconSource == (uint)__VSIconSource.IS_VisualStudio);
+
+            if (themeIcon && result != null)
+            {
+                return ThemeImage(owner, result);
+            }
+
             return result;
+        }
+
+        public static ImageSource ThemeImage(DependencyObject owner, BitmapSource source)
+        {
+            Color background = ImageThemingUtilities.GetImageBackgroundColor(owner);
+            return ImageThemingUtilities.GetOrCreateThemedBitmapSource(source, background, true, Colors.Black, false);
         }
 
         private static object GetObjectData(IVsUIObject obj)
