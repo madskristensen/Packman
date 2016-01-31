@@ -78,7 +78,7 @@ namespace PackmanVsix
 
             themeIcon = (iconSource == (uint)__VSIconSource.IS_VisualStudio);
 
-            if (themeIcon && result != null)
+            if (themeIcon && result != null && owner != null)
             {
                 return ThemeImage(owner, result);
             }

@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Media;
 using Microsoft.JSON.Core.Parser.TreeItems;
 using Microsoft.JSON.Editor.Completion;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Utilities;
 
 namespace PackmanVsix
@@ -59,9 +63,50 @@ namespace PackmanVsix
 
                 Telemetry.TrackEvent("Completion for files");
 
+                JSONArray array = context.ContextItem.FindType<JSONArray>();
+
+                if (array == null)
+                {
+                    yield break;
+                }
+
+                HashSet<string> usedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (JSONArrayElement arrayElement in array.Elements)
+                {
+                    JSONTokenItem token = arrayElement.Value as JSONTokenItem;
+
+                    if (token != null)
+                    {
+                        usedFiles.Add(token.CanonicalizedText);
+                    }
+                }
+
+                FrameworkElement o = context.Session.Presenter as FrameworkElement;
+
+                if (o != null)
+                {
+                    o.SetBinding(ImageThemingUtilities.ImageBackgroundColorProperty, new Binding("Background")
+                    {
+                        Source = o,
+                        Converter = new BrushToColorConverter()
+                    });
+                }
+
                 foreach (var file in files)
                 {
-                    yield return new SimpleCompletionEntry(file, _glyph, context.Session);
+                    if (!usedFiles.Contains(file))
+                    {
+                        bool isThemeIcon;
+                        ImageSource glyph = WpfUtil.GetIconForFile(o, file, out isThemeIcon);
+
+                        yield return new SimpleCompletionEntry(file, glyph, context.Session);
+                    }
+                }
+
+                if (o != null)
+                {
+                    BindingOperations.ClearBinding(o, ImageThemingUtilities.ImageBackgroundColorProperty);
                 }
             }
         }
