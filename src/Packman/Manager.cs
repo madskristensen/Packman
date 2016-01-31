@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Packman
@@ -95,11 +95,13 @@ namespace Packman
 
         private async Task CopyPackageContent(InstallablePackage entry, InstallSettings settings)
         {
+            string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
+            string versionDir = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version);
+
+            await entry.DownloadFiles(versionDir);
+
             await Task.Run(() =>
             {
-                string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
-                string versionDir = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version);
-
                 try
                 {
                     foreach (string file in entry.Files)
@@ -120,7 +122,7 @@ namespace Packman
                 {
                     try
                     {
-                        Directory.Delete(versionDir);
+                        Directory.Delete(versionDir, true);
                     }
                     catch
                     {

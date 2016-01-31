@@ -1,9 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 using EnvDTE;
 using EnvDTE80;
-using Packman;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Packman;
 
 namespace PackmanVsix
 {

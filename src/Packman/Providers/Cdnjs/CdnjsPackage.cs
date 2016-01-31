@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Packman
@@ -28,47 +27,15 @@ namespace Packman
 
             var asset = metadata.Assets.FirstOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
 
-            if (!Directory.Exists(dir))
-            {
-                var list = new List<Task>();
-
-                foreach (string fileName in asset.Files)
-                {
-                    string url = string.Format(_downloadUrlFormat, Name, asset.Version, fileName);
-                    var localFile = new FileInfo(Path.Combine(dir, fileName));
-
-                    localFile.Directory.Create();
-
-                    using (WebClient client = new WebClient())
-                    {
-                        try
-                        {
-                            var task = client.DownloadFileTaskAsync(url, localFile.FullName);
-                            list.Add(task);
-                        }
-                        catch
-                        {
-                        }
-                    }
-                }
-
-                try
-                {
-                    await Task.WhenAll(list);
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-
             var package = new InstallablePackage
             {
                 Name = Name,
                 Version = asset.Version,
                 Files = asset.Files,
                 MainFile = metadata.MainFile,
-                AllFiles = asset.Files
+                AllFiles = asset.Files,
+                UrlFormat = _downloadUrlFormat
+
             };
 
             if (!package.Files.Contains(package.MainFile))
