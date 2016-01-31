@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using EnvDTE;
 using EnvDTE80;
 using Packman;
@@ -99,16 +100,19 @@ namespace PackmanVsix
             return null;
         }
 
-        public static void AddFileToProject(this Project project, string file, string itemType = null)
+        public static async Task AddFileToProjectAsync(this Project project, string file, string itemType = null)
         {
             if (project.IsKind(ProjectTypes.ASPNET_5))
                 return;
 
-            if (_dte.Solution.FindProjectItem(file) == null)
+            await Task.Run(() =>
             {
+                //if (_dte.Solution.FindProjectItem(file) == null)
+                //{
                 ProjectItem item = project.ProjectItems.AddFromFile(file);
                 item.SetItemType(itemType);
-            }
+                //}
+            });
         }
 
         public static void SetItemType(this ProjectItem item, string itemType)
@@ -131,7 +135,7 @@ namespace PackmanVsix
             }
         }
 
-        public static void AddNestedFile(string parentFile, string newFile, string itemType = null)
+        public static async Task AddNestedFileAsync(string parentFile, string newFile, string itemType = null)
         {
             ProjectItem item = _dte.Solution.FindProjectItem(parentFile);
 
@@ -144,7 +148,7 @@ namespace PackmanVsix
 
                 if (item.ProjectItems == null || item.ContainingProject.IsKind(ProjectTypes.UNIVERSAL_APP))
                 {
-                    item.ContainingProject.AddFileToProject(newFile);
+                    await item.ContainingProject.AddFileToProjectAsync(newFile);
                 }
                 else if (_dte.Solution.FindProjectItem(newFile) == null)
                 {

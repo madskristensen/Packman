@@ -33,18 +33,17 @@ namespace PackmanVsix
 
         static void Copying(object sender, FileCopyEventArgs e)
         {
-            Logger.Log($"  Copying package files into project");
             ProjectHelpers.CheckFileOutOfSourceControl(e.Destination);
         }
 
         static void Installing(object sender, InstallEventArgs e)
         {
-            string msg = $"Installing package {e.Package.Name} {e.Package.Version}";
+            string msg = $"Installing package {e.Package.Name} {e.Package.Version}...";
             Logger.Log(msg);
             VSPackage.DTE.StatusBar.Text = msg;
         }
 
-        static void Installed(object sender, InstallEventArgs e)
+        static async void Installed(object sender, InstallEventArgs e)
         {
             var project = ProjectHelpers.GetActiveProject();
 
@@ -55,11 +54,11 @@ namespace PackmanVsix
                 try
                 {
                     var info = new FileInfo(absolute);
-                    project.AddFileToProject(info.FullName);
+                    await project.AddFileToProjectAsync(info.FullName);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // Angular has issues with its huge i18n folder. No idea why
+                    Logger.Log(ex);
                 }
             }
 
