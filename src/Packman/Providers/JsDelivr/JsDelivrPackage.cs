@@ -80,13 +80,19 @@ namespace Packman
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
 
-            if (!File.Exists(metaPath))
-            {
-                return null;
-            }
-
             try
             {
+                if (!File.Exists(metaPath))
+                {
+                    string url = string.Format(_metaPackageUrlFormat, Name);
+                    Directory.CreateDirectory(Path.GetDirectoryName(metaPath));
+
+                    using (WebClient client = new WebClient())
+                    {
+                        await client.DownloadFileTaskAsync(url, metaPath);
+                    }
+                }
+
                 using (StreamReader reader = new StreamReader(metaPath))
                 {
                     string json = await reader.ReadToEndAsync();

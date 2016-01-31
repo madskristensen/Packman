@@ -232,7 +232,6 @@
     <Compile Include="JSON\Completion\NameCompletionProvider.cs" />
     <Compile Include="JSON\Completion\VersionCompletionProvider.cs" />
     <Compile Include="JSON\Completion\SimpleCompletionEntry.cs" />
-    <Compile Include="JSON\JsonCreationListener.cs" />
     <Compile Include="JSON\Schema\ManifestSchemaSelector.cs" />
     <Compile Include="JSON\Validation\JsonErrorTag.cs" />
     <Compile Include="JSON\Validation\BaseValidator.cs" />
