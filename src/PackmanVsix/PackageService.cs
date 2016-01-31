@@ -7,16 +7,14 @@ namespace PackmanVsix
     static class PackageService
     {
         static IServiceProvider _serviceProvider;
-        static Manager _manager;
 
-        public static void Initialize(IServiceProvider serviceProvider, Manager manager)
+        public static void Initialize(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _manager = manager;
 
-            _manager.Installed += Installed;
-            _manager.Installing += Installing;
-            _manager.Copying += Copying;
+            Manager.Installed += Installed;
+            Manager.Installing += Installing;
+            Manager.Copying += Copying;
         }
 
         private static void Copying(object sender, FileCopyEventArgs e)

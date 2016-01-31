@@ -7,7 +7,6 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Microsoft.JSON.Core.Parser.TreeItems;
 using Microsoft.JSON.Editor.Completion;
-using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Utilities;
 
@@ -15,9 +14,8 @@ namespace PackmanVsix
 {
     [Export(typeof(IJSONCompletionListProvider))]
     [Name(nameof(FilesCompletionProvider))]
-    internal class FilesCompletionProvider : BaseCompletionProvider
+    class FilesCompletionProvider : BaseCompletionProvider
     {
-        static readonly StandardGlyphGroup _glyph = StandardGlyphGroup.GlyphGroupVariable;
 
         public override JSONCompletionContextType ContextType
         {

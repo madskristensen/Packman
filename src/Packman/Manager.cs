@@ -161,10 +161,10 @@ namespace Packman
                 Copied(this, new FileCopyEventArgs(source, destination));
         }
 
-        public event EventHandler<InstallEventArgs> Installing;
-        public event EventHandler<InstallEventArgs> Installed;
+        public static event EventHandler<InstallEventArgs> Installing;
+        public static event EventHandler<InstallEventArgs> Installed;
 
-        public event EventHandler<FileCopyEventArgs> Copying;
-        public event EventHandler<FileCopyEventArgs> Copied;
+        public static event EventHandler<FileCopyEventArgs> Copying;
+        public static event EventHandler<FileCopyEventArgs> Copied;
     }
 }

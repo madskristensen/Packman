@@ -34,7 +34,7 @@ namespace PackmanVsix
             Logger.Initialize(this, Name);
             Telemetry.Initialize(this, Version, "d8226d88-0507-4495-9c9c-63951a2151d3");
 
-            PackageService.Initialize(this, Manager);
+            PackageService.Initialize(this);
             InstallPackageCommand.Initialize(this);
             RestorePackagesCommand.Initialize(this);
 
