@@ -95,7 +95,7 @@ namespace Packman
 
                 using (StreamReader reader = new StreamReader(metaPath))
                 {
-                    string json = await reader.ReadToEndAsync();
+                    string json = reader.ReadToEnd();
 
                     if (!string.IsNullOrEmpty(json))
                     {

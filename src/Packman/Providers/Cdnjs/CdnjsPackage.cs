@@ -27,11 +27,11 @@ namespace Packman
             }
 
             var asset = metadata.Assets.FirstOrDefault(a => a.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
-            
+
             if (!Directory.Exists(dir))
             {
                 var list = new List<Task>();
-                
+
                 foreach (string fileName in asset.Files)
                 {
                     string url = string.Format(_downloadUrlFormat, Name, asset.Version, fileName);
@@ -70,6 +70,14 @@ namespace Packman
                 MainFile = metadata.MainFile,
                 AllFiles = asset.Files
             };
+
+            if (!package.Files.Contains(package.MainFile))
+            {
+                if (package.Files.Contains(Name))
+                    package.MainFile = Name;
+                else
+                    package.MainFile = package.Files.FirstOrDefault();
+            }
 
             return package;
         }

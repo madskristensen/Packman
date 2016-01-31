@@ -78,7 +78,7 @@ namespace Packman
                 return null;
             }
 
-            return await package.GetPackageMetaData(Name);
+            return await package.GetPackageMetaData(Name).ConfigureAwait(false);
         }
 
         public async Task<bool> InitializeAsync()
