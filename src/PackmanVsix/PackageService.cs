@@ -33,6 +33,7 @@ namespace PackmanVsix
 
         static void Copying(object sender, FileCopyEventArgs e)
         {
+            Logger.Log($"Copying {Path.GetFileName(e.Destination)}");
             ProjectHelpers.CheckFileOutOfSourceControl(e.Destination);
         }
 
