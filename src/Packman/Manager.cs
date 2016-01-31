@@ -124,8 +124,9 @@ namespace Packman
                     {
                         Directory.Delete(versionDir, true);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        System.Diagnostics.Debug.Write(ex);
                     }
                 }
             });

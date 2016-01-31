@@ -28,9 +28,9 @@ public static class Logger
                 pane.OutputString(DateTime.Now.ToString() + ": " + message + Environment.NewLine);
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Do nothing
+            System.Diagnostics.Debug.Write(ex);
         }
     }
 
