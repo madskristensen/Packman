@@ -252,12 +252,20 @@ namespace PackmanVsix
 
         public static bool IsConfigFile(this ProjectItem item)
         {
-            if (item == null || item.Properties == null || item.Kind != Constants.vsProjectItemKindPhysicalFile || item.ContainingProject == null)
+            if (item == null || item.Properties == null || !item.IsKind(Constants.vsProjectItemKindPhysicalFile) || item.ContainingProject == null)
                 return false;
 
             string fileName = Path.GetFileName(item.GetFullPath());
 
             return fileName.Equals(Defaults.ManifestFileName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsKind(this ProjectItem item, string kindGuid)
+        {
+            if (item == null)
+                return false;
+
+            return item.Kind.Equals(kindGuid, StringComparison.OrdinalIgnoreCase);
         }
     }
 

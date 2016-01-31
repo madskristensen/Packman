@@ -49,7 +49,7 @@ namespace PackmanVsix
         {
             var button = (OleMenuCommand)sender;
             var item = ProjectHelpers.GetSelectedItems().FirstOrDefault();
-            button.Visible = item != null && item.Kind == Constants.vsProjectItemKindPhysicalFolder;
+            button.Visible = item.IsKind(Constants.vsProjectItemKindPhysicalFolder);
         }
 
         async void Install(object sender, EventArgs e)
