@@ -1,5 +1,6 @@
 ﻿using System.Windows.Media;
 using Microsoft.JSON.Editor.Completion;
+using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.Web.Editor.Imaging;
 
@@ -17,12 +18,20 @@ namespace PackmanVsix
             : this(text, null, glyph, session)
         { }
 
+        public SimpleCompletionEntry(string text, ImageMoniker moniker, IIntellisenseSession session)
+            : this(text, null, WpfUtil.GetIconForImageMoniker(moniker, 16, 16), session)
+        { }
+
         public SimpleCompletionEntry(string text, ImageSource glyph, IIntellisenseSession session)
             : this(text, null, glyph, session)
         { }
 
         public SimpleCompletionEntry(string text, string description, IIntellisenseSession session)
             : base(text, "\"" + text + "\"", description, _glyph, null, false, session as ICompletionSession)
+        { }
+
+        public SimpleCompletionEntry(string text, string description, ImageMoniker moniker, IIntellisenseSession session)
+            : base(text, "\"" + text + "\"", description, WpfUtil.GetIconForImageMoniker(moniker, 16, 16), null, false, session as ICompletionSession)
         { }
 
         public SimpleCompletionEntry(string text, string description, StandardGlyphGroup glyph, IIntellisenseSession session)

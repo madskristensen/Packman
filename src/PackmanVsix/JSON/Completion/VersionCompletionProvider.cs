@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Microsoft.JSON.Core.Parser.TreeItems;
 using Microsoft.JSON.Editor.Completion;
-using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace PackmanVsix
@@ -12,8 +12,6 @@ namespace PackmanVsix
     [Name(nameof(VersionCompletionProvider))]
     class VersionCompletionProvider : BaseCompletionProvider
     {
-        static readonly StandardGlyphGroup _glyph = StandardGlyphGroup.GlyphGroupVariable;
-
         public override JSONCompletionContextType ContextType
         {
             get { return JSONCompletionContextType.PropertyValue; }
@@ -38,7 +36,7 @@ namespace PackmanVsix
 
                 foreach (var version in versions.Reverse())
                 {
-                    yield return new SimpleCompletionEntry(version, _glyph, context.Session);
+                    yield return new SimpleCompletionEntry(version, KnownMonikers.Version, context.Session);
                 }
             }
         }
