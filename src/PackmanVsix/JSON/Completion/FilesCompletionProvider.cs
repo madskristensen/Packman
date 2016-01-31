@@ -25,34 +25,34 @@ namespace PackmanVsix
         protected override IEnumerable<JSONCompletionEntry> GetEntries(JSONCompletionContext context)
         {
             var member = context.ContextItem.FindType<JSONMember>();
+            var list = new List<JSONCompletionEntry>();
 
             if (member == null || member.UnquotedNameText != "files")
-                yield break;
+                return list;
 
             var parent = member.Parent as JSONObject;
             var name = parent?.FindType<JSONMember>()?.UnquotedNameText;
 
             if (string.IsNullOrEmpty(name))
-                yield break;
+                return list;
 
             var children = parent.BlockItemChildren?.OfType<JSONMember>();
             var version = children?.SingleOrDefault(c => c.UnquotedNameText == "version");
 
             if (version == null)
-                yield break;
+                return list;
 
             var package = VSPackage.Manager.Provider.GetInstallablePackageAsync(name, version.UnquotedValueText).Result;
 
             if (package == null)
-                yield break;
+                return list;
 
             Telemetry.TrackEvent("Completion for files");
 
             JSONArray array = context.ContextItem.FindType<JSONArray>();
 
             if (array == null)
-
-                yield break;
+                return list;
 
             HashSet<string> usedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -84,7 +84,7 @@ namespace PackmanVsix
                     bool isThemeIcon;
                     ImageSource glyph = WpfUtil.GetIconForFile(o, file, out isThemeIcon);
 
-                    yield return new SimpleCompletionEntry(file, glyph, context.Session);
+                    list.Add(new SimpleCompletionEntry(file, glyph, context.Session));
                 }
             }
 
@@ -92,7 +92,8 @@ namespace PackmanVsix
             {
                 BindingOperations.ClearBinding(o, ImageThemingUtilities.ImageBackgroundColorProperty);
             }
-            //}
+
+            return list;
         }
     }
 }

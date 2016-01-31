@@ -57,13 +57,14 @@ namespace Packman
 
                     using (WebClient client = new WebClient())
                     {
-                        await client.DownloadFileTaskAsync(url, metaPath).ConfigureAwait(false);
+                        // When this is async, it deadlocks when called from FileCompletionProvider.cs
+                        client.DownloadFile(url, metaPath);
                     }
                 }
 
                 using (StreamReader reader = new StreamReader(metaPath))
                 {
-                    string json = reader.ReadToEnd();
+                    string json = await reader.ReadToEndAsync().ConfigureAwait(false);
 
                     if (!string.IsNullOrEmpty(json))
                     {

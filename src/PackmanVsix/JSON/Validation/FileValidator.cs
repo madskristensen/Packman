@@ -31,10 +31,6 @@ namespace PackmanVsix.JSON.Validation
             if (package == null || packages == null || packages.UnquotedNameText != "packages")
                 return JSONItemValidationResult.Continue;
 
-            //var metadata = VSPackage.Manager.Provider.GetPackageMetaDataAsync(package.UnquotedNameText).Result;
-
-            //if (metadata != null)
-            //{
             var parent = member.Parent as JSONObject;
             var children = parent?.BlockItemChildren.OfType<JSONMember>();
             var version = children?.SingleOrDefault(c => c.UnquotedNameText == "version");
@@ -52,7 +48,6 @@ namespace PackmanVsix.JSON.Validation
                 string message = $"({VSPackage.Name}) {item.Text} is not a valid file name for {package.Name.Text}.";
                 AddError(context, item, message);
             }
-            //}
 
             return JSONItemValidationResult.Continue;
         }

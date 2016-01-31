@@ -54,29 +54,23 @@ namespace Packman
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string metaPath = Path.Combine(rootCacheDir, providerName, Name, "metadata.json");
-
-            if (!File.Exists(metaPath))
-            {
-                using (WebClient client = new WebClient())
-                {
-                    string url = string.Format(_metaPackageUrlFormat, Name);
-                    try
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(metaPath));
-                        await client.DownloadFileTaskAsync(url, metaPath).ConfigureAwait(false);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                }
-            }
-
             try
             {
+                if (!File.Exists(metaPath))
+                {
+                    string url = string.Format(_metaPackageUrlFormat, Name);
+                    Directory.CreateDirectory(Path.GetDirectoryName(metaPath));
+
+                    using (WebClient client = new WebClient())
+                    {
+                        // When this is async, it deadlocks when called from FileCompletionProvider.cs
+                        client.DownloadFile(url, metaPath);
+                    }
+                }
+
                 using (StreamReader reader = new StreamReader(metaPath))
                 {
-                    string json = reader.ReadToEnd();
+                    string json = await reader.ReadToEndAsync().ConfigureAwait(false);
 
                     if (!string.IsNullOrEmpty(json))
                     {
@@ -86,7 +80,7 @@ namespace Packman
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.Write(ex.Message);
+                System.Diagnostics.Debug.Write(ex);
             }
 
             return null;
