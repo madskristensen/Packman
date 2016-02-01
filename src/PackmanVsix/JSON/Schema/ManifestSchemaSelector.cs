@@ -6,9 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.JSON.Core.Schema;
-using Packman;
 
-namespace WebCompilerVsix.JSON
+namespace PackmanVsix
 {
     [Export(typeof(IJSONSchemaSelector))]
     class ManifestSchemaSelector : IJSONSchemaSelector
@@ -24,7 +23,7 @@ namespace WebCompilerVsix.JSON
         {
             string fileName = Path.GetFileName(fileLocation);
 
-            if (fileName.Equals(Defaults.ManifestFileName, StringComparison.OrdinalIgnoreCase))
+            if (fileName.Equals(VSPackage.ManifestFileName, StringComparison.OrdinalIgnoreCase))
                 return GetSchemaFileName("json\\schema\\manifest-schema.json");
 
             return null;

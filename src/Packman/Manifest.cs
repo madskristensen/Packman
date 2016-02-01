@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -45,8 +46,17 @@ namespace Packman
 
             using (StreamWriter writer = new StreamWriter(FileName))
             {
+                OnSaving();
                 await writer.WriteAsync(json);
             }
         }
+
+        void OnSaving()
+        {
+            if (Saving != null)
+                Saving(this, EventArgs.Empty);
+        }
+
+        public static event EventHandler<EventArgs> Saving;
     }
 }

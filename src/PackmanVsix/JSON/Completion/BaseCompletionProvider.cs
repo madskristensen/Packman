@@ -29,7 +29,7 @@ namespace PackmanVsix
             {
                 string fileName = Path.GetFileName(document.FilePath);
 
-                if (fileName.Equals(Defaults.ManifestFileName, StringComparison.OrdinalIgnoreCase))
+                if (fileName.Equals(VSPackage.ManifestFileName, StringComparison.OrdinalIgnoreCase))
                 {
                     return GetEntries(context);
                 }
