@@ -28,7 +28,7 @@ namespace PackmanVsix
         static void Downloading(object sender, InstallEventArgs e)
         {
             string file = e.Package.AllFiles.Count() == 1 ? "file" : "files";
-            Logger.Log($"Downloading package {e.Package.Name} {e.Package.Version} ({e.Package.AllFiles.Count()} {file})");
+            Logger.Log($"Downloading {e.Package.Name} {e.Package.Version} ({e.Package.AllFiles.Count()} {file})");
         }
 
         static void Copying(object sender, FileCopyEventArgs e)
@@ -39,7 +39,7 @@ namespace PackmanVsix
 
         static void Installing(object sender, InstallEventArgs e)
         {
-            string msg = $"Installing package {e.Package.Name} {e.Package.Version}...";
+            string msg = $"Installing {e.Package.Name} {e.Package.Version}...";
             Logger.Log(msg);
             VSPackage.DTE.StatusBar.Text = msg;
         }
@@ -63,7 +63,7 @@ namespace PackmanVsix
                 }
             }
 
-            string msg = $"Installed package {e.Package.Name} {e.Package.Version} successfully";
+            string msg = $"Installed {e.Package.Name} {e.Package.Version} successfully";
             Logger.Log(msg);
             VSPackage.DTE.StatusBar.Text = msg;
         }
