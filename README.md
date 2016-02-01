@@ -1,11 +1,11 @@
-# Project Packman - a new package manager
+# Packman - a new package manager
 
 [![Build status](https://ci.appveyor.com/api/projects/status/o2oc8nlxf6lqr787?svg=true)](https://ci.appveyor.com/project/madskristensen/packman)
 
 Download the extension at the
 [VS Gallery](https://visualstudiogallery.msdn.microsoft.com/4cd5e0e0-2c38-426b-9f43-1d3688cc8be1)
 or get the
-[nightly build](http://vsixgallery.com/extension/ce753d0f-f511-4b2b-93de-5cc50145dca6/)
+[nightly build](http://vsixgallery.com/extension/ce753d0f-f511-4b2b-93de-5cc50145dca6/).
 
 See the
 [changelog](CHANGELOG.md)
