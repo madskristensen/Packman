@@ -7,7 +7,6 @@
   - [ ] Visual indication that packages has update
 - [ ] Uninstall package
   - [ ] Light bulb in `packman.json`
-- [ ] Remove all package artifacts from project
 - [x] UI for package search
   - [x] Preview of what's being installed
   - [x] Select exactly which files to install
