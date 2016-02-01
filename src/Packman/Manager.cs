@@ -93,7 +93,39 @@ namespace Packman
             return manifest;
         }
 
-        private async Task CopyPackageContent(InstallablePackage entry, InstallSettings settings)
+        public async Task<ManifestPackage> UninstallAsync(Manifest manifest, string name)
+        {
+            var package = manifest.Packages.FirstOrDefault(p => p.Key == name).Value;
+
+            if (package == null)
+                throw new PackageNotFoundException(name, null);
+
+            string cwd = Path.GetDirectoryName(manifest.FileName);
+            var installDir = Path.Combine(cwd, package.Path);
+
+            var files = package.Files;
+
+            if (files == null)
+            {
+                var installable = await Provider.GetInstallablePackageAsync(name, package.Version);
+
+                if (installable != null)
+                    files = installable.AllFiles;
+            }
+
+            foreach (string file in files)
+            {
+                string path = Path.Combine(installDir, file);
+                File.Delete(path);
+            }
+
+            manifest.Packages.Remove(name);
+            await manifest.Save();
+
+            return package;
+        }
+
+        async Task CopyPackageContent(InstallablePackage entry, InstallSettings settings)
         {
             string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string versionDir = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version);

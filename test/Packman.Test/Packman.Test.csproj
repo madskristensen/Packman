@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="UninstallTest.cs" />
     <Compile Include="StringTest.cs" />
     <Compile Include="InstallTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
