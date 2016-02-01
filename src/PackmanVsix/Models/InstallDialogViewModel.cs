@@ -213,10 +213,10 @@ namespace PackmanVsix.Models
             IEnumerable<string> packages = await VSPackage.Manager.Provider.GetPackageNamesAsync();
             IReadOnlyList<string> listedPackages = packages?.ToList();
             bool loadSuccess = true;
-            
+
             if (listedPackages == null || listedPackages.Count == 0)
             {
-                listedPackages = new[] {Properties.Resources.PackagesCouldNotBeLoaded};
+                listedPackages = new[] { Properties.Resources.PackagesCouldNotBeLoaded };
                 loadSuccess = false;
             }
 
@@ -303,6 +303,11 @@ namespace PackmanVsix.Models
                             children.Sort((x, y) => x.ItemType == y.ItemType ? StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name) : y.ItemType == PackageItemType.Folder ? 1 : -1);
 
                             currentRealParent.Children = children;
+
+                            if (currentVirtualParent != currentRealParent)
+                            {
+                                currentVirtualParent.Children = children;
+                            }
                         }
 
                         currentRealParent = next;
@@ -317,7 +322,6 @@ namespace PackmanVsix.Models
                             Name = parts[i],
                             ItemType = PackageItemType.File,
                             IsChecked = false,
-                            IsMain = string.Equals(package.MainFile, file, StringComparison.OrdinalIgnoreCase),
                         };
 
                         List<PackageItem> children = new List<PackageItem>(currentRealParent.Children)
@@ -328,6 +332,13 @@ namespace PackmanVsix.Models
                         children.Sort((x, y) => x.ItemType == y.ItemType ? StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name) : y.ItemType == PackageItemType.Folder ? -1 : 1);
 
                         currentRealParent.Children = children;
+
+                        if (currentVirtualParent != currentRealParent)
+                        {
+                            currentVirtualParent.Children = children;
+                        }
+
+                        next.IsMain = string.Equals(package.MainFile, file, StringComparison.OrdinalIgnoreCase);
                     }
                 }
             }
@@ -340,7 +351,7 @@ namespace PackmanVsix.Models
                 {
                     canUpdateInstallStatusValue = true;
                     _packageItem = packageItem;
-                    DisplayRoots = new[] {root};
+                    DisplayRoots = new[] { root };
                     SelectedFiles = selectedFiles;
                     InstallPackageCommand.CanExecute(null);
                 }
@@ -349,7 +360,7 @@ namespace PackmanVsix.Models
 
         private async void UpdateVersions(string name)
         {
-            string[] latest = new[] {Properties.Resources.LatestVersion};
+            string[] latest = new[] { Properties.Resources.LatestVersion };
             if (string.IsNullOrWhiteSpace(name))
             {
                 PackageVersions = latest;
