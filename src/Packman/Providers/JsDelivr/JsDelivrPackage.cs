@@ -20,7 +20,7 @@ namespace Packman
         {
             string rootCacheDir = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string dir = Path.Combine(rootCacheDir, providerName, Name, version);
-            var metadata = await GetPackageMetaData(providerName);
+            var metadata = await GetPackageMetaData(providerName).ConfigureAwait(false);
 
             if (metadata == null)
                 return null;
@@ -64,7 +64,7 @@ namespace Packman
 
                 using (StreamReader reader = new StreamReader(metaPath))
                 {
-                    string json = await reader.ReadToEndAsync();
+                    string json = await reader.ReadToEndAsync().ConfigureAwait(false);
 
                     if (!string.IsNullOrEmpty(json))
                     {

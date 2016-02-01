@@ -60,7 +60,7 @@ namespace Packman
                 return null;
             }
 
-            return await package.ToInstallablePackageAsync(version, Name);
+            return await package.ToInstallablePackageAsync(version, Name).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<string>> GetPackageNamesAsync()
