@@ -21,7 +21,7 @@ namespace PackmanVsix
             if (string.IsNullOrEmpty(folder))
                 return null;
 
-            return Path.Combine(folder, Defaults.ManifestFileName);
+            return Path.Combine(folder, VSPackage.ManifestFileName);
         }
 
         public static void CheckFileOutOfSourceControl(string file)
@@ -257,7 +257,7 @@ namespace PackmanVsix
 
             string fileName = Path.GetFileName(item.GetFullPath());
 
-            return fileName.Equals(Defaults.ManifestFileName, StringComparison.OrdinalIgnoreCase);
+            return fileName.Equals(VSPackage.ManifestFileName, StringComparison.OrdinalIgnoreCase);
         }
 
         public static bool IsKind(this ProjectItem item, string kindGuid)

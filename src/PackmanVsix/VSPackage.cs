@@ -17,6 +17,7 @@ namespace PackmanVsix
     {
         public const string Version = "1.0";
         public const string Name = "Packman";
+        public const string ManifestFileName = "packman.json";
 
         public static DTE2 DTE { get; private set; }
         public static Manager Manager { get; private set; }

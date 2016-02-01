@@ -11,6 +11,7 @@ namespace Packman.Test
     {
         string _cwd, _manifestPath;
         IEnumerable<Manager> _managers;
+        const string _manifestFileName = "packman.json";
 
         [TestInitialize]
         public void Initialize()
@@ -20,7 +21,7 @@ namespace Packman.Test
 
             Defaults.CacheDays = 3;
 
-            _manifestPath = Path.Combine(_cwd, Defaults.ManifestFileName);
+            _manifestPath = Path.Combine(_cwd, _manifestFileName);
 
             IPackageProvider[] managers = { new JsDelivrProvider(), new CdnjsProvider() };
             _managers = managers.Select(a => new Manager(a));
@@ -43,7 +44,7 @@ namespace Packman.Test
                 string path = Path.Combine(_cwd, "js");
                 await manager.Install(_manifestPath, entry, path);
 
-                string config = Path.Combine(_cwd, Defaults.ManifestFileName);
+                string config = Path.Combine(_cwd, _manifestFileName);
 
                 Assert.IsTrue(File.Exists(config), "Config not created");
 
@@ -61,7 +62,7 @@ namespace Packman.Test
                 string path = Path.Combine(_cwd, "js/lib");
                 await manager.Install(_manifestPath, entry, path);
 
-                string config = Path.Combine(_cwd, Defaults.ManifestFileName);
+                string config = Path.Combine(_cwd, _manifestFileName);
                 string content = File.ReadAllText(config);
 
                 Assert.IsTrue(File.Exists(config), "Config not created");
@@ -78,7 +79,7 @@ namespace Packman.Test
                 string path = Path.Combine(_cwd, "lib");
                 await manager.Install(_manifestPath, entry, path, false);
 
-                string config = Path.Combine(_cwd, Defaults.ManifestFileName);
+                string config = Path.Combine(_cwd, _manifestFileName);
 
                 if (File.Exists(config))
                 {
