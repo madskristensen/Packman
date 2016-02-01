@@ -93,18 +93,25 @@ namespace Packman
             return manifest;
         }
 
-        public async Task<ManifestPackage> UninstallAsync(Manifest manifest, string name)
+        public async Task<ManifestPackage> UninstallAsync(Manifest manifest, string name, bool saveManifest)
         {
             var package = manifest.Packages.FirstOrDefault(p => p.Key == name).Value;
 
             if (package == null)
                 throw new PackageNotFoundException(name, null);
 
+            if (saveManifest)
+            {
+                manifest.Packages.Remove(name);
+                await manifest.Save();
+            }
+
             string cwd = Path.GetDirectoryName(manifest.FileName);
             var installDir = Path.Combine(cwd, package.Path);
 
             var files = package.Files;
 
+            // If no files are specified in the entry, then find all files from package
             if (files == null)
             {
                 var installable = await Provider.GetInstallablePackageAsync(name, package.Version);
@@ -113,14 +120,14 @@ namespace Packman
                     files = installable.AllFiles;
             }
 
-            foreach (string file in files)
+            if (files != null)
             {
-                string path = Path.Combine(installDir, file);
-                File.Delete(path);
+                foreach (string file in files)
+                {
+                    string path = Path.Combine(installDir, file);
+                    File.Delete(path);
+                }
             }
-
-            manifest.Packages.Remove(name);
-            await manifest.Save();
 
             return package;
         }

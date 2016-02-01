@@ -49,7 +49,7 @@ namespace Packman.Test
 
                 Assert.IsTrue(File.Exists(file), "Package was not isntalled correctly");
 
-                await manager.UninstallAsync(manifest, name);
+                await manager.UninstallAsync(manifest, name, true);
                 Assert.IsFalse(manifest.Packages.ContainsKey(name));
                 Assert.IsFalse(File.Exists(file), "Package was not removed");
             }

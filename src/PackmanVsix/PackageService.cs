@@ -16,8 +16,11 @@ namespace PackmanVsix
             Manager.Installed += Installed;
             Manager.Installing += Installing;
             Manager.Copying += Copying;
+
             InstallablePackage.Downloading += Downloading;
             InstallablePackage.Downloaded += Downloaded;
+
+            Manifest.Saving += Saving;
         }
 
         static void Downloaded(object sender, InstallEventArgs e)
@@ -66,6 +69,14 @@ namespace PackmanVsix
             string msg = $"Installed {e.Package.Name} {e.Package.Version} successfully";
             Logger.Log(msg);
             VSPackage.DTE.StatusBar.Text = msg;
+        }
+
+        static void Saving(object sender, EventArgs e)
+        {
+            var manifest = (Manifest)sender;
+
+            if (manifest != null && !string.IsNullOrEmpty(manifest.FileName))
+                ProjectHelpers.CheckFileOutOfSourceControl(manifest.FileName);
         }
     }
 }
