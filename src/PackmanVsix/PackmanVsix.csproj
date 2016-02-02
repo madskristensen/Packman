@@ -232,6 +232,7 @@
     <Compile Include="InstallDialog.xaml.cs">
       <DependentUpon>InstallDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JSON\JsonCreationListener.cs" />
     <Compile Include="Models\ActionCommand.cs" />
     <Compile Include="Models\BindableBase.cs" />
     <Compile Include="Models\InstallDialogViewModel.cs" />

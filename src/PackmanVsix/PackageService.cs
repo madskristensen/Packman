@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.JSON.Core.Parser;
 using Packman;
 
 namespace PackmanVsix
@@ -21,6 +23,45 @@ namespace PackmanVsix
             InstallablePackage.Downloaded += Downloaded;
 
             Manifest.Saving += Saving;
+        }
+
+        public static async Task RestorePackagesAsync(string manifestFile)
+        {
+            try
+            {
+                if (await IsValidJson(manifestFile))
+                {
+                    var manifest = await Manifest.FromFileOrNewAsync(manifestFile);
+                    await VSPackage.Manager.InstallAll(manifest);
+
+                    Telemetry.TrackEvent("Packages restored");
+                }
+                else
+                {
+                    VSPackage.DTE.StatusBar.Text = Properties.Resources.ManifestInvalidJson;
+                }
+            }
+            catch (PackageNotFoundException ex)
+            {
+                VSPackage.DTE.StatusBar.Text = string.Format(Properties.Resources.ExceptionLoadingPackages, ex.Name, ex.Version);
+                Logger.Log(ex);
+            }
+            catch (Exception ex)
+            {
+                VSPackage.DTE.StatusBar.Text = Properties.Resources.ErrorRestoringPackages;
+                Logger.Log(ex);
+            }
+        }
+
+        static async Task<bool> IsValidJson(string file)
+        {
+            using (StreamReader reader = new StreamReader(file))
+            {
+                string json = await reader.ReadToEndAsync();
+                var doc = JSONParser.Parse(json);
+
+                return doc.IsValid;
+            }
         }
 
         static void Downloaded(object sender, InstallEventArgs e)
