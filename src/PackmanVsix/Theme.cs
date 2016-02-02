@@ -13,9 +13,11 @@ namespace PackmanVsix
             ResourceDictionary shellResources = (ResourceDictionary) Application.LoadComponent(new Uri("Microsoft.VisualStudio.Platform.WindowManagement;component/Themes/ThemedDialogDefaultStyles.xaml", UriKind.Relative));
             ResourceDictionary scrollStyleContainer = (ResourceDictionary) Application.LoadComponent(new Uri("Microsoft.VisualStudio.Shell.UI.Internal;component/Styles/ScrollBarStyle.xaml", UriKind.Relative));
             ResourceDictionary localThemingContainer = (ResourceDictionary)Application.LoadComponent(new Uri("PackmanVsix;component/Controls/Shared.xaml", UriKind.Relative));
+            ResourceDictionary comboTheme = (ResourceDictionary)Application.LoadComponent(new Uri("PackmanVsix;component/Controls/VsThemedComboBox.xaml", UriKind.Relative));
             allResources.MergedDictionaries.Add(shellResources);
             allResources.MergedDictionaries.Add(scrollStyleContainer);
             allResources.MergedDictionaries.Add(localThemingContainer);
+            allResources.MergedDictionaries.Add(comboTheme);
             allResources[typeof (ScrollViewer)] = new Style
             {
                 TargetType = typeof (ScrollViewer),
@@ -24,7 +26,7 @@ namespace PackmanVsix
             return allResources;
         }
 
-        private static ResourceDictionary ThemeResources => BuildThemeResources();
+        private static ResourceDictionary ThemeResources { get; } = BuildThemeResources();
 
         public static void ShouldBeThemed(this FrameworkElement control)
         {
