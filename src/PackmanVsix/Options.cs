@@ -12,6 +12,12 @@ namespace PackmanVsix
         [DefaultValue(true)]
         public bool SaveManifestFile { get; set; } = true;
 
+        [DisplayName("Restore packages on save")]
+        [Category("Package install")]
+        [Description("Automatically restore packages when saving package.json.")]
+        [DefaultValue(true)]
+        public bool RestoreOnSave { get; set; } = true;
+
         [DisplayName("Add package folder")]
         [Category("Package install")]
         [Description("Creates a new folder for the package instead of installing the files directly into the selected folder.")]

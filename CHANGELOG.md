@@ -2,6 +2,8 @@
 
 - [x] Install packages
 - [x] Restore packages
+  - [x] Context menu button in Solution Explorer
+  - [x] When saving `packman.json`
 - [ ] Update package
   - [ ] Light bulb in `packman.json`
   - [ ] Visual indication that packages has update
@@ -26,6 +28,8 @@
 - [x] Offline support (works from cache)
 - [x] Options dialog
 - [ ] Visual indication that folder/file is from package
+- [ ] Cross-platform command line interface
+- [ ] List packages under the _Dependencies_ node in Solution Explorer
 
 Features that have a checkmark are complete and available for
 download in the

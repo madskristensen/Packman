@@ -129,6 +129,9 @@
   <data name="MainFileToolTip" xml:space="preserve">
     <value>The main file for this package</value>
   </data>
+  <data name="ManifestInvalidJson" xml:space="preserve">
+    <value>Packman.json contains syntax errors</value>
+  </data>
   <data name="PackagesCouldNotBeLoaded" xml:space="preserve">
     <value>Packages could not be loaded</value>
   </data>

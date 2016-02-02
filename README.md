@@ -1,18 +1,31 @@
-# Project Packman - a new package manager
-
-Packman is a client-side package manager for JavaScript
-and CSS libraries.
+# Packman - a new package manager
 
 [![Build status](https://ci.appveyor.com/api/projects/status/o2oc8nlxf6lqr787?svg=true)](https://ci.appveyor.com/project/madskristensen/packman)
 
 Download the extension at the
 [VS Gallery](https://visualstudiogallery.msdn.microsoft.com/4cd5e0e0-2c38-426b-9f43-1d3688cc8be1)
 or get the
-[nightly build](http://vsixgallery.com/extension/ce753d0f-f511-4b2b-93de-5cc50145dca6/)
+[nightly build](http://vsixgallery.com/extension/ce753d0f-f511-4b2b-93de-5cc50145dca6/).
 
 See the
 [changelog](CHANGELOG.md)
 for changes and roadmap.
+
+---------------------------------------------------
+
+Packman is a package manager for client-side packages
+such as JavaScript and CSS libraries. It uses well
+established global content delivery networks that hosts
+thousands of the most popular libraries.
+
+Because it uses these content delivery networks as
+data source, it allows the user to be in total control
+over where to install the packages and what files
+to install. The user is in complete control of what 
+is added to the project.
+
+This makes Packman the fastest and most flexible package
+manager on the market.
 
 ## Features
 
@@ -21,6 +34,7 @@ for changes and roadmap.
 - Only installs the files you need and nothing else
 - Great Visual Studio integration
 - Is based on existing CDN infrastructure
+- Can use JsDelivr and Cdnjs as pacakge catalogs
 
 ### Installing a package
 Right-click any folder in your projet and hit
@@ -95,3 +109,14 @@ This will hydrate your project with the files from all
 the packags listed in packman.json.
 
 ## Options
+An options page is available in the Visual Studio 
+options dialog.
+
+![Options](art/options.png)
+
+From here you can set various settings including which
+provider to use - 
+[JsDelivr](http://www.jsdelivr.com/)
+or
+[Cdnjs](https://cdnjs.com/)
+.

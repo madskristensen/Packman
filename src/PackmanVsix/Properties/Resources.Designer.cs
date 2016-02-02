@@ -97,6 +97,15 @@ namespace PackmanVsix.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Packman.json contains syntax errors.
+        /// </summary>
+        internal static string ManifestInvalidJson {
+            get {
+                return ResourceManager.GetString("ManifestInvalidJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Packages could not be loaded.
         /// </summary>
         internal static string PackagesCouldNotBeLoaded {

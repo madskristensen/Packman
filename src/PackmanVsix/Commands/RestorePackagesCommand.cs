@@ -55,22 +55,7 @@ namespace PackmanVsix
             if (item == null)
                 return;
 
-            try
-            {
-                var manifest = await Manifest.FromFileOrNewAsync(item.GetFullPath());
-                await VSPackage.Manager.InstallAll(manifest);
-
-                Telemetry.TrackEvent("Packages restored");
-            }
-            catch (PackageNotFoundException ex)
-            {
-                VSPackage.DTE.StatusBar.Text = string.Format(Properties.Resources.ExceptionLoadingPackages, ex.Name, ex.Version);
-            }
-            catch (Exception ex)
-            {
-                VSPackage.DTE.StatusBar.Text = Properties.Resources.ErrorRestoringPackages;
-                Logger.Log(ex);
-            }
+            await PackageService.RestorePackagesAsync(item.GetFullPath());
         }
     }
 }
