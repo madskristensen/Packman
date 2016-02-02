@@ -18,7 +18,7 @@
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-        <ComboBox x:Name="cbName" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10 0" IsEditable="True" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" IsTextSearchEnabled="True" Text="{Binding Path=PackageName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" ItemsSource="{Binding Path=AvailablePackages}" IsEnabled="{Binding Path=IsPackageListLoaded}">
+        <ComboBox x:Name="cbName" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10 0" IsEditable="True" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" ScrollViewer.CanContentScroll="True"  IsTextSearchEnabled="True" Text="{Binding Path=PackageName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" ItemsSource="{Binding Path=AvailablePackages}" IsEnabled="{Binding Path=IsPackageListLoaded}">
             <ComboBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel/>
