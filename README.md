@@ -30,11 +30,17 @@ manager on the market.
 ## Features
 
 - Fastest package manager in the world
+  - Package installs take just milliseconds
+- Contains all the relevant client-side packages
+- Always up-to-date with the latest package versions
 - Can install packages into any folder
 - Only installs the files you need and nothing else
+  - Unlike Bower and npm that installs many extra files
 - Great Visual Studio integration
 - Is based on existing CDN infrastructure
-- Can use JsDelivr and Cdnjs as pacakge catalogs
+  - Uses [JsDelivr](http://www.jsdelivr.com/) and [Cdnjs](https://cdnjs.com/) as package catalogs
+- Work in all Visual Studio projects types
+  - Including ASP.NET, Cordova and Universal Windows Apps
 
 ### Installing a package
 Right-click any folder in your projet and hit
@@ -107,6 +113,10 @@ package.json manifest file and select
 
 This will hydrate your project with the files from all
 the packags listed in packman.json.
+
+Package restore will also happen every time you save
+packman.json. This behavior can be disabled in the
+options dialog.
 
 ## Options
 An options page is available in the Visual Studio 
