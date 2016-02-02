@@ -137,7 +137,7 @@ namespace Packman
             string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string versionDir = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version);
 
-            await entry.DownloadFiles(versionDir);
+            await entry.DownloadFilesAsync(versionDir);
 
             await Task.Run(() =>
             {

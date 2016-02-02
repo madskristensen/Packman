@@ -39,6 +39,7 @@ namespace Packman.Test
             foreach (var manager in _managers)
             {
                 var entry = await manager.Provider.GetInstallablePackageAsync("jquery", "2.2.0");
+                entry.Files = new [] { "jquery.js"};
 
                 Assert.IsNotNull(entry.MainFile, "Main file is not set");
                 string path = Path.Combine(_cwd, "js");

@@ -33,8 +33,8 @@ namespace Packman.Test
             Directory.Delete(_cwd, true);
         }
 
-        [TestMethod, TestCategory("Unisntall")]
-        public async Task InstallPackage()
+        [TestMethod, TestCategory("Uninsntall")]
+        public async Task UninstallPackage()
         {
             string name = "jquery";
             string version = "2.2.0";

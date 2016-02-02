@@ -20,7 +20,7 @@ namespace PackmanVsix
             Manager.Copying += Copying;
 
             InstallablePackage.Downloading += Downloading;
-            InstallablePackage.Downloaded += Downloaded;
+            InstallablePackage.DownloadingRemainingFiles += DownloadingRemainingFiles;
 
             Manifest.Saving += Saving;
         }
@@ -64,15 +64,17 @@ namespace PackmanVsix
             }
         }
 
-        static void Downloaded(object sender, InstallEventArgs e)
+        static void DownloadingRemainingFiles(object sender, InstallEventArgs e)
         {
-            Logger.Log($"Downloaded {e.Package.Name} {e.Package.Version} successfully");
+            int count = e.Package.AllFiles.Count() - e.Package.Files.Count();
+            string file = count == 1 ? "file" : "files";
+            Logger.Log($"Downloading remaining {e.Package.Name} {e.Package.Version} ({count} {file})");
         }
 
         static void Downloading(object sender, InstallEventArgs e)
         {
             string file = e.Package.AllFiles.Count() == 1 ? "file" : "files";
-            Logger.Log($"Downloading {e.Package.Name} {e.Package.Version} ({e.Package.AllFiles.Count()} {file})");
+            Logger.Log($"Downloading {e.Package.Name} {e.Package.Version} ({e.Package.Files.Count()} {file})");
         }
 
         static void Copying(object sender, FileCopyEventArgs e)

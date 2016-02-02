@@ -35,30 +35,57 @@ namespace Packman
             return false;
         }
 
-        internal async Task DownloadFiles(string downloadDir)
+        internal async Task DownloadFilesAsync(string downloadDir)
         {
             if (Directory.Exists(downloadDir))
                 return;
 
-            var list = new List<Task>();
-
-            foreach (string fileName in AllFiles)
-            {
-                string url = string.Format(UrlFormat, Name, Version, fileName);
-                var localFile = new FileInfo(Path.Combine(downloadDir, fileName));
-
-                localFile.Directory.Create();
-
-                using (WebClient client = new WebClient())
-                {
-                    var task = client.DownloadFileTaskAsync(url, localFile.FullName);
-                    list.Add(task);
-                }
-            }
+            var list = DownloadFiles(downloadDir, Files);
 
             OnDownloading(downloadDir);
             await Task.WhenAll(list);
-            OnDownloaded(downloadDir);
+
+            var remaining = AllFiles.Where(f => !Files.Contains(f));
+
+            if (remaining.Any())
+            {
+                // Fire and forget to return call immediately. Download the rest of the files
+                // TODO: Is there a more elegant way than using the threadpool like this?
+                System.Threading.ThreadPool.QueueUserWorkItem(async (o) =>
+                {
+                    OnDownloadingRemainingFiles(downloadDir);
+
+                    await Task.WhenAll(DownloadFiles(downloadDir, remaining));
+                });
+            }
+        }
+
+        List<Task> DownloadFiles(string downloadDir, IEnumerable<string> files)
+        {
+            var list = new List<Task>();
+
+            foreach (string fileName in files)
+            {
+                try
+                {
+                    string url = string.Format(UrlFormat, Name, Version, fileName);
+                    var localFile = new FileInfo(Path.Combine(downloadDir, fileName));
+
+                    localFile.Directory.Create();
+
+                    using (WebClient client = new WebClient())
+                    {
+                        var task = client.DownloadFileTaskAsync(url, localFile.FullName);
+                        list.Add(task);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.Write(ex);
+                }
+            }
+
+            return list;
         }
 
         void OnDownloading(string path)
@@ -67,13 +94,13 @@ namespace Packman
                 Downloading(this, new InstallEventArgs(this, path));
         }
 
-        void OnDownloaded(string path)
+        void OnDownloadingRemainingFiles(string path)
         {
-            if (Downloaded != null)
-                Downloaded(this, new InstallEventArgs(this, path));
+            if (DownloadingRemainingFiles != null)
+                DownloadingRemainingFiles(this, new InstallEventArgs(this, path));
         }
 
         public static event EventHandler<InstallEventArgs> Downloading;
-        public static event EventHandler<InstallEventArgs> Downloaded;
+        public static event EventHandler<InstallEventArgs> DownloadingRemainingFiles;
     }
 }
