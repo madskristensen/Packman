@@ -12,7 +12,7 @@
 
         <Buttons>
             <Button guid="guidLibrarianCmdSet" id="InstallLibrary" priority="0x0100" type="Button">
-                <Icon guid="ImageCatalogGuid" id="NewPackage" />
+                <Icon guid="ImageCatalogGuid" id="NewWebMethodAction" />
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
@@ -22,7 +22,7 @@
             </Button>
             <Button guid="guidLibrarianCmdSet" id="RestoreAll" priority="0x0200" type="Button">
                 <Parent guid="guidLibrarianCmdSet" id="ContextMenuGroup" />
-                <Icon guid="ImageCatalogGuid" id="Package" />
+                <Icon guid="ImageCatalogGuid" id="WebMethodAction" />
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>

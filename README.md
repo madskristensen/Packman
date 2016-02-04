@@ -128,5 +128,4 @@ From here you can set various settings including which
 provider to use - 
 [JsDelivr](http://www.jsdelivr.com/)
 or
-[Cdnjs](https://cdnjs.com/)
-.
+[Cdnjs](https://cdnjs.com/).
