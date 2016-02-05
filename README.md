@@ -140,3 +140,6 @@ provider to use -
 [JsDelivr](http://www.jsdelivr.com/)
 or
 [Cdnjs](https://cdnjs.com/).
+
+## License
+[Apache 2.0](LICENSE)
