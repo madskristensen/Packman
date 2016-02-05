@@ -29,9 +29,11 @@ manager on the market. It also means that Packman isn't
 a real package manager in the traditional sense at all.
 
 ## Reasons for using Packman
-1. For simple apps that just needs a few client libraries
+1. For apps not currently using another package manager
 2. For projects where you think Bower and npm are overkill
 3. For developers that don't want to use Bower or npm
+4. For developers that values simplicity in their tools
+5. For ASP.NET Core apps where NuGet can't install content packages
 
 ## Reasons for NOT using Packman
 1. Developer/team likes using Bower and/or npm
