@@ -25,7 +25,18 @@ to install. The user is in complete control of what
 is added to the project.
 
 This makes Packman the fastest and most flexible package
-manager on the market.
+manager on the market. It also means that Packman isn't
+a real package manager in the traditional sense at all.
+
+## Reasons for using Packman
+1. For simple apps that just needs a few client libraries
+2. For projects where you think Bower and npm are overkill
+3. For developers that don't want to use Bower or npm
+
+## Reasons for NOT using Packman
+1. Developer/team likes using Bower and/or npm
+2. For apps that uses WebPack or Browserify for module loading/bundling
+3. For app types where NuGet works just fine
 
 ## Features
 
