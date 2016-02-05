@@ -5,6 +5,62 @@
   "type": "object",
   "required": [ "packages" ],
 
+  "definitions": {
+    "nameBasedPackageUse": {
+      "properties": {
+        "version": {
+          "description": "The version of the package.",
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\\+[0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*)?$"
+        },
+        "files": {
+          "description": "The file names to copy into the project.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "uniqueItems": true
+          }
+        }
+      },
+      "required": [ "version" ],
+      "not": {
+        "properties": {
+          "urls": { }
+        },
+        "required": [ "urls" ]
+      }
+    },
+    "urlBasedPackageUse": {
+      "properties": {
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "required": [ "urls" ],
+      "not": {
+        "anyOf": [
+          {
+            "properties": {
+              "version": { }
+            },
+            "required": [ "version" ]
+          },
+          {
+            "properties": {
+              "files": { }
+            },
+            "required": [ "files" ]
+          }
+        ]
+      }
+    }
+  },
+
   "properties": {
     "packages": {
       "description": "A list of package objects.",
@@ -12,29 +68,20 @@
 
       "additionalProperties": {
         "type": "object",
-        "required": [ "path", "version" ],
+        "required": [ "path" ],
 
         "properties": {
           "path": {
             "description": "The local relative path to the directory where the package artifacts will be copied into.",
             "type": "string",
             "minLength": 1
-          },
-          "version": {
-            "description": "The version of the package.",
-            "type": "string",
-            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\\+[0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*)?$"
-          },
-          "files": {
-            "description": "The file names to copy into the project.",
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "string",
-              "uniqueItems": true
-            }
           }
-        }
+        },
+
+        "anyOf": [
+          { "$ref": "#/definitions/nameBasedPackageUse" },
+          { "$ref": "#/definitions/urlBasedPackageUse" }
+        ]
       }
     }
   }
