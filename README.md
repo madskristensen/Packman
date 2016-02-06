@@ -117,6 +117,24 @@ and file names.
 You only get Intellisense for file names if the _version_
 property exist and has an accurate value.
 
+### Custom URLs
+You can create custom packages that will download files
+at any URL you specify. To do that, open `packman.json`
+and add a custom entry like so:
+
+```json
+"my-custom-package":{
+  "path": "output/custom",
+  "urls": [ 
+    "http://example.com/file.js",
+    "http://example.com/file.min.js"
+  ]
+}
+```
+
+Then simply restore the packages to download and add the
+files to your project.
+
 ### Restoring packages
 It's very easy to restore packages. Just right-click the
 package.json manifest file and select
