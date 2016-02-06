@@ -36,6 +36,11 @@ namespace Packman
                 Manifest manifest = JsonConvert.DeserializeObject<Manifest>(content);
                 manifest.FileName = fileName;
 
+                foreach (var name in manifest.Packages.Keys)
+                {
+                    manifest.Packages[name].Name = name;
+                }
+
                 return manifest;
             }
         }

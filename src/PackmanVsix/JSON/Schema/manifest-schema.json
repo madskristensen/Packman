@@ -19,6 +19,7 @@
           "minItems": 1,
           "items": {
             "type": "string",
+            "minLength": 1,
             "uniqueItems": true
           }
         }
@@ -37,7 +38,8 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "minLength": 1
           }
         }
       },

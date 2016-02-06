@@ -1,0 +1,11 @@
+﻿{
+  "packages": {
+    "mypackage": {
+      "path": "custom",
+      "urls": [
+        "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"
+      ]
+    }
+  }
+}

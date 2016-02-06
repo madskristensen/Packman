@@ -4,13 +4,13 @@ namespace Packman
 {
     public class InstallEventArgs : EventArgs
     {
-        public InstallEventArgs(InstallablePackage package, string path)
+        public InstallEventArgs(IInstallablePackage package, string path)
         {
             Package = package;
             Path = path;
         }
 
-        public InstallablePackage Package { get; }
+        public IInstallablePackage Package { get; }
 
         public string Path { get; }
     }

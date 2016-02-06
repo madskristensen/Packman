@@ -5,7 +5,10 @@ namespace Packman
 {
     public class ManifestPackage
     {
-        [JsonProperty("version"), JsonRequired]
+        [JsonIgnore]
+        public string Name { get; set; }
+
+        [JsonProperty("version")]
         public string Version { get; set; }
 
         [JsonProperty("path"), JsonRequired]
@@ -13,5 +16,8 @@ namespace Packman
 
         [JsonProperty("files", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<string> Files { get; set; }
+
+        [JsonProperty("urls", NullValueHandling = NullValueHandling.Ignore)]
+        public IEnumerable<string> Urls { get; set; }
     }
 }

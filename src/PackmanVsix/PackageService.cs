@@ -66,15 +66,15 @@ namespace PackmanVsix
 
         static void DownloadingRemainingFiles(object sender, InstallEventArgs e)
         {
-            int count = e.Package.AllFiles.Count() - e.Package.Files.Count();
+            int count = e.Package.TotalFileCount - e.Package.Files.Count();
             string file = count == 1 ? "file" : "files";
-            Logger.Log($"Downloading remaining {e.Package.Name} {e.Package.Version} ({count} {file})");
+            Logger.Log($"Downloading remaining {e.Package.Name} ({count} {file})");
         }
 
         static void Downloading(object sender, InstallEventArgs e)
         {
-            string file = e.Package.AllFiles.Count() == 1 ? "file" : "files";
-            Logger.Log($"Downloading {e.Package.Name} {e.Package.Version} ({e.Package.Files.Count()} {file})");
+            string file = e.Package.TotalFileCount == 1 ? "file" : "files";
+            Logger.Log($"Downloading {e.Package.Name} ({e.Package.Files.Count()} {file})");
         }
 
         static void Copying(object sender, FileCopyEventArgs e)
@@ -85,7 +85,7 @@ namespace PackmanVsix
 
         static void Installing(object sender, InstallEventArgs e)
         {
-            string msg = $"Installing {e.Package.Name} {e.Package.Version}...";
+            string msg = $"Installing {e.Package.Name}...";
             Logger.Log(msg);
             VSPackage.DTE.StatusBar.Text = msg;
         }
@@ -109,7 +109,7 @@ namespace PackmanVsix
                 }
             }
 
-            string msg = $"Installed {e.Package.Name} {e.Package.Version} successfully";
+            string msg = $"Installed {e.Package.Name} successfully";
             Logger.Log(msg);
             VSPackage.DTE.StatusBar.Text = msg;
         }

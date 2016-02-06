@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Packman
@@ -19,26 +21,33 @@ namespace Packman
             foreach (var name in manifest.Packages.Keys)
             {
                 var entry = manifest.Packages[name];
-                var package = await Provider.GetInstallablePackageAsync(name, entry.Version);
 
-                if (package == null)
-                    throw new PackageNotFoundException(name, entry.Version);
-
-                if (entry.Files != null && entry.Files.Count() != package.Files.Count())
-                    package.Files = entry.Files;
-
-                var file = new FileInfo(manifest.FileName);
-
-                var settings = new InstallSettings
+                if (entry.Urls != null)
                 {
-                    InstallDirectory = Path.Combine(file.DirectoryName, entry.Path.Replace("/", "\\")),
-                    SaveManifest = false
-                };
+                    await InstallUrls(manifest, entry);
+                }
+                else
+                {
+                    var package = await Provider.GetInstallablePackageAsync(name, entry.Version);
 
-                await Install(manifest, package, settings);
+                    if (package == null)
+                        throw new PackageNotFoundException(name, entry.Version);
+
+                    if (entry.Files != null && entry.Files.Count() != package.Files.Count())
+                        package.Files = entry.Files;
+
+                    var file = new FileInfo(manifest.FileName);
+
+                    var settings = new InstallSettings
+                    {
+                        InstallDirectory = Path.Combine(file.DirectoryName, entry.Path.Replace("/", "\\")),
+                        SaveManifest = false
+                    };
+
+                    await Install(manifest, package, settings);
+                }
             }
         }
-
 
         public async Task<Manifest> Install(string manifestFilePath, InstallablePackage entry, string installDirectory, bool saveManifest = true)
         {
@@ -91,6 +100,39 @@ namespace Packman
             OnInstalled(entry, settings.InstallDirectory);
 
             return manifest;
+        }
+
+        async Task InstallUrls(Manifest manifest, ManifestPackage package)
+        {
+            string dir = Path.GetDirectoryName(manifest.FileName);
+            string path = Path.Combine(dir, package.Path).Replace("\\", "/");
+            var files = new List<string>();
+
+            var urlPackage = new UrlPackage
+            {
+                Name = package.Name,
+                Files = files
+            };
+
+            OnInstalling(urlPackage, path);
+
+            foreach (string url in package.Urls)
+            {
+                string fileName = Path.GetFileName(url);
+                string filePath = Path.Combine(dir, package.Path, fileName);
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                files.Add(fileName);
+
+                using (WebClient client = new WebClient())
+                {
+                    OnCopying(url, filePath);
+                    await client.DownloadFileTaskAsync(url, filePath);
+                    OnCopied(url, filePath);
+                }
+            }
+
+            OnInstalled(urlPackage, path);
         }
 
         public async Task<ManifestPackage> UninstallAsync(Manifest manifest, string name, bool saveManifest)
@@ -179,13 +221,13 @@ namespace Packman
             return Uri.UnescapeDataString(baseUri.MakeRelativeUri(fileUri).ToString()).Trim('/');
         }
 
-        void OnInstalling(InstallablePackage package, string path)
+        void OnInstalling(IInstallablePackage package, string path)
         {
             if (Installing != null)
                 Installing(this, new InstallEventArgs(package, path));
         }
 
-        void OnInstalled(InstallablePackage package, string path)
+        void OnInstalled(IInstallablePackage package, string path)
         {
             if (Installed != null)
                 Installed(this, new InstallEventArgs(package, path));

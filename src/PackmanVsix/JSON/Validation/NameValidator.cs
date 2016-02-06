@@ -25,6 +25,11 @@ namespace PackmanVsix.JSON.Validation
             if (packages == null || packages.UnquotedNameText != "packages")
                 return JSONItemValidationResult.Continue;
 
+            var children = (member.Value as JSONObject)?.BlockItemChildren?.OfType<JSONMember>();
+
+            if (!children.Any(c => c.UnquotedNameText == "version"))
+                return JSONItemValidationResult.Continue;
+
             var names = VSPackage.Manager.Provider.GetPackageNamesAsync().Result;
 
             if (names != null && !names.Contains(member.UnquotedNameText))

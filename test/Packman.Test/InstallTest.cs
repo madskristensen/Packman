@@ -31,6 +31,10 @@ namespace Packman.Test
         public void Cleanup()
         {
             Directory.Delete(_cwd, true);
+
+            string artifactTests = "..\\..\\artifacts\\custom";
+            if (Directory.Exists(artifactTests))
+                Directory.Delete(artifactTests, true);
         }
 
         [TestMethod, TestCategory("Install")]
@@ -39,7 +43,7 @@ namespace Packman.Test
             foreach (var manager in _managers)
             {
                 var entry = await manager.Provider.GetInstallablePackageAsync("jquery", "2.2.0");
-                entry.Files = new [] { "jquery.js"};
+                entry.Files = new[] { "jquery.js" };
 
                 Assert.IsNotNull(entry.MainFile, "Main file is not set");
                 string path = Path.Combine(_cwd, "js");
@@ -88,6 +92,20 @@ namespace Packman.Test
                     Assert.IsFalse(content.Contains("16pixels"));
                 }
             }
+        }
+
+        [TestMethod, TestCategory("Install")]
+        public async Task InstallCustomUrls()
+        {
+            string root = new DirectoryInfo("..\\..\\artifacts").FullName;
+            string manifestFilePath = Path.Combine(root, "urlinstall.json");
+
+            Manifest manifest = await Manifest.FromFileOrNewAsync(manifestFilePath);
+            await _managers.First().InstallAll(manifest);
+
+            string file = Path.Combine(root, "custom", "jquery.js");
+            Assert.IsTrue(File.Exists(file));
+
         }
     }
 }

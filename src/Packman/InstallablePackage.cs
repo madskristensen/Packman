@@ -7,7 +7,7 @@ using System;
 
 namespace Packman
 {
-    public class InstallablePackage
+    public class InstallablePackage : IInstallablePackage
     {
         public string Name { get; set; }
         public string Version { get; set; }
@@ -16,24 +16,29 @@ namespace Packman
         public IEnumerable<string> AllFiles { get; set; }
         internal string UrlFormat { get; set; }
 
-        public bool AreAllFilesRecommended()
+        public int TotalFileCount
         {
-            var extensions = new List<string>();
-            string[] ignore = { ".map" };
-
-            foreach (string file in Files)
-            {
-                string ext = Path.GetExtension(file).ToLowerInvariant();
-
-                if (!ignore.Contains(ext) && !extensions.Contains(ext))
-                    extensions.Add(ext);
-
-                if (extensions.Count >= 2)
-                    return true;
-            }
-
-            return false;
+            get { return AllFiles.Count(); }
         }
+
+        //public bool AreAllFilesRecommended()
+        //{
+        //    var extensions = new List<string>();
+        //    string[] ignore = { ".map" };
+
+        //    foreach (string file in Files)
+        //    {
+        //        string ext = Path.GetExtension(file).ToLowerInvariant();
+
+        //        if (!ignore.Contains(ext) && !extensions.Contains(ext))
+        //            extensions.Add(ext);
+
+        //        if (extensions.Count >= 2)
+        //            return true;
+        //    }
+
+        //    return false;
+        //}
 
         internal async Task DownloadFilesAsync(string downloadDir)
         {
