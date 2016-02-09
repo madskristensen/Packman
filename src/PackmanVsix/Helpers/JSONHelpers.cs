@@ -12,6 +12,9 @@ namespace PackmanVsix
 
         public static bool HasSchema(this JSONDocument document, IJSONSchemaEvaluationReportCache cache)
         {
+            if (document == null || cache == null)
+                return false;
+
             JSONObject schema = cache.DetermineSchemaToUseAsync(document).Result;
 
             if (schema != null && !string.IsNullOrWhiteSpace(schema.DocumentLocation))
