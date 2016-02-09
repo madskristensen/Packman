@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using Microsoft.JSON.Core.Schema;
 using Microsoft.JSON.Editor.Completion;
 using Microsoft.VisualStudio.Text;
 using Packman;
@@ -16,11 +17,14 @@ namespace PackmanVsix
         [Import]
         public ITextDocumentFactoryService TextDocumentFactoryService { get; set; }
 
+        [Import]
+        IJSONSchemaEvaluationReportCache _reportCache { get; set; }
+
         public abstract JSONCompletionContextType ContextType { get; }
 
         public IEnumerable<JSONCompletionEntry> GetListEntries(JSONCompletionContext context)
         {
-            if (!VSPackage.Manager.Provider.IsInitialized)
+            if (!VSPackage.Manager.Provider.IsInitialized || !context.ContextItem.JSONDocument.HasSchema(_reportCache))
                 return _empty;
 
             ITextDocument document;

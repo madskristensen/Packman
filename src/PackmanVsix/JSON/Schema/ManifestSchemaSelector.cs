@@ -24,16 +24,9 @@ namespace PackmanVsix
             string fileName = Path.GetFileName(fileLocation);
 
             if (fileName.Equals(VSPackage.ManifestFileName, StringComparison.OrdinalIgnoreCase))
-                return GetSchemaFileName("json\\schema\\manifest-schema.json");
+                return JSONHelpers.SchemaFileName;
 
             return null;
-        }
-
-        private static string GetSchemaFileName(string relativePath)
-        {
-            string assembly = Assembly.GetExecutingAssembly().Location;
-            string folder = Path.GetDirectoryName(assembly);
-            return Path.Combine(folder, relativePath);
         }
     }
 }

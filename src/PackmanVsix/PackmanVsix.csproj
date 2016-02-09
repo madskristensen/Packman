@@ -231,6 +231,7 @@
     <Compile Include="Converters\NotConverter.cs" />
     <Compile Include="Converters\PackageItemIconConverter.cs" />
     <Compile Include="Converters\VisibleIfNonNullConverter.cs" />
+    <Compile Include="Helpers\JSONHelpers.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\ProjectHelpers.cs" />
     <Compile Include="Helpers\Telemetry.cs" />

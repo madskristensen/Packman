@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using Microsoft.JSON.Core.Parser;
+using Microsoft.JSON.Core.Parser.TreeItems;
+using Microsoft.JSON.Core.Schema;
 using Microsoft.JSON.Core.Validation;
 
-namespace PackmanVsix.JSON.Validation
+namespace PackmanVsix
 {
     abstract class BaseValidator : IJSONItemValidator
     {
+        [Import]
+        IJSONSchemaEvaluationReportCache _reportCache { get; set; }
+
         protected abstract Type ItemType { get; }
 
         public IEnumerable<Type> ItemTypes
@@ -19,7 +25,12 @@ namespace PackmanVsix.JSON.Validation
             if (!VSPackage.Manager.Provider.IsInitialized)
                 return JSONItemValidationResult.Continue;
 
-            return ValidateJsonItem(item, context);
+            if (item.JSONDocument.HasSchema(_reportCache))
+            {
+                return ValidateJsonItem(item, context);
+            }
+
+            return JSONItemValidationResult.Continue;
         }
 
         protected abstract JSONItemValidationResult ValidateJsonItem(JSONParseItem item, IJSONValidationContext context);
