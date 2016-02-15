@@ -34,7 +34,7 @@ namespace PackmanVsix.JSON.Validation
 
             if (names != null && !names.Contains(member.UnquotedNameText))
             {
-                string message = $"({VSPackage.Name}) The package \"{member.UnquotedNameText}\" does not exist";
+                string message = $"({Vsix.Name}) The package \"{member.UnquotedNameText}\" does not exist";
                 AddError(context, member.Name, message);
             }
 

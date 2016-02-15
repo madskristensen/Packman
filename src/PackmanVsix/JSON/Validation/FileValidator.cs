@@ -45,7 +45,7 @@ namespace PackmanVsix.JSON.Validation
 
             if (!installable.AllFiles.Contains(item.Text.Trim('"', ',')))
             {
-                string message = $"({VSPackage.Name}) {item.Text} is not a valid file name for {installable.Name} {installable.Version}.";
+                string message = $"({Vsix.Name}) {item.Text} is not a valid file name for {installable.Name} {installable.Version}.";
                 AddError(context, item, message);
             }
 

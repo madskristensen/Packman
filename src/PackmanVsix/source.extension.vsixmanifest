@@ -2,8 +2,8 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
         <Identity Id="ce753d0f-f511-4b2b-93de-5cc50145dca6" Version="1.1" Language="en-US" Publisher="Mads Kristensen" />
-        <DisplayName>Packman Package Manager</DisplayName>
-        <Description xml:space="preserve">Packman is a package manager for client-side packages such as JavaScript and CSS libraries. It uses well established global content delivery networks that hosts thousands of the most popular libraries.</Description>
+        <DisplayName>Packman</DisplayName>
+        <Description xml:space="preserve">A package manager for client-side packages such as JavaScript and CSS libraries. It uses well established global content delivery networks that hosts thousands of the most popular libraries.</Description>
         <MoreInfo>https://github.com/madskristensen/Packman</MoreInfo>
         <License>Resources\LICENSE</License>
         <ReleaseNotes>https://github.com/madskristensen/Packman/blob/master/CHANGELOG.md</ReleaseNotes>

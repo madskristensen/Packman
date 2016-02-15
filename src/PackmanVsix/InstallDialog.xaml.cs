@@ -32,7 +32,7 @@ namespace PackmanVsix
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             Icon = BitmapFrame.Create(new Uri("pack://application:,,,/PackmanVsix;component/Resources/dialog-icon.png", UriKind.RelativeOrAbsolute));
-            Title = VSPackage.Name;
+            Title = Vsix.Name;
 
             cbName.Focus();
 

@@ -34,7 +34,7 @@ namespace PackmanVsix.JSON.Validation
 
             if (versions != null && !versions.Contains(member.UnquotedValueText))
             {
-                string message = $"({VSPackage.Name}) \"{member.UnquotedValueText}\" is not a valid version for \"{package.UnquotedNameText}\".";
+                string message = $"({Vsix.Name}) \"{member.UnquotedValueText}\" is not a valid version for \"{package.UnquotedNameText}\".";
                 AddError(context, member.Value, message);
             }
 
