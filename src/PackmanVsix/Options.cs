@@ -9,8 +9,8 @@ namespace PackmanVsix
         [DisplayName("Save manifest file")]
         [Category("Package install")]
         [Description("Creates and maintains the packman.json file at the root of the project.")]
-        [DefaultValue(true)]
-        public bool SaveManifestFile { get; set; } = true;
+        [DefaultValue(false)]
+        public bool SaveManifestFile { get; set; }
 
         [DisplayName("Restore packages on save")]
         [Category("Package install")]
