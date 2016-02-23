@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="110" xml:space="preserve">
-    <value>Packman</value>
+    <value>Client-Side Library Installer</value>
   </data>
   <data name="112" xml:space="preserve">
-    <value>A package manager for client-side packages such as JavaScript and CSS libraries. It uses well established global content delivery networks that hosts thousands of the most popular libraries.</value>
+    <value>A simple solution to installing JavaScript and CSS libraries into any project. It uses well established global content delivery networks that hosts thousands of the most popular libraries.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="400" type="System.Resources.ResXFileRef, System.Windows.Forms">

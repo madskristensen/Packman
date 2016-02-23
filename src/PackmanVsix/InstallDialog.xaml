@@ -6,7 +6,7 @@
         xmlns:controls="clr-namespace:PackmanVsix.Controls"
         xmlns:models="clr-namespace:PackmanVsix.Models"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type=models:InstallDialogViewModel}"
-        Title="Packman" Height="300.2" Width="498.674">
+        Title="Install Client-Side Library" Height="300.2" Width="498.674">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />

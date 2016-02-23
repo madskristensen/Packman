@@ -12,17 +12,17 @@
 
         <Buttons>
             <Button guid="guidLibrarianCmdSet" id="InstallLibrary" priority="0x0100" type="Button">
-                <Icon guid="ImageCatalogGuid" id="NewWebMethodAction" />
+                <Icon guid="ImageCatalogGuid" id="JSWebScript" />
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
-                    <ButtonText>Add Packman Package...</ButtonText>
+                    <ButtonText>Add Client-Side Library...</ButtonText>
                 </Strings>
             </Button>
             <Button guid="guidLibrarianCmdSet" id="RestoreAll" priority="0x0200" type="Button">
                 <Parent guid="guidLibrarianCmdSet" id="ContextMenuGroup" />
-                <Icon guid="ImageCatalogGuid" id="WebMethodAction" />
+                <Icon guid="ImageCatalogGuid" id="JSWebScript" />
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
