@@ -4,6 +4,7 @@
   - [x] JSON Schema support
   - [x] Restore package from custom urls
   - [x] Tweaks to the package name validator
+- [x] Renamed to _Client-Side Library Installer_
 - [ ] Update package
   - [ ] Light bulb in `packman.json`
   - [ ] Visual indication that packages has update
