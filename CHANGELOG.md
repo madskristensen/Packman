@@ -1,10 +1,5 @@
 # Roadmap
 
-- [x] Support for custom url artifacts
-  - [x] JSON Schema support
-  - [x] Restore package from custom urls
-  - [x] Tweaks to the package name validator
-- [x] Renamed to _Client-Side Library Installer_
 - [ ] Update package
   - [ ] Light bulb in `packman.json`
   - [ ] Visual indication that packages has update
@@ -22,6 +17,15 @@ download in the
 
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
+
+## 1.1
+**2016-02-23**
+
+- [x] Support for custom url artifacts
+  - [x] JSON Schema support
+  - [x] Restore package from custom urls
+  - [x] Tweaks to the package name validator
+- [x] Renamed to _Client-Side Library Installer_
 
 ## 1.0
 **2016-02-04**
