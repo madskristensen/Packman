@@ -2,6 +2,7 @@
 using Microsoft.JSON.Editor.Completion;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.Web.Editor.Completion;
 using Microsoft.Web.Editor.Imaging;
 
 namespace PackmanVsix
@@ -9,6 +10,7 @@ namespace PackmanVsix
     class SimpleCompletionEntry : JSONCompletionEntry
     {
         private static readonly ImageSource _glyph = GlyphService.GetGlyph(StandardGlyphGroup.GlyphGroupVariable, StandardGlyphItem.GlyphItemPublic);
+        private int _specificVersion;
 
         public SimpleCompletionEntry(string text, IIntellisenseSession session)
             : this(text, (ImageSource)null, session)
@@ -21,6 +23,12 @@ namespace PackmanVsix
         public SimpleCompletionEntry(string text, ImageMoniker moniker, IIntellisenseSession session)
             : this(text, null, WpfUtil.GetIconForImageMoniker(moniker, 16, 16), session)
         { }
+
+        public SimpleCompletionEntry(string text, ImageMoniker moniker, IIntellisenseSession session, int specificVersion)
+            : this(text, null, WpfUtil.GetIconForImageMoniker(moniker, 16, 16), session)
+        {
+            _specificVersion = specificVersion;
+        }
 
         public SimpleCompletionEntry(string text, ImageSource glyph, IIntellisenseSession session)
             : this(text, null, glyph, session)
@@ -45,5 +53,17 @@ namespace PackmanVsix
         public SimpleCompletionEntry(string displayText, string insertionText, string description, IIntellisenseSession session)
             : base(displayText, insertionText, description, _glyph, null, false, session as ICompletionSession)
         { }
+
+        protected override int InternalCompareTo(CompletionEntry other)
+        {
+            SimpleCompletionEntry otherEntry = other as SimpleCompletionEntry;
+
+            if(_specificVersion != 0 && otherEntry != null)
+            {
+                return _specificVersion.CompareTo(otherEntry._specificVersion);
+            }
+
+            return base.InternalCompareTo(other);
+        }
     }
 }
