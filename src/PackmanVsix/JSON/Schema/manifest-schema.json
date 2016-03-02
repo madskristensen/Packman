@@ -64,6 +64,11 @@
   },
 
   "properties": {
+    "includeInProject": {
+      "description": "Specify whether or not the library files should be included in the project",
+      "type": "boolean",
+      "default":  true
+    },
     "packages": {
       "description": "A list of package objects.",
       "type": "object",

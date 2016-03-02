@@ -93,11 +93,11 @@ namespace Packman
 
             string cwd = new FileInfo(manifest.FileName).DirectoryName;
 
-            OnInstalling(entry, settings.InstallDirectory);
+            OnInstalling(manifest, entry, settings.InstallDirectory);
 
             await CopyPackageContent(entry, settings);
 
-            OnInstalled(entry, settings.InstallDirectory);
+            OnInstalled(manifest, entry, settings.InstallDirectory);
 
             return manifest;
         }
@@ -114,7 +114,7 @@ namespace Packman
                 Files = files
             };
 
-            OnInstalling(urlPackage, path);
+            OnInstalling(manifest, urlPackage, path);
 
             foreach (string url in package.Urls)
             {
@@ -132,7 +132,7 @@ namespace Packman
                 }
             }
 
-            OnInstalled(urlPackage, path);
+            OnInstalled(manifest, urlPackage, path);
         }
 
         public async Task<ManifestPackage> UninstallAsync(Manifest manifest, string name, bool saveManifest)
@@ -221,16 +221,16 @@ namespace Packman
             return Uri.UnescapeDataString(baseUri.MakeRelativeUri(fileUri).ToString()).Trim('/');
         }
 
-        void OnInstalling(IInstallablePackage package, string path)
+        void OnInstalling(Manifest manifest, IInstallablePackage package, string path)
         {
             if (Installing != null)
-                Installing(this, new InstallEventArgs(package, path));
+                Installing(this, new InstallEventArgs(manifest, package, path));
         }
 
-        void OnInstalled(IInstallablePackage package, string path)
+        void OnInstalled(Manifest manifest, IInstallablePackage package, string path)
         {
             if (Installed != null)
-                Installed(this, new InstallEventArgs(package, path));
+                Installed(this, new InstallEventArgs(manifest, package, path));
         }
 
         void OnCopying(string source, string destination)

@@ -35,6 +35,7 @@ namespace PackmanVsix
                     await VSPackage.Manager.InstallAll(manifest);
 
                     Telemetry.TrackEvent("Packages restored");
+                    VSPackage.DTE.StatusBar.Text = $"{manifest.Packages.Count} libraries successfully installed";
                 }
                 else
                 {
@@ -92,20 +93,23 @@ namespace PackmanVsix
 
         static async void Installed(object sender, InstallEventArgs e)
         {
-            var project = ProjectHelpers.GetActiveProject();
-
-            foreach (var file in e.Package.Files)
+            if (e.Manifest != null && e.Manifest.IncludeInProject)
             {
-                string absolute = Path.Combine(e.Path, file);
+                var project = ProjectHelpers.GetActiveProject();
 
-                try
+                foreach (var file in e.Package.Files)
                 {
-                    var info = new FileInfo(absolute);
-                    await project.AddFileToProjectAsync(info.FullName);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log(ex);
+                    string absolute = Path.Combine(e.Path, file);
+
+                    try
+                    {
+                        var info = new FileInfo(absolute);
+                        await project.AddFileToProjectAsync(info.FullName);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                    }
                 }
             }
 

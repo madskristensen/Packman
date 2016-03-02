@@ -1,5 +1,6 @@
 ﻿{
   "$schema": "manifest-schema.json",
+  "includeInProject": false,
   "packages": {
     "angularjs": {
       "version": "1.4.7",

@@ -18,6 +18,9 @@ namespace Packman
             FileName = fileName;
         }
 
+        [JsonProperty("includeInProject")]
+        public bool IncludeInProject { get; set; } = true;
+
         [JsonProperty("packages")]
         public IDictionary<string, ManifestPackage> Packages { get; set; }
 

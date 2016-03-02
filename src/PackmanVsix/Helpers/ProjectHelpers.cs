@@ -54,15 +54,6 @@ namespace PackmanVsix
             }
         }
 
-        public static IEnumerable<string> GetSelectedItemPaths()
-        {
-            foreach (ProjectItem item in GetSelectedItems())
-            {
-                if (item != null && item.Properties != null)
-                    yield return item.Properties.Item("FullPath").Value.ToString();
-            }
-        }
-
         public static string GetRootFolder(this Project project)
         {
             if (project == null || string.IsNullOrEmpty(project.FullName))
@@ -135,54 +126,9 @@ namespace PackmanVsix
             }
         }
 
-        public static async Task AddNestedFileAsync(string parentFile, string newFile, string itemType = null)
-        {
-            ProjectItem item = _dte.Solution.FindProjectItem(parentFile);
-
-            try
-            {
-                if (item == null
-                    || item.ContainingProject == null
-                    || item.ContainingProject.IsKind(ProjectTypes.ASPNET_5))
-                    return;
-
-                if (item.ProjectItems == null || item.ContainingProject.IsKind(ProjectTypes.UNIVERSAL_APP))
-                {
-                    await item.ContainingProject.AddFileToProjectAsync(newFile);
-                }
-                else if (_dte.Solution.FindProjectItem(newFile) == null)
-                {
-                    item.ProjectItems.AddFromFile(newFile);
-                }
-
-                ProjectItem newItem = _dte.Solution.FindProjectItem(newFile);
-                newItem.SetItemType(itemType);
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(ex);
-            }
-        }
-
         public static bool IsKind(this Project project, string kindGuid)
         {
             return project.Kind.Equals(kindGuid, StringComparison.OrdinalIgnoreCase);
-        }
-
-        public static void DeleteFileFromProject(string file)
-        {
-            ProjectItem item = _dte.Solution.FindProjectItem(file);
-
-            if (item == null)
-                return;
-            try
-            {
-                item.Delete();
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(ex);
-            }
         }
 
         public static IEnumerable<Project> GetAllProjects()
@@ -213,14 +159,6 @@ namespace PackmanVsix
                     .Cast<ProjectItem>()
                     .Where(p => p.SubProject != null)
                     .SelectMany(p => GetChildProjects(p.SubProject));
-        }
-
-        public static bool IsSolutionLoaded()
-        {
-            if (_dte.Solution == null)
-                return false;
-
-            return GetAllProjects().Any();
         }
 
         public static Project GetActiveProject()
