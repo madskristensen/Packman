@@ -84,7 +84,7 @@ namespace PackmanVsix
             Telemetry.TrackEvent("Package installed", props);
 
             if (settings.SaveManifest)
-                item.ContainingProject.AddFileToProjectAsync(manifestPath, "None");
+                item.ContainingProject.AddFileToProject(manifestPath, "None");
         }
 
         private InstallablePackage GetPackage(string folder, out string installDirectory)

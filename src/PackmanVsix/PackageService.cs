@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.JSON.Core.Parser;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
 using Packman;
 
 namespace PackmanVsix
@@ -20,8 +18,9 @@ namespace PackmanVsix
             _serviceProvider = serviceProvider;
 
             Manager.Installed += Installed;
-            Manager.Installing += Installing;
+
             Manager.Copying += Copying;
+            Manager.Copied += Copied;
 
             InstallablePackage.Downloading += Downloading;
             InstallablePackage.DownloadingRemainingFiles += DownloadingRemainingFiles;
@@ -41,27 +40,24 @@ namespace PackmanVsix
                     await VSPackage.Manager.InstallAll(manifest);
 
                     Telemetry.TrackEvent("Packages restored");
-                    VSPackage.DTE.StatusBar.Text = $"{manifest.Packages.Count} libraries successfully installed";
 
-                    if (_files.Count > 0)
+                    if (_files.Count > 0 && manifest.IncludeInProject)
                     {
-                        var project = ProjectHelpers.GetActiveProject();
+                        VSPackage.DTE.StatusBar.Animate(true, EnvDTE.vsStatusAnimation.vsStatusAnimationGeneral);
+                        VSPackage.DTE.StatusBar.Text = $"Adding {_files.Count} files to project. This may take a while...";
 
-                        var solutionService = _serviceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
-                        IVsHierarchy hierarchy;
-                        solutionService.GetProjectOfUniqueName(project.UniqueName, out hierarchy);
-
-                        var ip = (IVsProject)hierarchy;
-                        var result = new VSADDRESULT[0];
-
-                        ip.AddItem(VSConstants.VSITEMID_ROOT,
-                                   VSADDITEMOPERATION.VSADDITEMOP_OPENFILE,
-                                   null,
-                                   0,
-                                   _files.ToArray(),
-                                   IntPtr.Zero,
-                                   result);
+                        try
+                        {
+                            var project = ProjectHelpers.GetActiveProject();
+                            project.AddFilesToProject(_files);
+                        }
+                        finally
+                        {
+                            VSPackage.DTE.StatusBar.Animate(false, EnvDTE.vsStatusAnimation.vsStatusAnimationGeneral);
+                        }
                     }
+
+                    VSPackage.DTE.StatusBar.Text = $"{manifest.Packages.Count} libraries successfully installed";
                 }
                 else
                 {
@@ -110,37 +106,16 @@ namespace PackmanVsix
             ProjectHelpers.CheckFileOutOfSourceControl(e.Destination);
         }
 
-        static void Installing(object sender, InstallEventArgs e)
+        private static void Copied(object sender, FileCopyEventArgs e)
         {
-            string msg = $"Installing {e.Package.Name}...";
-            Logger.Log(msg);
-            VSPackage.DTE.StatusBar.Text = msg;
+            if (!_files.Contains(e.Destination))
+            {
+                _files.Add(e.Destination);
+            }
         }
 
         static void Installed(object sender, InstallEventArgs e)
         {
-            if (e.Manifest != null && e.Manifest.IncludeInProject)
-            {
-                //var project = ProjectHelpers.GetActiveProject();
-
-                foreach (var file in e.Package.Files)
-                {
-                    string absolute = Path.Combine(e.Path, file);
-
-                    try
-                    {
-                        var info = new FileInfo(absolute);
-                        //await project.AddFileToProjectAsync(info.FullName);
-                        if (!_files.Contains(info.FullName))
-                            _files.Add(info.FullName);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log(ex);
-                    }
-                }
-            }
-
             string msg = $"Installed {e.Package.Name} successfully";
             Logger.Log(msg);
             VSPackage.DTE.StatusBar.Text = msg;

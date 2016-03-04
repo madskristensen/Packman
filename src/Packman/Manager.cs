@@ -95,9 +95,13 @@ namespace Packman
 
             OnInstalling(manifest, entry, settings.InstallDirectory);
 
-            await CopyPackageContent(entry, settings);
+            var copied = await CopyPackageContent(entry, settings);
 
-            OnInstalled(manifest, entry, settings.InstallDirectory);
+            // Check if the files where already installed. Skip if they were
+            if (copied)
+            {
+                OnInstalled(manifest, entry, settings.InstallDirectory);
+            }
 
             return manifest;
         }
@@ -119,7 +123,7 @@ namespace Packman
             foreach (string url in package.Urls)
             {
                 string fileName = Path.GetFileName(url);
-                string filePath = Path.Combine(dir, package.Path, fileName);
+                string filePath = new FileInfo(Path.Combine(dir, package.Path, fileName)).FullName;
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                 files.Add(fileName);
@@ -174,10 +178,11 @@ namespace Packman
             return package;
         }
 
-        async Task CopyPackageContent(InstallablePackage entry, InstallSettings settings)
+        async Task<bool> CopyPackageContent(InstallablePackage entry, InstallSettings settings)
         {
             string cachePath = Environment.ExpandEnvironmentVariables(Defaults.CachePath);
             string versionDir = Path.Combine(cachePath, Provider.Name, entry.Name, entry.Version);
+            bool hasCopied = false;
 
             await entry.DownloadFilesAsync(versionDir);
 
@@ -191,12 +196,22 @@ namespace Packman
                         string src = Path.Combine(versionDir, cleanFile);
                         string dest = Path.Combine(settings.InstallDirectory, cleanFile);
 
+                        if (File.Exists(dest))
+                        {
+                            var srcDate = File.GetLastWriteTime(src);
+                            var destDate = File.GetLastWriteTime(dest);
+
+                            if (srcDate == destDate)
+                                continue;
+                        }
+
                         string dir = Path.GetDirectoryName(dest);
                         Directory.CreateDirectory(dir);
 
                         OnCopying(src, dest);
                         File.Copy(src, dest, true);
                         OnCopied(src, dest);
+                        hasCopied = true;
                     }
                 }
                 catch (Exception)
@@ -211,6 +226,8 @@ namespace Packman
                     }
                 }
             });
+
+            return hasCopied;
         }
 
         public static string MakeRelative(string baseFile, string file)

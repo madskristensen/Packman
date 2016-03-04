@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Packman;
 
 namespace PackmanVsix
@@ -91,19 +94,41 @@ namespace PackmanVsix
             return null;
         }
 
-        public static async Task AddFileToProjectAsync(this Project project, string file, string itemType = null)
+        public static void AddFileToProject(this Project project, string file, string itemType = null)
         {
             if (project.IsKind(ProjectTypes.ASPNET_5))
                 return;
 
-            await Task.Run(() =>
-            {
-                //if (_dte.Solution.FindProjectItem(file) == null)
-                //{
-                ProjectItem item = project.ProjectItems.AddFromFile(file);
-                item.SetItemType(itemType);
-                //}
-            });
+            //if (_dte.Solution.FindProjectItem(file) == null)
+            //{
+            ProjectItem item = project.ProjectItems.AddFromFile(file);
+            item.SetItemType(itemType);
+            //}
+        }
+
+        public static void AddFilesToProject(this Project project, IEnumerable<string> files)
+        {
+            if (project.IsKind(ProjectTypes.ASPNET_5))
+                return;
+
+            var solutionService = Package.GetGlobalService(typeof(SVsSolution)) as IVsSolution;
+
+            IVsHierarchy hierarchy = null;
+            solutionService?.GetProjectOfUniqueName(project.UniqueName, out hierarchy);
+
+            if (hierarchy == null)
+                return;
+
+            var ip = (IVsProject)hierarchy;
+            var result = new VSADDRESULT[files.Count()];
+
+            ip.AddItem(VSConstants.VSITEMID_ROOT,
+                       VSADDITEMOPERATION.VSADDITEMOP_LINKTOFILE,
+                       string.Empty,
+                       (uint)files.Count(),
+                       files.ToArray(),
+                       IntPtr.Zero,
+                       result);
         }
 
         public static void SetItemType(this ProjectItem item, string itemType)
@@ -190,7 +215,7 @@ namespace PackmanVsix
 
         public static bool IsConfigFile(this ProjectItem item)
         {
-            if (item == null || item.Properties == null || !item.IsKind(Constants.vsProjectItemKindPhysicalFile) || item.ContainingProject == null)
+            if (item == null || item.Properties == null || !item.IsKind(EnvDTE.Constants.vsProjectItemKindPhysicalFile) || item.ContainingProject == null)
                 return false;
 
             string fileName = Path.GetFileName(item.GetFullPath());
