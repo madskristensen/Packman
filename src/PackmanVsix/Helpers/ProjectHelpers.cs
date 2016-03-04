@@ -111,6 +111,16 @@ namespace PackmanVsix
             if (project.IsKind(ProjectTypes.ASPNET_5))
                 return;
 
+            if (project.IsKind(ProjectTypes.WEBSITE_PROJECT))
+            {
+                var command = _dte.Commands.Item("SolutionExplorer.Refresh");
+
+                if (command.IsAvailable)
+                    _dte.ExecuteCommand(command.Name);
+
+                return;
+            }
+
             var solutionService = Package.GetGlobalService(typeof(SVsSolution)) as IVsSolution;
 
             IVsHierarchy hierarchy = null;
