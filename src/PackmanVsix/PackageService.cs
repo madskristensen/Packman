@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.JSON.Core.Parser;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
 using Packman;
 
 namespace PackmanVsix
@@ -10,6 +13,7 @@ namespace PackmanVsix
     static class PackageService
     {
         static IServiceProvider _serviceProvider;
+        static List<string> _files = new List<string>();
 
         public static void Initialize(IServiceProvider serviceProvider)
         {
@@ -31,11 +35,33 @@ namespace PackmanVsix
             {
                 if (await IsValidJson(manifestFile))
                 {
+                    _files.Clear();
+
                     var manifest = await Manifest.FromFileOrNewAsync(manifestFile);
                     await VSPackage.Manager.InstallAll(manifest);
 
                     Telemetry.TrackEvent("Packages restored");
                     VSPackage.DTE.StatusBar.Text = $"{manifest.Packages.Count} libraries successfully installed";
+
+                    if (_files.Count > 0)
+                    {
+                        var project = ProjectHelpers.GetActiveProject();
+
+                        var solutionService = _serviceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
+                        IVsHierarchy hierarchy;
+                        solutionService.GetProjectOfUniqueName(project.UniqueName, out hierarchy);
+
+                        var ip = (IVsProject)hierarchy;
+                        var result = new VSADDRESULT[0];
+
+                        ip.AddItem(VSConstants.VSITEMID_ROOT,
+                                   VSADDITEMOPERATION.VSADDITEMOP_OPENFILE,
+                                   null,
+                                   0,
+                                   _files.ToArray(),
+                                   IntPtr.Zero,
+                                   result);
+                    }
                 }
                 else
                 {
@@ -91,11 +117,11 @@ namespace PackmanVsix
             VSPackage.DTE.StatusBar.Text = msg;
         }
 
-        static async void Installed(object sender, InstallEventArgs e)
+        static void Installed(object sender, InstallEventArgs e)
         {
             if (e.Manifest != null && e.Manifest.IncludeInProject)
             {
-                var project = ProjectHelpers.GetActiveProject();
+                //var project = ProjectHelpers.GetActiveProject();
 
                 foreach (var file in e.Package.Files)
                 {
@@ -104,7 +130,9 @@ namespace PackmanVsix
                     try
                     {
                         var info = new FileInfo(absolute);
-                        await project.AddFileToProjectAsync(info.FullName);
+                        //await project.AddFileToProjectAsync(info.FullName);
+                        if (!_files.Contains(info.FullName))
+                            _files.Add(info.FullName);
                     }
                     catch (Exception ex)
                     {
