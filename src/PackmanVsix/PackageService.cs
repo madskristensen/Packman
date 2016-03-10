@@ -12,6 +12,7 @@ namespace PackmanVsix
     {
         static IServiceProvider _serviceProvider;
         static List<string> _files = new List<string>();
+        static bool _isRestoring;
 
         public static void Initialize(IServiceProvider serviceProvider)
         {
@@ -32,6 +33,8 @@ namespace PackmanVsix
         {
             try
             {
+                _isRestoring = true;
+
                 if (await IsValidJson(manifestFile))
                 {
                     _files.Clear();
@@ -74,6 +77,10 @@ namespace PackmanVsix
                 VSPackage.DTE.StatusBar.Text = Properties.Resources.ErrorRestoringPackages;
                 Logger.Log(ex);
             }
+            finally
+            {
+                _isRestoring = false;
+            }
         }
 
         static async Task<bool> IsValidJson(string file)
@@ -108,9 +115,17 @@ namespace PackmanVsix
 
         private static void Copied(object sender, FileCopyEventArgs e)
         {
-            if (!_files.Contains(e.Destination))
+            if (_isRestoring)
             {
-                _files.Add(e.Destination);
+                if (!_files.Contains(e.Destination))
+                {
+                    _files.Add(e.Destination);
+                }
+            }
+            else
+            {
+                var project = ProjectHelpers.GetActiveProject();
+                project.AddFileToProject(e.Destination);
             }
         }
 
