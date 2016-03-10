@@ -74,7 +74,7 @@ namespace PackmanVsix
                 SaveManifest = VSPackage.Options.SaveManifestFile
             };
 
-            await VSPackage.Manager.Install(manifestPath, package, settings);
+            await PackageService.InstallpackageAsync(manifestPath, package, settings);
 
             var props = new Dictionary<string, string> {
                 { "name", package.Name.ToLowerInvariant().Trim()}                ,

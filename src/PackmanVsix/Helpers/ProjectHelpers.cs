@@ -108,7 +108,7 @@ namespace PackmanVsix
 
         public static void AddFilesToProject(this Project project, IEnumerable<string> files)
         {
-            if (project.IsKind(ProjectTypes.ASPNET_5))
+            if (project == null || project.IsKind(ProjectTypes.ASPNET_5))
                 return;
 
             if (project.IsKind(ProjectTypes.WEBSITE_PROJECT))
