@@ -44,7 +44,7 @@ namespace PackmanVsix
 
                     Telemetry.TrackEvent("Packages restored");
 
-                    if (_files.Count > 0 && manifest.IncludeInProject)
+                    if (_files.Count > 0)
                     {
                         VSPackage.DTE.StatusBar.Animate(true, EnvDTE.vsStatusAnimation.vsStatusAnimationGeneral);
                         VSPackage.DTE.StatusBar.Text = $"Adding {_files.Count} files to project. This may take a while...";
