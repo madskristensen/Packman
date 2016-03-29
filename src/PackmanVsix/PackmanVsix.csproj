@@ -264,6 +264,7 @@
     <Compile Include="Models\PackageItem.cs" />
     <Compile Include="Models\PackageItemType.cs" />
     <Compile Include="Models\PackageSearchItem.cs" />
+    <Compile Include="Models\PackageSorter.cs" />
     <Compile Include="Models\PackageVersion.cs" />
     <Compile Include="Options.cs">
       <SubType>Component</SubType>

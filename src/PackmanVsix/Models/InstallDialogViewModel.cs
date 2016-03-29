@@ -137,6 +137,11 @@ namespace PackmanVsix.Models
                         }
                     }
 
+                    if (value != null)
+                    {
+                        matchingPackages.Sort(PackageSorter.For(value, VSPackage.Manager.Provider));
+                    }
+
                     AvailablePackages = matchingPackages;
                 }
             }

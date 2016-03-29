@@ -108,6 +108,7 @@ namespace PackmanVsix.Controls.Search
             if (HasResults)
             {
                 Options.SelectedIndex = 0;
+                Options.ScrollIntoView(Options.Items[0]);
             }
         }
 
@@ -136,6 +137,8 @@ namespace PackmanVsix.Controls.Search
             {
                 Options.SelectedIndex = 0;
             }
+
+            Options.ScrollIntoView(Options.Items[0]);
         }
 
         public string Text
@@ -255,6 +258,7 @@ namespace PackmanVsix.Controls.Search
             if (ItemsSource != null && ItemsSource.Count > 0)
             {
                 Options.SelectedIndex = 0;
+                Options.ScrollIntoView(Options.Items[0]);
             }
         }
 
@@ -279,8 +283,14 @@ namespace PackmanVsix.Controls.Search
                 case Key.Down:
                     if (HasResults)
                     {
+                        Options.ScrollIntoView(Options.Items[0]);
                         FrameworkElement fe = (FrameworkElement)Options.ItemContainerGenerator.ContainerFromIndex(0);
-                        fe.Focus();
+
+                        if (fe != null)
+                        {
+                            fe.Focus();
+                        }
+
                         Options.SelectedIndex = 0;
                         e.Handled = true;
                     }
