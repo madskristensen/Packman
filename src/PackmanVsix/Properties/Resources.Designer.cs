@@ -88,6 +88,15 @@ namespace PackmanVsix.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        internal static string Loading {
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The main file for this package.
         /// </summary>
         internal static string MainFileToolTip {

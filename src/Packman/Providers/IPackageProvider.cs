@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Packman.Providers;
 
 namespace Packman
 {
@@ -12,5 +14,6 @@ namespace Packman
         Task<IEnumerable<string>> GetVersionsAsync(string packageName);
         Task<bool> InitializeAsync();
         bool IsInitialized { get; }
+        Task<IPackageInfo> GetPackageInfoAsync(string packageName);
     }
 }

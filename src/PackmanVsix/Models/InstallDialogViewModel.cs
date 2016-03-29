@@ -4,13 +4,14 @@ using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Packman;
+using PackmanVsix.Controls.Search;
 
 namespace PackmanVsix.Models
 {
     public class InstallDialogViewModel : BindableBase
     {
         private readonly Action<bool> _closeDialog;
-        private IReadOnlyList<string> _availablePacakges;
+        private IReadOnlyList<ISearchItem> _allPackages;
         private IReadOnlyList<PackageItem> _displayRoot;
         private bool _includePackageName;
         private bool _isPackageListLoaded;
@@ -20,6 +21,8 @@ namespace PackmanVsix.Models
         private IReadOnlyList<string> _packageVersions;
         private string _rootFolderName;
         private string _selectedPackageVersion;
+        private ISearchItem _selectedPackage;
+        private IReadOnlyList<ISearchItem> _availablePackages;
 
         public InstallDialogViewModel(Dispatcher dispatcher, Action<bool> closeDialog)
         {
@@ -31,10 +34,10 @@ namespace PackmanVsix.Models
             LoadPackages();
         }
 
-        public IReadOnlyList<string> AvailablePackages
+        public IReadOnlyList<ISearchItem> AvailablePackages
         {
-            get { return _availablePacakges; }
-            set { Set(ref _availablePacakges, value); }
+            get { return _availablePackages; }
+            set { Set(ref _availablePackages, value); }
         }
 
         public Dispatcher Dispatcher { get; private set; }
@@ -124,8 +127,17 @@ namespace PackmanVsix.Models
             {
                 if (Set(ref _packageName, value, StringComparer.OrdinalIgnoreCase))
                 {
-                    UpdateVersions(value);
-                    FindPackage(value, SelectedPackageVersion);
+                    List<ISearchItem> matchingPackages = new List<ISearchItem>(_allPackages);
+
+                    foreach (ISearchItem item in _allPackages)
+                    {
+                        if (!item.IsMatchForSearchTerm(value))
+                        {
+                            matchingPackages.Remove(item);
+                        }
+                    }
+
+                    AvailablePackages = matchingPackages;
                 }
             }
         }
@@ -166,6 +178,22 @@ namespace PackmanVsix.Models
                 if (Set(ref _selectedPackageVersion, value, StringComparer.Ordinal))
                 {
                     FindPackage(PackageName, value);
+                }
+            }
+        }
+
+        public ISearchItem SelectedPackage
+        {
+            get { return _selectedPackage; }
+            set
+            {
+                if (Set(ref _selectedPackage, value))
+                {
+                    if (value != null)
+                    {
+                        UpdateVersions(value.CollapsedItemText);
+                        FindPackage(value.CollapsedItemText, SelectedPackageVersion);
+                    }
                 }
             }
         }
@@ -211,17 +239,18 @@ namespace PackmanVsix.Models
         private async void LoadPackages()
         {
             IEnumerable<string> packages = await VSPackage.Manager.Provider.GetPackageNamesAsync();
-            IReadOnlyList<string> listedPackages = packages?.ToList();
+            IReadOnlyList<ISearchItem> listedPackages = packages?.Select(x => new PackageSearchItem(x))?.ToList();
             bool loadSuccess = true;
 
             if (listedPackages == null || listedPackages.Count == 0)
             {
-                listedPackages = new[] { Properties.Resources.PackagesCouldNotBeLoaded };
+                listedPackages = new[] { new PackageSearchItem(Properties.Resources.PackagesCouldNotBeLoaded) };
                 loadSuccess = false;
             }
 
             Dispatcher.Invoke(() =>
             {
+                _allPackages = listedPackages;
                 AvailablePackages = listedPackages;
                 IsPackageListLoaded = loadSuccess;
             });
