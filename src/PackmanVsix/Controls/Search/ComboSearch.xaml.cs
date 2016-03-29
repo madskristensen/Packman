@@ -255,7 +255,7 @@ namespace PackmanVsix.Controls.Search
                 SearchBox.Focus();
             }
 
-            if (ItemsSource != null && ItemsSource.Count > 0)
+            if (ItemsSource != null && ItemsSource.Count > 0 && Options.SelectedIndex == -1)
             {
                 Options.SelectedIndex = 0;
                 Options.ScrollIntoView(Options.Items[0]);
