@@ -226,6 +226,14 @@
     <Compile Include="Controls\PackageContentsTreeView.xaml.cs">
       <DependentUpon>PackageContentsTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Search\ComboSearch.xaml.cs">
+      <DependentUpon>ComboSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Search\ISearchItem.cs" />
+    <Compile Include="Controls\Search\LogicalOrConverter.cs" />
+    <Compile Include="Controls\Search\SearchHighlight.cs" />
+    <Compile Include="Controls\Search\SearchItemContainer.cs" />
+    <Compile Include="Controls\Search\Wrapper.cs" />
     <Compile Include="Controls\ThemedWindow.cs" />
     <Compile Include="Converters\BoldingConverter.cs" />
     <Compile Include="Converters\NotConverter.cs" />
@@ -255,6 +263,8 @@
     <Compile Include="JSON\Validation\NameValidator.cs" />
     <Compile Include="Models\PackageItem.cs" />
     <Compile Include="Models\PackageItemType.cs" />
+    <Compile Include="Models\PackageSearchItem.cs" />
+    <Compile Include="Models\PackageSorter.cs" />
     <Compile Include="Models\PackageVersion.cs" />
     <Compile Include="Options.cs">
       <SubType>Component</SubType>
@@ -339,6 +349,10 @@
     <Page Include="Controls\PackageContentsTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Search\ComboSearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Shared.xaml">
       <SubType>Designer</SubType>

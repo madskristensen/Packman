@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using Packman;
 using PackmanVsix.Models;
 
@@ -52,6 +56,24 @@ namespace PackmanVsix
         {
             get { return DataContext as InstallDialogViewModel; }
             set { DataContext = value; }
+        }
+
+        private void NavigateToHomepage(object sender, RequestNavigateEventArgs e)
+        {
+            Hyperlink link = sender as Hyperlink;
+
+            if (link != null)
+            {
+                Process.Start(link.NavigateUri.AbsoluteUri);
+            }
+
+            e.Handled = true;
+            cbName.ResumeFocusEvents();
+        }
+
+        private void HyperlinkPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            cbName.SuspendFocusEvents();
         }
     }
 }

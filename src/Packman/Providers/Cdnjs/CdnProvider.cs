@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Packman.Providers;
 
 namespace Packman
 {
@@ -16,6 +17,7 @@ namespace Packman
         readonly string _localPath;
         IEnumerable<CdnjsPackage> _packages;
         static AsyncLock _mutex = new AsyncLock();
+        private Dictionary<string, Lazy<Task<IPackageInfo>>> _searchPackages;
 
         public CdnjsProvider()
         {
@@ -31,6 +33,25 @@ namespace Packman
         public string Name
         {
             get { return "Cdnjs"; }
+        }
+
+        public async Task<IPackageInfo> GetPackageInfoAsync(string packageName)
+        {
+            if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))
+                return null;
+
+            var package = _packages.FirstOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+
+            if (package != null)
+            {
+                Lazy<Task<IPackageInfo>> packageInfo;
+                if (_searchPackages.TryGetValue(packageName, out packageInfo))
+                {
+                    return await packageInfo.Value;
+                }
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<string>> GetVersionsAsync(string packageName)
@@ -113,7 +134,22 @@ namespace Packman
                     }
 
                     _packages = distinct;
+                    Dictionary<string, Lazy<Task<IPackageInfo>>> infos = new Dictionary<string, Lazy<Task<IPackageInfo>>>();
 
+                    foreach (CdnjsPackage package in distinct)
+                    {
+                        CdnjsPackage local = package;
+                        infos[local.Name] = new Lazy<Task<IPackageInfo>>(async () =>
+                        {
+                            IPackageMetaData metadata = await local.GetPackageMetaData(Name);
+                            return new PackageInfo(local.Name, metadata.Description)
+                            {
+                                Homepage = metadata.Homepage
+                            };
+                        });
+                    }
+
+                    _searchPackages = infos;
                     return true;
                 }
                 catch (Exception)

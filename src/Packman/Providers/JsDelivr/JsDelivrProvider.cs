@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Packman.Providers;
 
 namespace Packman
 {
@@ -33,12 +34,27 @@ namespace Packman
             get { return "JsDelivr"; }
         }
 
+        public async Task<IPackageInfo> GetPackageInfoAsync(string packageName)
+        {
+            if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))
+                return null;
+
+            var package = _packages.FirstOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+
+            if (package != null)
+            {
+                return new PackageInfo(package.Name, "(No Description)");
+            }
+
+            return null;
+        }
+
         public async Task<IEnumerable<string>> GetVersionsAsync(string packageName)
         {
             if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))
                 return null;
 
-            var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+            var package = _packages.FirstOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
             return package?.Versions;
         }
@@ -48,7 +64,7 @@ namespace Packman
             if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))
                 return null;
 
-            var package = _packages.SingleOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+            var package = _packages.FirstOrDefault(p => p.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
 
             if (package == null)
             {
