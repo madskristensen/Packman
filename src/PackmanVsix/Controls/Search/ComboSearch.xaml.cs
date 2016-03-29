@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
@@ -205,6 +206,31 @@ namespace PackmanVsix.Controls.Search
             };
 
             GlyphStyle = DefaultGlyphStyle;
+            SearchBox.AddHandler(GotKeyboardFocusEvent, (RoutedEventHandler) SearchBoxGotKeyboardFocus, true);
+            SearchBox.AddHandler(MouseDoubleClickEvent, (RoutedEventHandler) SearchBoxGotKeyboardFocus, true);
+            SearchBox.AddHandler(PreviewMouseLeftButtonUpEvent, (RoutedEventHandler)SearchBoxGotKeyboardFocus, true);
+            SearchBox.AddHandler(LostFocusEvent, (RoutedEventHandler)SearchBoxLostFocus, true);
+        }
+
+        private void SearchBoxLostFocus(object sender, RoutedEventArgs e)
+        {
+            SearchBox.AddHandler(PreviewMouseLeftButtonUpEvent, (RoutedEventHandler)SearchBoxGotKeyboardFocus, true);
+        }
+
+        private void SearchBoxGotKeyboardFocus(object sender, RoutedEventArgs e)
+        {
+            if (!SearchBox.IsFocused)
+            {
+                return;
+            }
+
+            SearchBox.SelectAll();
+
+            if (e.RoutedEvent == PreviewMouseLeftButtonUpEvent)
+            {
+                SearchBox.RemoveHandler(PreviewMouseLeftButtonUpEvent, (RoutedEventHandler)SearchBoxGotKeyboardFocus);
+                e.Handled = true;
+            }
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
@@ -264,6 +290,8 @@ namespace PackmanVsix.Controls.Search
 
         private void HandleListBoxKeyPress(object sender, KeyEventArgs e)
         {
+            int index = SearchBox.CaretIndex;
+
             switch (e.Key)
             {
                 case Key.Tab:
@@ -275,15 +303,28 @@ namespace PackmanVsix.Controls.Search
                 case Key.Up:
                     if (Options.SelectedIndex == 0)
                     {
-                        SelectedItem = (ISearchItem)ItemsSource[0];
+                        SelectedItem = (ISearchItem) ItemsSource[0];
                         LostFocus -= OnLostFocus;
                         SearchBox.Focus();
+                        SearchBox.CaretIndex = index;
                         LostFocus += OnLostFocus;
                     }
                     break;
                 case Key.Escape:
                     e.Handled = true;
                     SearchBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    break;
+                case Key.Down:
+                case Key.PageDown:
+                case Key.PageUp:
+                case Key.Home:
+                case Key.End:
+                    break;
+                default:
+                    LostFocus -= OnLostFocus;
+                    SearchBox.Focus();
+                    SearchBox.CaretIndex = index;
+                    LostFocus += OnLostFocus;
                     break;
             }
         }

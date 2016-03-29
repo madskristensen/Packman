@@ -34,10 +34,10 @@
                     <TextBlock Text="{Binding Path=Item.(models:PackageSearchItem.Description), Mode=OneWay}" TextWrapping="Wrap" ToolTip="{Binding Path=Item.(models:PackageSearchItem.Description), Mode=OneWay}" />
                 </Label>
                 <Label Grid.Row="2" Grid.Column="1" Visibility="{Binding Path=Item.(models:PackageSearchItem.Homepage), Converter={StaticResource NullToVisibilityConverter}}">
-                    <TextBlock>
+                    <TextBlock TextTrimming="CharacterEllipsis" ToolTip="{Binding Path=Item.(models:PackageSearchItem.Homepage), Mode=OneWay}">
                         <Run>Homepage: </Run>
                         <Hyperlink NavigateUri="{Binding Path=Item.(models:PackageSearchItem.Homepage), Mode=OneWay}" RequestNavigate="NavigateToHomepage" PreviewMouseDown="HyperlinkPreviewMouseDown"
-                                   Foreground="{DynamicResource {x:Static platformUi:EnvironmentColors.PanelHyperlinkBrushKey}}">
+                                   Foreground="{DynamicResource {x:Static platformUi:EnvironmentColors.PanelHyperlinkInsideSelectionInactiveTextBrushKey}}">
                             <Run Text="{Binding Path=Item.(models:PackageSearchItem.Homepage), Mode=OneWay}" />
                         </Hyperlink>
                     </TextBlock>
