@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.VisualStudio.Imaging;
-using Microsoft.VisualStudio.Imaging.Interop;
 using Packman.Providers;
 using PackmanVsix.Controls.Search;
 using PackmanVsix.Properties;
@@ -14,17 +12,37 @@ namespace PackmanVsix.Models
 {
     internal class PackageSearchItem : BindableBase, ISearchItem, IPackageInfo
     {
-        private bool _isLoaded;
         private readonly Dispatcher _dispatcher;
         private string _description;
         private string _homepage;
         private ImageSource _icon;
+        private Lazy<Task<IPackageInfo>> _infoTask;
+        private static ConcurrentDictionary<string, PackageSearchItem> _cache = new ConcurrentDictionary<string, PackageSearchItem>();
+        private bool _special;
+        private static PackageSearchItem _missing;
 
-        public PackageSearchItem(string name)
+        public static PackageSearchItem Missing
+        {
+            get { return _missing ?? (_missing = new PackageSearchItem()); }
+        }
+
+        public static PackageSearchItem GetOrCreate(string name)
+        {
+            return _cache.GetOrAdd(name, n => new PackageSearchItem(n));
+        }
+
+        private PackageSearchItem()
+        {
+            _special = true;
+            CollapsedItemText = Resources.PackagesCouldNotBeLoaded;
+        }
+
+        private PackageSearchItem(string name)
         {
             _dispatcher = Dispatcher.CurrentDispatcher;
             CollapsedItemText = name;
             Icon = WpfUtil.GetIconForImageMoniker(KnownMonikers.Package, 24, 24);
+            _infoTask = new Lazy<Task<IPackageInfo>>(() => VSPackage.Manager.Provider.GetPackageInfoAsync(CollapsedItemText));
         }
 
         public string CollapsedItemText { get; }
@@ -40,10 +58,14 @@ namespace PackmanVsix.Models
         {
             get
             {
-                if (!_isLoaded)
+                if (!_special && !_infoTask.Value.IsCompleted)
                 {
                     LoadPackageInfoAsync();
-                    return Resources.Loading;
+
+                    if (!_infoTask.Value.IsCompleted)
+                    {
+                        return Resources.Loading;
+                    }
                 }
 
                 return _description;
@@ -65,8 +87,7 @@ namespace PackmanVsix.Models
 
         private async void LoadPackageInfoAsync()
         {
-            IPackageInfo info = await VSPackage.Manager.Provider.GetPackageInfoAsync(CollapsedItemText).ConfigureAwait(false);
-            _isLoaded = true;
+            IPackageInfo info = await _infoTask.Value.ConfigureAwait(false);
 
             await _dispatcher.InvokeAsync(() =>
             {

@@ -64,7 +64,7 @@ namespace Packman
                     using (WebClient client = new WebClient())
                     {
                         // When this is async, it deadlocks when called from FileCompletionProvider.cs
-                        client.DownloadFile(url, metaPath);
+                        await Task.Run(() => client.DownloadFile(url, metaPath)).ConfigureAwait(false);
                     }
                 }
 
