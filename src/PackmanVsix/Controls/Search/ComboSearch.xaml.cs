@@ -136,9 +136,8 @@ namespace PackmanVsix.Controls.Search
             if (ItemsSource != null && ItemsSource.Count > 0)
             {
                 Options.SelectedIndex = 0;
+                Options.ScrollIntoView(Options.Items[0]);
             }
-
-            Options.ScrollIntoView(Options.Items[0]);
         }
 
         public string Text

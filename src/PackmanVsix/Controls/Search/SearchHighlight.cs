@@ -8,8 +8,52 @@ namespace PackmanVsix.Controls.Search
 {
     public static class SearchHighlight
     {
+        public static readonly DependencyProperty SourceTextProperty = DependencyProperty.RegisterAttached(
+            "SourceText", typeof(string), typeof(SearchHighlight), new PropertyMetadata("", TextChanged));
+
+
         public static readonly DependencyProperty HighlightStyleProperty = DependencyProperty.RegisterAttached(
-            "HighlightStyle", typeof (Style), typeof (SearchHighlight), new PropertyMetadata(default(Style)));
+            "HighlightStyle", typeof(Style), typeof(SearchHighlight), new PropertyMetadata(default(Style), StyleChanged));
+
+        private static void StyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            Label lbl = d as Label;
+            TextBlock block = d as TextBlock;
+
+            if (lbl != null)
+            {
+                block = lbl.Content as TextBlock;
+
+                if (block == null)
+                {
+                    string lblChild = lbl.Content as string;
+
+                    if (lblChild == null)
+                    {
+                        return;
+                    }
+
+                    TextBlock newChild = new TextBlock { Text = lblChild };
+                    lbl.Content = newChild;
+                    block = newChild;
+                }
+            }
+
+            if (block == null)
+            {
+                return;
+            }
+        }
+
+        public static void SetSourceText(DependencyObject element, string value)
+        {
+            element.SetValue(SourceTextProperty, value);
+        }
+
+        public static string GetSourceText(DependencyObject element)
+        {
+            return (string)element.GetValue(SourceTextProperty);
+        }
 
         public static void SetHighlightStyle(DependencyObject element, Style value)
         {
@@ -18,50 +62,54 @@ namespace PackmanVsix.Controls.Search
 
         public static Style GetHighlightStyle(DependencyObject element)
         {
-            return (Style) element.GetValue(HighlightStyleProperty);
+            return (Style)element.GetValue(HighlightStyleProperty);
         }
 
         public static readonly DependencyProperty HighlightTextProperty = DependencyProperty.RegisterAttached(
-            "HighlightText", typeof (string), typeof (SearchHighlight), new PropertyMetadata(default(string), TextChanged));
+            "HighlightText", typeof(string), typeof(SearchHighlight), new PropertyMetadata(default(string), TextChanged));
 
         private static void TextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             Label lbl = d as Label;
+            TextBlock block = d as TextBlock;
 
-            if (lbl == null)
+            if (lbl != null)
+            {
+                block = lbl.Content as TextBlock;
+
+                if (block == null)
+                {
+                    string lblChild = lbl.Content as string;
+                    TextBlock newChild = new TextBlock { Text = lblChild ?? "" };
+                    lbl.Content = newChild;
+                    block = newChild;
+                }
+            }
+
+            if (block == null)
             {
                 return;
             }
 
-            TextBlock block = lbl.Content as TextBlock;
+            string searchText = GetHighlightText(d);
+            string blockText = GetSourceText(d);
+            int last = 0;
+            block.Inlines.Clear();
 
-            if (block == null)
+            if (!string.IsNullOrEmpty(searchText))
             {
-                string lblChild = lbl.Content as string;
 
-                if (lblChild == null)
-                {
-                    return;
-                }
-
-                TextBlock newChild = new TextBlock {Text = lblChild};
-                lbl.Content = newChild;
-                block = newChild;
-            }
-
-            string searchText = e.NewValue as string;
-
-            if (searchText != null)
-            {
-                string blockText = block.Text;
-                block.Inlines.Clear();
                 string pattern = Regex.Escape(searchText);
                 Regex r = new Regex(pattern, RegexOptions.IgnoreCase);
                 MatchCollection matches = r.Matches(blockText);
-                int last = 0;
 
                 for (int i = 0; i < matches.Count; ++i)
                 {
+                    if (matches[i].Length == 0)
+                    {
+                        continue;
+                    }
+
                     if (last < matches[i].Index)
                     {
                         string inserted = blockText.Substring(last, matches[i].Index - last);
@@ -79,11 +127,11 @@ namespace PackmanVsix.Controls.Search
                     block.Inlines.Add(highlight);
                     last += matches[i].Length;
                 }
+            }
 
-                if (last < blockText.Length)
-                {
-                    block.Inlines.Add(blockText.Substring(last));
-                }
+            if (last < blockText.Length)
+            {
+                block.Inlines.Add(blockText.Substring(last));
             }
         }
 
@@ -94,7 +142,7 @@ namespace PackmanVsix.Controls.Search
 
         public static string GetHighlightText(DependencyObject element)
         {
-            return (string) element.GetValue(HighlightTextProperty);
+            return (string)element.GetValue(HighlightTextProperty);
         }
     }
 }

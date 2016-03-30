@@ -27,25 +27,34 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Margin="5" Height="24" Width="24" VerticalAlignment="Top">
-                    <Image Stretch="Uniform" Source="{Binding Path=Item.(models:PackageSearchItem.Icon), Mode=OneWay}" />
+                    <Image DataContext="{Binding Path=Item,Mode=OneWay}" Stretch="Uniform" Source="{Binding Path=(models:PackageSearchItem.Icon), Mode=OneWay}" />
                 </Border>
-                <Label Grid.Column="1" Grid.Row="0" Content="{Binding Path=Item.CollapsedItemText, Mode=OneWay}" search:SearchHighlight.HighlightText="{Binding Path=SearchText}" search:SearchHighlight.HighlightStyle="{StaticResource HighlightStyle}" FontWeight="Bold" />
-                <Label Grid.Column="1" Grid.Row="1" FontStyle="Italic" search:SearchHighlight.HighlightText="{Binding Path=SearchText}" search:SearchHighlight.HighlightStyle="{StaticResource HighlightStyle}">
-                    <TextBlock Text="{Binding Path=Item.(models:PackageSearchItem.Description), Mode=OneWay}" TextWrapping="Wrap" ToolTip="{Binding Path=Item.(models:PackageSearchItem.Description), Mode=OneWay}" />
+                <Label Grid.Column="1" Grid.Row="0" 
+                       search:SearchHighlight.HighlightText="{Binding Path=SearchText,Mode=OneWay}"
+                       search:SearchHighlight.HighlightStyle="{StaticResource HighlightStyle}"
+                       search:SearchHighlight.SourceText="{Binding Path=Item.(models:PackageSearchItem.CollapsedItemText), Mode=OneWay}"
+                       FontWeight="Bold" />
+                <Label Grid.Column="1" Grid.Row="1" FontStyle="Italic">
+                    <TextBlock search:SearchHighlight.HighlightText="{Binding Path=SearchText,Mode=OneWay}"
+                               search:SearchHighlight.HighlightStyle="{StaticResource HighlightStyle}"
+                               search:SearchHighlight.SourceText="{Binding Path=Item.(models:PackageSearchItem.Description), Mode=OneWay}"
+                               TextWrapping="Wrap" ToolTip="{Binding Path=Item.(models:PackageSearchItem.Description), Mode=OneWay}" />
                 </Label>
-                <Label Grid.Row="2" Grid.Column="1" Visibility="{Binding Path=Item.(models:PackageSearchItem.Homepage), Converter={StaticResource NullToVisibilityConverter}}">
-                    <TextBlock TextTrimming="CharacterEllipsis" ToolTip="{Binding Path=Item.(models:PackageSearchItem.Homepage), Mode=OneWay}">
+                <Label Grid.Row="2" Grid.Column="1" Visibility="{Binding Path=Item.(models:PackageSearchItem.Homepage), Converter={StaticResource NullToVisibilityConverter},Mode=OneWay}">
+                    <TextBlock DataContext="{Binding Path=Item,Mode=OneWay}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Path=(models:PackageSearchItem.Homepage), Mode=OneWay}">
                         <Run>Homepage: </Run>
-                        <Hyperlink NavigateUri="{Binding Path=Item.(models:PackageSearchItem.Homepage), Mode=OneWay}" RequestNavigate="NavigateToHomepage" PreviewMouseDown="HyperlinkPreviewMouseDown"
+                        <Hyperlink NavigateUri="{Binding Path=(models:PackageSearchItem.Homepage), Mode=OneWay}" RequestNavigate="NavigateToHomepage" PreviewMouseDown="HyperlinkPreviewMouseDown"
                                    Foreground="{DynamicResource {x:Static platformUi:EnvironmentColors.PanelHyperlinkInsideSelectionInactiveTextBrushKey}}">
-                            <Run Text="{Binding Path=Item.(models:PackageSearchItem.Homepage), Mode=OneWay}" />
+                            <Run Text="{Binding Path=(models:PackageSearchItem.Homepage), Mode=OneWay}" />
                         </Hyperlink>
                     </TextBlock>
                 </Label>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="CollapsedTemplate" DataType="search:SearchItemContainer">
-            <Label Content="{Binding Path=Item.CollapsedItemText}" search:SearchHighlight.HighlightText="{Binding Path=SearchText}" search:SearchHighlight.HighlightStyle="{StaticResource HighlightStyle}" />
+            <Label search:SearchHighlight.HighlightText="{Binding Path=SearchText,Mode=OneWay}"
+                   search:SearchHighlight.HighlightStyle="{StaticResource HighlightStyle}"
+                   search:SearchHighlight.SourceText="{Binding Path=Item.(models:PackageSearchItem.CollapsedItemText), Mode=OneWay}" />
         </DataTemplate>
     </controls:ThemedWindow.Resources>
     <Grid>
