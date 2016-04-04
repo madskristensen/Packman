@@ -16,6 +16,7 @@
                 <CommandFlag>IconIsMoniker</CommandFlag>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultInvisible</CommandFlag>
+                <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
                     <ButtonText>Add Client-Side Library...</ButtonText>
                 </Strings>
@@ -32,6 +33,10 @@
             </Button>
         </Buttons>
     </Commands>
+
+    <KeyBindings>
+        <KeyBinding guid="guidLibrarianCmdSet" id="InstallLibrary" mod1="Shift Alt" key1="8" editor="guidVSStd97"/>
+    </KeyBindings>
 
     <CommandPlacements>
         <CommandPlacement guid="guidLibrarianCmdSet" id="ContextMenuGroup" priority="0x0200">
