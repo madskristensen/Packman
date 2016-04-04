@@ -40,7 +40,7 @@ namespace PackmanVsix
         [DisplayName("Provider")]
         [Category("Provider")]
         [Description("The CDN that provides the data.")]
-        [DefaultValue(Providers.JsDelivr)]
+        [DefaultValue(Providers.Cdnjs)]
         [TypeConverter(typeof(EnumConverter))]
         public Providers Provider { get; set; } = Providers.Cdnjs;
 
