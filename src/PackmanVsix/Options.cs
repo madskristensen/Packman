@@ -42,7 +42,7 @@ namespace PackmanVsix
         [Description("The CDN that provides the data.")]
         [DefaultValue(Providers.JsDelivr)]
         [TypeConverter(typeof(EnumConverter))]
-        public Providers Provider { get; set; } = Providers.JsDelivr;
+        public Providers Provider { get; set; } = Providers.Cdnjs;
 
 
         protected override void OnApply(PageApplyEventArgs e)
