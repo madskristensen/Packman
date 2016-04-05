@@ -1,8 +1,10 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using PackmanVsix.Models;
 
 namespace PackmanVsix.Controls.Search
 {
@@ -98,10 +100,7 @@ namespace PackmanVsix.Controls.Search
 
             if (!string.IsNullOrEmpty(searchText))
             {
-
-                string pattern = Regex.Escape(searchText);
-                Regex r = new Regex(pattern, RegexOptions.IgnoreCase);
-                MatchCollection matches = r.Matches(blockText);
+                IReadOnlyList<PackageSearchUtil.Range> matches = PackageSearchUtil.ForTerm(searchText).GetMatchesInText(blockText);
 
                 for (int i = 0; i < matches.Count; ++i)
                 {
@@ -110,14 +109,14 @@ namespace PackmanVsix.Controls.Search
                         continue;
                     }
 
-                    if (last < matches[i].Index)
+                    if (last < matches[i].Start)
                     {
-                        string inserted = blockText.Substring(last, matches[i].Index - last);
+                        string inserted = blockText.Substring(last, matches[i].Start - last);
                         block.Inlines.Add(inserted);
                         last += inserted.Length;
                     }
 
-                    Run highlight = new Run(matches[i].Value);
+                    Run highlight = new Run(matches[i].ToString());
                     highlight.SetBinding(FrameworkContentElement.StyleProperty, new Binding
                     {
                         Mode = BindingMode.OneWay,

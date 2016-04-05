@@ -244,7 +244,7 @@ namespace PackmanVsix.Models
         private async void LoadPackages()
         {
             IEnumerable<string> packages = await VSPackage.Manager.Provider.GetPackageNamesAsync();
-            IReadOnlyList<ISearchItem> listedPackages = packages?.Select(PackageSearchItem.GetOrCreate)?.ToList();
+            IReadOnlyList<ISearchItem> listedPackages = packages?.Select(x => PackageSearchItem.GetOrCreate(x, VSPackage.Manager.Provider.GetAlias(x)))?.ToList();
             bool loadSuccess = true;
 
             if (listedPackages == null || listedPackages.Count == 0)

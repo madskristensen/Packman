@@ -49,6 +49,11 @@ namespace Packman
             return null;
         }
 
+        public string GetAlias(string s)
+        {
+            return null;
+        }
+
         public async Task<IEnumerable<string>> GetVersionsAsync(string packageName)
         {
             if (!IsInitialized && !await InitializeAsync().ConfigureAwait(false))

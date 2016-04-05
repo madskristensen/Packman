@@ -26,9 +26,9 @@ namespace PackmanVsix.Models
             get { return _missing ?? (_missing = new PackageSearchItem()); }
         }
 
-        public static PackageSearchItem GetOrCreate(string name)
+        public static PackageSearchItem GetOrCreate(string name, string alias = null)
         {
-            return _cache.GetOrAdd(name, n => new PackageSearchItem(n));
+            return _cache.GetOrAdd(name, n => new PackageSearchItem(n, alias));
         }
 
         private PackageSearchItem()
@@ -37,8 +37,9 @@ namespace PackmanVsix.Models
             CollapsedItemText = Resources.PackagesCouldNotBeLoaded;
         }
 
-        private PackageSearchItem(string name)
+        private PackageSearchItem(string name, string alias = null)
         {
+            Alias = alias ?? name;
             _dispatcher = Dispatcher.CurrentDispatcher;
             CollapsedItemText = name;
             Icon = WpfUtil.GetIconForImageMoniker(KnownMonikers.Package, 24, 24);
@@ -49,7 +50,7 @@ namespace PackmanVsix.Models
 
         public bool IsMatchForSearchTerm(string searchTerm)
         {
-            return CollapsedItemText.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) > -1;
+            return PackageSearchUtil.ForTerm(searchTerm).IsMatch(this);
         }
         
         public string Name => CollapsedItemText;
@@ -84,6 +85,8 @@ namespace PackmanVsix.Models
             get { return _icon; }
             set { Set(ref _icon, value); }
         }
+
+        public string Alias { get; }
 
         private async void LoadPackageInfoAsync()
         {

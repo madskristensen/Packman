@@ -54,6 +54,17 @@ namespace Packman
             return null;
         }
 
+        public string GetAlias(string s)
+        {
+            switch (s)
+            {
+                case "twitter-bootstrap":
+                    return "bootstrap";
+                default:
+                    return null;
+            }
+        }
+
         public async Task<IEnumerable<string>> GetVersionsAsync(string packageName)
         {
             if (!IsInitialized && !await InitializeAsync())
