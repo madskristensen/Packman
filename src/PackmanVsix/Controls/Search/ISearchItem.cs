@@ -4,6 +4,8 @@
     {
         string CollapsedItemText { get; }
 
+        string Alias { get; }
+
         bool IsMatchForSearchTerm(string searchTerm);
     }
 }

@@ -7,24 +7,23 @@ namespace PackmanVsix.Models
 {
     public class PackageSorter : IComparer<ISearchItem>
     {
-        private readonly string _searchTerm;
+        private readonly PackageSearchUtil _searchUtil;
 
         private PackageSorter(string searchTerm)
         {
-            _searchTerm = searchTerm;
+            _searchUtil = PackageSearchUtil.ForTerm(searchTerm);
         }
 
         public static IComparer<ISearchItem> For(string searchTerm, IPackageProvider provider)
         {
-            //TODO: Do something with the package provider to get special mappings
             return new PackageSorter(searchTerm);
         }
 
         public int Compare(ISearchItem x, ISearchItem y)
         {
-            int indexX = x.CollapsedItemText.IndexOf(_searchTerm, StringComparison.OrdinalIgnoreCase);
-            int indexY = y.CollapsedItemText.IndexOf(_searchTerm, StringComparison.OrdinalIgnoreCase);
-            int result = indexX.CompareTo(indexY);
+            int leftMatchStrength = _searchUtil.CalculateMatchStrength(x);
+            int rightMatchStrength = _searchUtil.CalculateMatchStrength(y);
+            int result = -leftMatchStrength.CompareTo(rightMatchStrength);
 
             if (result == 0)
             {
