@@ -7,7 +7,7 @@
   - [ ] Light bulb in `packman.json`
 - [ ] Visual indication that folder/file is from package
 - [ ] Cross-platform command line interface
-- [ ] List packages under the _Dependencies_ node in Solution Explorer
+- [ ] List packages under the _Dependencies_ node in Solution Explorer\
 
 Features that have a checkmark are complete and available for
 download in the
@@ -17,6 +17,13 @@ download in the
 
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
+
+## 1.2
+**2016-04-05**
+
+- [x] Keyboard shortcut
+- [x] Make CdnJS the default provider
+- [x] Support fuzzy search with alias support
 
 ## 1.1
 **2016-02-23**
