@@ -26,9 +26,9 @@ namespace PackmanVsix.Models
             get { return _missing ?? (_missing = new PackageSearchItem()); }
         }
 
-        public static PackageSearchItem GetOrCreate(string name)
+        public static PackageSearchItem GetOrCreate(string name, string alias = null)
         {
-            return _cache.GetOrAdd(name, n => new PackageSearchItem(n));
+            return _cache.GetOrAdd(name, n => new PackageSearchItem(n, alias));
         }
 
         private PackageSearchItem()

@@ -15,5 +15,6 @@ namespace Packman
         Task<bool> InitializeAsync();
         bool IsInitialized { get; }
         Task<IPackageInfo> GetPackageInfoAsync(string packageName);
+        string GetAlias(string s);
     }
 }
