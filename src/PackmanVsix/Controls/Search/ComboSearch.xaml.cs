@@ -6,7 +6,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.PlatformUI;
 
@@ -127,6 +129,8 @@ namespace PackmanVsix.Controls.Search
             search?.OnSearchTextChanged();
         }
 
+        private Window _window;
+
         public event EventHandler SearchTextChanged;
 
         private void OnSearchTextChanged()
@@ -214,6 +218,18 @@ namespace PackmanVsix.Controls.Search
             SearchBox.AddHandler(LostFocusEvent, (RoutedEventHandler)SearchBoxLostFocus, true);
         }
 
+        private void WindowMoved(object sender, EventArgs e)
+        {
+            if (!Flyout.IsOpen)
+            {
+                return;
+            }
+
+            double offset = Flyout.HorizontalOffset;
+            Flyout.HorizontalOffset = offset + 1;
+            Flyout.HorizontalOffset = offset;
+        }
+
         private void SearchBoxLostFocus(object sender, RoutedEventArgs e)
         {
             SearchBox.AddHandler(PreviewMouseLeftButtonUpEvent, (RoutedEventHandler)SearchBoxGotKeyboardFocus, true);
@@ -221,6 +237,16 @@ namespace PackmanVsix.Controls.Search
 
         private void SearchBoxGotKeyboardFocus(object sender, RoutedEventArgs e)
         {
+            if (_window == null)
+            {
+                _window = Window.GetWindow(this);
+
+                if (_window != null)
+                {
+                    _window.LocationChanged += WindowMoved;
+                }
+            }
+
             if (!SearchBox.IsFocused)
             {
                 return;
@@ -338,8 +364,18 @@ namespace PackmanVsix.Controls.Search
             }
         }
 
-        private void OnItemDoubleClick(object sender, MouseButtonEventArgs e)
+        private void OnItemCommitGesture(object sender, MouseButtonEventArgs e)
         {
+            HitTestResult result = VisualTreeHelper.HitTest((Visual) sender, e.GetPosition((IInputElement) sender));
+            TextBlock over = result.VisualHit as TextBlock;
+
+            if (over != null && over.Inlines.OfType<Hyperlink>().Any(x => x.IsMouseOver))
+            {
+                return;
+            }
+
+            object item = Options.ItemContainerGenerator.ItemFromContainer((DependencyObject)sender);
+            SelectedItem = ((SearchItemContainer)item).Item;
             CommitedItem = SelectedItem;
             e.Handled = true;
             SearchBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));

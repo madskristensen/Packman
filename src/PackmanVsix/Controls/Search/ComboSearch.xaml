@@ -18,7 +18,7 @@
             <Path Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{Binding ElementName=ThisControl, Path=GlyphStyle}" />
         </Border>
         <!-- Fly out -->
-        <Popup x:Name="Flyout" Placement="Bottom" Width="{Binding ElementName=SearchBox, Path=ActualWidth, Mode=OneWay}">
+        <Popup x:Name="Flyout" Placement="Bottom" PlacementTarget="{Binding ElementName=SearchBox}" Width="{Binding ElementName=SearchBox, Path=ActualWidth, Mode=OneWay}">
             <Popup.IsOpen>
                 <MultiBinding Mode="OneWay" Converter="{StaticResource LogicalOr}">
                     <Binding ElementName="ThisControl" Path="IsKeyboardFocusWithin" />
@@ -38,7 +38,7 @@
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem" d:DataContext="{d:DesignInstance Type=search:SearchItemContainer, IsDesignTimeCreatable=False}">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <EventSetter Event="MouseDoubleClick" Handler="OnItemDoubleClick" />
+                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnItemCommitGesture" />
                         <EventSetter Event="PreviewKeyDown" Handler="HandleListBoxKeyPress" />
                     </Style>
                 </ListBox.ItemContainerStyle>
