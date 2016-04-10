@@ -178,7 +178,7 @@ namespace Packman
             if (!file.Exists)
                 return true;
 
-            bool isTooOld = File.GetLastWriteTime(_localPath) > DateTime.Now.AddDays(Defaults.CacheDays);
+            bool isTooOld = File.GetLastWriteTime(_localPath).AddDays(Defaults.CacheDays) < DateTime.Now;
 
             if (isTooOld)
                 return true;
@@ -187,7 +187,7 @@ namespace Packman
             {
                 string json = File.ReadAllText(_localPath);
                 packages = JsonConvert.DeserializeObject<IEnumerable<CdnjsPackage>>(json);
-                return false;
+                return packages == null;
             }
             catch
             {

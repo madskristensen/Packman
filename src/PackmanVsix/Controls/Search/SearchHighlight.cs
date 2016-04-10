@@ -95,6 +95,12 @@ namespace PackmanVsix.Controls.Search
 
             string searchText = GetHighlightText(d);
             string blockText = GetSourceText(d);
+
+            if (blockText == null)
+            {
+                return;
+            }
+
             int last = 0;
             block.Inlines.Clear();
 

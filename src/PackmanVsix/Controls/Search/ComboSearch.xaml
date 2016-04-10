@@ -14,7 +14,7 @@
         <!-- Text Entry -->
         <TextBox x:Name="SearchBox" Text="{Binding ElementName=ThisControl, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}" PreviewKeyDown="HandleKeyPress" Padding="2 2 20 2" />
         <!-- Expand Grip -->
-        <Border BorderBrush="Transparent" BorderThickness="1" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+        <Border BorderBrush="Transparent" BorderThickness="1" HorizontalAlignment="Right" Margin="0" SnapsToDevicePixels="true" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" IsHitTestVisible="False">
             <Path Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{Binding ElementName=ThisControl, Path=GlyphStyle}" />
         </Border>
         <!-- Fly out -->
