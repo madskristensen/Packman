@@ -31,7 +31,7 @@ namespace PackmanVsix.Models
 
         private static int CalculatePartScore(string alias, string part)
         {
-            int matchIndex = alias.IndexOf(part, StringComparison.OrdinalIgnoreCase);
+            int matchIndex = alias?.IndexOf(part, StringComparison.OrdinalIgnoreCase) ?? -1;
             if (matchIndex > -1)
             {
                 double pctUsed = (double) part.Length/alias.Length;
