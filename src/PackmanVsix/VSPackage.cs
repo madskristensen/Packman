@@ -7,11 +7,12 @@ using Packman;
 
 namespace PackmanVsix
 {
-    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [InstalledProductRegistration("#110", "#112", Vsix.Version, IconResourceID = 400)]
     [ProvideOptionPage(typeof(Options), "Web", Vsix.Name, 101, 111, true, new[] { "package", "library", "framework", "install" }, ProvidesLocalizedCategoryName = false)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
+    [ProvideAutoLoad(UIContextGuids80.SolutionHasSingleProject, PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids80.SolutionHasMultipleProjects, PackageAutoLoadFlags.BackgroundLoad)]
     [Guid(PackageGuids.guidLibrarianPackageString)]
     public sealed class VSPackage : Package
     {
