@@ -6,6 +6,10 @@
       "version": "1.4.7",
       "path": "lib",
       "files": [ "angular.js" ]
+    },
+    "foo": {
+      "path": "lib",
+      "urls": [ "c:\\knockout.js" ]
     }
   }
 }
