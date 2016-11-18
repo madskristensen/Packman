@@ -53,7 +53,7 @@ is added to the project.
   - Including ASP.NET, Cordova and Universal Windows Apps
 
 ### Installing a library
-Right-click any folder in your projet and hit
+Right-click any folder in your project and hit
 **Add Client-Side Library...**
 
 ![Install package](art/context-menu-install.png)
