@@ -66,7 +66,8 @@ namespace PackmanVsix
                         }
                     }
 
-                    VSPackage.DTE.StatusBar.Text = $"{manifest.Packages.Count} libraries successfully installed";
+                    var libraryText = (manifest.Packages.Count == 1) ? "library" : "libraries";
+                    VSPackage.DTE.StatusBar.Text = $"{manifest.Packages.Count} {libraryText} successfully installed";
                 }
                 else
                 {
