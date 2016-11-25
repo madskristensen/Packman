@@ -48,8 +48,6 @@ namespace PackmanVsix
                     var manifest = await Manifest.FromFileOrNewAsync(manifestFile);
                     await VSPackage.Manager.InstallAll(manifest);
 
-                    Telemetry.TrackEvent("Packages restored");
-
                     if (_files.Count > 0)
                     {
                         VSPackage.DTE.StatusBar.Animate(true, EnvDTE.vsStatusAnimation.vsStatusAnimationGeneral);

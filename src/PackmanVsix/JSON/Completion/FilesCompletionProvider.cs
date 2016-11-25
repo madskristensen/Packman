@@ -47,8 +47,6 @@ namespace PackmanVsix
             if (package == null)
                 return list;
 
-            Telemetry.TrackEvent("Completion for files");
-
             JSONArray array = context.ContextItem.FindType<JSONArray>();
 
             if (array == null)

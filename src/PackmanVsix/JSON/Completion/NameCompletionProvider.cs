@@ -27,8 +27,6 @@ namespace PackmanVsix
 
             if (names != null)
             {
-                Telemetry.TrackEvent("Completion for name");
-
                 foreach (var name in names)
                 {
                     yield return new SimpleCompletionEntry(name, KnownMonikers.Package, context.Session);

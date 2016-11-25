@@ -33,8 +33,7 @@ namespace PackmanVsix
             if (versions != null)
             {
                 int index = 0;
-                Telemetry.TrackEvent("Completion for version");
-
+                
                 foreach (var version in versions)
                 {
                     yield return new SimpleCompletionEntry(version, KnownMonikers.Version, context.Session, ++index);

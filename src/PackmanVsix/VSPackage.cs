@@ -32,7 +32,6 @@ namespace PackmanVsix
             await SetDefaults();
 
             Logger.Initialize(this, Vsix.Name);
-            Telemetry.Initialize(this, Vsix.Version, "d8226d88-0507-4495-9c9c-63951a2151d3");
 
             PackageService.Initialize(this);
             InstallPackageCommand.Initialize(this);

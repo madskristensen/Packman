@@ -77,14 +77,7 @@ namespace PackmanVsix
             };
 
             await PackageService.InstallpackageAsync(manifestPath, package, settings);
-
-            var props = new Dictionary<string, string> {
-                { "name", package.Name.ToLowerInvariant().Trim()}                ,
-                { "version", package.Version}
-            };
-
-            Telemetry.TrackEvent("Package installed", props);
-
+            
             if (settings.SaveManifest)
                 item.ContainingProject.AddFileToProject(manifestPath, "None");
         }
