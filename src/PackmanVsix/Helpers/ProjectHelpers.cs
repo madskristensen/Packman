@@ -96,7 +96,7 @@ namespace PackmanVsix
 
         public static void AddFileToProject(this Project project, string file, string itemType = null)
         {
-            if (project.IsKind(ProjectTypes.ASPNET_5))
+            if (project.IsKind(ProjectTypes.ASPNET_5, ProjectTypes.DOTNET_Core))
                 return;
 
             //if (_dte.Solution.FindProjectItem(file) == null)
@@ -108,7 +108,7 @@ namespace PackmanVsix
 
         public static void AddFilesToProject(this Project project, IEnumerable<string> files)
         {
-            if (project == null || project.IsKind(ProjectTypes.ASPNET_5))
+            if (project == null || project.IsKind(ProjectTypes.ASPNET_5, ProjectTypes.DOTNET_Core))
                 return;
 
             if (project.IsKind(ProjectTypes.WEBSITE_PROJECT))
@@ -161,9 +161,15 @@ namespace PackmanVsix
             }
         }
 
-        public static bool IsKind(this Project project, string kindGuid)
+        public static bool IsKind(this Project project, params string[] kindGuids)
         {
-            return project.Kind.Equals(kindGuid, StringComparison.OrdinalIgnoreCase);
+            foreach (var guid in kindGuids)
+            {
+                if (project.Kind.Equals(guid, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
 
         public static IEnumerable<Project> GetAllProjects()
@@ -245,6 +251,7 @@ namespace PackmanVsix
     public static class ProjectTypes
     {
         public const string ASPNET_5 = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
+        public const string DOTNET_Core = "{9A19103F-16F7-4668-BE54-9A1E7A4F7556}";
         public const string WEBSITE_PROJECT = "{E24C65DC-7377-472B-9ABA-BC803B73C61A}";
         public const string UNIVERSAL_APP = "{262852C6-CD72-467D-83FE-5EEB1973A190}";
         public const string NODE_JS = "{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}";
