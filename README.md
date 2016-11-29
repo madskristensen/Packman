@@ -134,7 +134,7 @@ files to your project.
 
 ### Restoring packages
 It's very easy to restore libraries. Just right-click the
-package.json manifest file and select
+packman.json manifest file and select
 **Restore packages**.
 
 ![Package restore](art/context-menu-restore.png)

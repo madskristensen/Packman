@@ -14,7 +14,7 @@ namespace PackmanVsix
 
         [DisplayName("Restore packages on save")]
         [Category("Package install")]
-        [Description("Automatically restore packages when saving package.json.")]
+        [Description("Automatically restore packages when saving packman.json.")]
         [DefaultValue(true)]
         public bool RestoreOnSave { get; set; } = true;
 
